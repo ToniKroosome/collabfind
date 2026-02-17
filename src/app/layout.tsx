@@ -9,12 +9,12 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'CollabFind',
+  title: 'IntrovertxCollab',
   description: 'Find influencer collaboration partners without awkward cold outreach',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'CollabFind',
+    title: 'IntrovertxCollab',
   },
   formatDetection: {
     telephone: false,

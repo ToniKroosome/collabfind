@@ -53,11 +53,11 @@ export function LoginForm() {
   return (
     <Card>
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-xl font-bold text-white">
-          C
+        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-lg font-bold text-white">
+          IX
         </div>
         <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to CollabFind</CardDescription>
+        <CardDescription>Sign in to IntrovertxCollab</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleLogin} className="space-y-4">

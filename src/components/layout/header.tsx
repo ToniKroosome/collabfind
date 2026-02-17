@@ -14,7 +14,7 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
         <Link href="/feed" className="text-lg font-bold text-indigo-600">
-          CollabFind
+          IntrovertxCollab
         </Link>
         <Link href="/notifications">
           <Button variant="ghost" size="icon" className="relative">

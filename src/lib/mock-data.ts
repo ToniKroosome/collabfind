@@ -123,7 +123,7 @@ export const MOCK_POSTS = [
   {
     id: 'mock-post-001', user_id: 'mock-001',
     title: '[Example] Looking for a photographer for skincare flat-lays',
-    description: '(This is a sample post to show you how CollabFind works!) I have a skincare collection launch coming up and need someone who can style and shoot beautiful flat-lay product photos. Ideally someone in LA who knows how to work with natural light.',
+    description: '(This is a sample post to show you how IntrovertxCollab works!) I have a skincare collection launch coming up and need someone who can style and shoot beautiful flat-lay product photos. Ideally someone in LA who knows how to work with natural light.',
     collab_type: 'photo', niche_tags: ['beauty', 'photography'],
     preferred_audience_min: 1000, preferred_audience_max: 100000,
     location: 'Los Angeles, CA', is_open: true,

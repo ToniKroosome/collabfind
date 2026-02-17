@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'CollabFind - Find Your Collab Partner',
-    short_name: 'CollabFind',
+    name: 'IntrovertxCollab - Find Your Collab Partner',
+    short_name: 'IntrovertxCollab',
     description:
       'Find influencer collaboration partners without awkward cold outreach',
     start_url: '/feed',

@@ -72,11 +72,11 @@ export function SignupForm() {
   return (
     <Card>
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-xl font-bold text-white">
-          C
+        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-lg font-bold text-white">
+          IX
         </div>
         <CardTitle className="text-2xl">Create your account</CardTitle>
-        <CardDescription>Join CollabFind and find your next collab</CardDescription>
+        <CardDescription>Join IntrovertxCollab and find your next collab</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSignup} className="space-y-4">
