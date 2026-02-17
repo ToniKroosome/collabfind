@@ -2,7 +2,7 @@
 // MOCK DATA — Toggle this flag to show/hide demo content
 // Set to false to hide all mock data instantly
 // ============================================================
-export const SHOW_MOCK_DATA = true
+export const SHOW_MOCK_DATA = false
 
 // --- Mock Profiles ---
 

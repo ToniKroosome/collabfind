@@ -78,6 +78,14 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
   }
 
   const handleFollowerRange = (value: string) => {
+    if (value === '__any__') {
+      setFormData((prev) => ({
+        ...prev,
+        follower_count_min: 0,
+        follower_count_max: 0,
+      }))
+      return
+    }
     const range = FOLLOWER_RANGES.find((r) => r.label === value)
     if (range) {
       setFormData((prev) => ({
@@ -94,7 +102,7 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
         r.min === formData.follower_count_min &&
         r.max === formData.follower_count_max
     )
-    return range?.label || ''
+    return range?.label || '__any__'
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -237,6 +245,7 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
             <SelectValue placeholder={t('profile.followerPlaceholder')} />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="__any__">{t('profile.followerAny')}</SelectItem>
             {FOLLOWER_RANGES.map((range) => (
               <SelectItem key={range.label} value={range.label}>
                 {range.label}

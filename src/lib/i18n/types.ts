@@ -144,6 +144,9 @@ export interface Translations {
   // Profile
   'profile.editProfile': string
   'profile.signOut': string
+  'profile.signOutTitle': string
+  'profile.signOutDesc': string
+  'profile.signOutConfirm': string
   'profile.yourCollabPosts': string
   'profile.noPostsYet': string
   'profile.createFirstPost': string
@@ -157,6 +160,7 @@ export interface Translations {
   'profile.bioPlaceholder': string
   'profile.yourNiches': string
   'profile.followerRange': string
+  'profile.followerAny': string
   'profile.followerPlaceholder': string
   'profile.socialLinks': string
   'profile.instagram': string

@@ -1,7 +1,16 @@
 'use client'
 
+import { useState } from 'react'
 import { ProfileCard } from '@/components/profile/profile-card'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import Link from 'next/link'
 import { useLanguage } from '@/lib/i18n'
 import type { Profile } from '@/types/database'
@@ -15,6 +24,7 @@ interface ProfilePageContentProps {
 
 export function ProfilePageContent({ profile, posts, signOutAction }: ProfilePageContentProps) {
   const { t } = useLanguage()
+  const [showSignOutDialog, setShowSignOutDialog] = useState(false)
 
   return (
     <div className="space-y-4 py-4">
@@ -25,12 +35,34 @@ export function ProfilePageContent({ profile, posts, signOutAction }: ProfilePag
             {t('profile.editProfile')}
           </Button>
         </Link>
-        <form action={signOutAction}>
-          <Button variant="ghost" type="submit" className="text-red-500">
-            {t('profile.signOut')}
-          </Button>
-        </form>
+        <Button
+          variant="ghost"
+          className="text-red-500"
+          onClick={() => setShowSignOutDialog(true)}
+        >
+          {t('profile.signOut')}
+        </Button>
       </div>
+
+      {/* Sign Out Confirmation Dialog */}
+      <Dialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('profile.signOutTitle')}</DialogTitle>
+            <DialogDescription>{t('profile.signOutDesc')}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setShowSignOutDialog(false)}>
+              {t('common.cancel')}
+            </Button>
+            <form action={signOutAction}>
+              <Button type="submit" variant="destructive">
+                {t('profile.signOutConfirm')}
+              </Button>
+            </form>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* User's own collab posts */}
       <div className="mt-6">

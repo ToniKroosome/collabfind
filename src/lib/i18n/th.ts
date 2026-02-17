@@ -144,6 +144,9 @@ export const th: Translations = {
   // Profile
   'profile.editProfile': 'แก้ไขโปรไฟล์',
   'profile.signOut': 'ออกจากระบบ',
+  'profile.signOutTitle': 'ออกจากระบบ?',
+  'profile.signOutDesc': 'คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?',
+  'profile.signOutConfirm': 'ใช่ ออกจากระบบ',
   'profile.yourCollabPosts': 'โพสต์คอลแลปของคุณ',
   'profile.noPostsYet': 'คุณยังไม่ได้สร้างโพสต์คอลแลป',
   'profile.createFirstPost': 'สร้างโพสต์แรกของคุณ',
@@ -157,6 +160,7 @@ export const th: Translations = {
   'profile.bioPlaceholder': 'บอกเล่าเกี่ยวกับตัวคุณและคอลแลปที่คุณมองหา...',
   'profile.yourNiches': 'หมวดหมู่ของคุณ',
   'profile.followerRange': 'จำนวนผู้ติดตาม',
+  'profile.followerAny': 'ไม่จำกัด',
   'profile.followerPlaceholder': 'เลือกขนาดผู้ติดตาม',
   'profile.socialLinks': 'ลิงก์โซเชียล',
   'profile.instagram': 'Instagram URL',

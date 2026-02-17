@@ -43,6 +43,11 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   }
 
   const handleAudienceRange = (value: string) => {
+    if (value === '__any__') {
+      setAudienceMin(0)
+      setAudienceMax(0)
+      return
+    }
     const range = FOLLOWER_RANGES.find((r) => r.label === value)
     if (range) {
       setAudienceMin(range.min)
@@ -54,7 +59,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     const range = FOLLOWER_RANGES.find(
       (r) => r.min === audienceMin && r.max === audienceMax
     )
-    return range?.label || ''
+    return range?.label || '__any__'
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -185,6 +190,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
             <SelectValue placeholder={t('createPost.audiencePlaceholder')} />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="__any__">{t('profile.followerAny')}</SelectItem>
             {FOLLOWER_RANGES.map((range) => (
               <SelectItem key={range.label} value={range.label}>
                 {range.label}

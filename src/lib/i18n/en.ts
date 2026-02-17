@@ -144,6 +144,9 @@ export const en: Translations = {
   // Profile
   'profile.editProfile': 'Edit Profile',
   'profile.signOut': 'Sign Out',
+  'profile.signOutTitle': 'Sign out?',
+  'profile.signOutDesc': 'Are you sure you want to sign out of your account?',
+  'profile.signOutConfirm': 'Yes, Sign Out',
   'profile.yourCollabPosts': 'Your Collab Posts',
   'profile.noPostsYet': "You haven't created any collab posts yet.",
   'profile.createFirstPost': 'Create your first post',
@@ -157,6 +160,7 @@ export const en: Translations = {
   'profile.bioPlaceholder': 'Tell others about yourself and what kind of collabs you\'re looking for...',
   'profile.yourNiches': 'Your Niche(s)',
   'profile.followerRange': 'Follower Count Range',
+  'profile.followerAny': 'Any',
   'profile.followerPlaceholder': 'Select your audience size',
   'profile.socialLinks': 'Social Links',
   'profile.instagram': 'Instagram URL',
