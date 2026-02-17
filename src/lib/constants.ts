@@ -50,3 +50,9 @@ export const COLLAB_TYPE_COLORS: Record<string, string> = {
   giveaway: 'bg-orange-100 text-orange-700',
   other: 'bg-gray-100 text-gray-700',
 }
+
+export const MATCH_STATUS_COLORS: Record<string, string> = {
+  active: 'bg-blue-100 text-blue-700',
+  completed: 'bg-green-100 text-green-700',
+  cancelled: 'bg-gray-100 text-gray-700',
+}

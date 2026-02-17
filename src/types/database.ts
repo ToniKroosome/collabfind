@@ -77,6 +77,10 @@ export interface Database {
           preferred_audience_min: number
           preferred_audience_max: number
           location: string | null
+          timeline: string | null
+          deliverables: string | null
+          requirements: string | null
+          compensation: string | null
           is_open: boolean
           created_at: string
           updated_at: string
@@ -91,6 +95,10 @@ export interface Database {
           preferred_audience_min?: number
           preferred_audience_max?: number
           location?: string | null
+          timeline?: string | null
+          deliverables?: string | null
+          requirements?: string | null
+          compensation?: string | null
           is_open?: boolean
           created_at?: string
           updated_at?: string
@@ -105,6 +113,10 @@ export interface Database {
           preferred_audience_min?: number
           preferred_audience_max?: number
           location?: string | null
+          timeline?: string | null
+          deliverables?: string | null
+          requirements?: string | null
+          compensation?: string | null
           is_open?: boolean
           created_at?: string
           updated_at?: string
@@ -171,6 +183,7 @@ export interface Database {
           post_id: string
           user_a: string
           user_b: string
+          status: 'active' | 'completed' | 'cancelled'
           created_at: string
         }
         Insert: {
@@ -179,6 +192,7 @@ export interface Database {
           post_id: string
           user_a: string
           user_b: string
+          status?: 'active' | 'completed' | 'cancelled'
           created_at?: string
         }
         Update: {
@@ -187,6 +201,7 @@ export interface Database {
           post_id?: string
           user_a?: string
           user_b?: string
+          status?: 'active' | 'completed' | 'cancelled'
           created_at?: string
         }
         Relationships: [
@@ -262,6 +277,58 @@ export interface Database {
           }
         ]
       }
+      collab_reviews: {
+        Row: {
+          id: string
+          match_id: string
+          reviewer_id: string
+          reviewee_id: string
+          rating: number
+          review_text: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          match_id: string
+          reviewer_id: string
+          reviewee_id: string
+          rating: number
+          review_text?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          match_id?: string
+          reviewer_id?: string
+          reviewee_id?: string
+          rating?: number
+          review_text?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collab_reviews_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collab_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collab_reviews_reviewee_id_fkey"
+            columns: ["reviewee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       notifications: {
         Row: {
           id: string
@@ -326,6 +393,7 @@ export type Interest = Database['public']['Tables']['interests']['Row']
 export type Match = Database['public']['Tables']['matches']['Row']
 export type Message = Database['public']['Tables']['messages']['Row']
 export type Notification = Database['public']['Tables']['notifications']['Row']
+export type CollabReview = Database['public']['Tables']['collab_reviews']['Row']
 
 // Joined types for queries
 export interface CollabPostWithProfile extends CollabPost {
@@ -340,4 +408,8 @@ export interface MatchWithDetails extends Match {
   collab_posts: CollabPost
   partner_a: Profile
   partner_b: Profile
+}
+
+export interface CollabReviewWithProfile extends CollabReview {
+  profiles: Profile
 }

@@ -91,6 +91,10 @@ CREATE TABLE IF NOT EXISTS collab_posts (
     preferred_audience_min INT DEFAULT 0,
     preferred_audience_max INT DEFAULT 0,
     location TEXT,
+    timeline TEXT,
+    deliverables TEXT,
+    requirements TEXT,
+    compensation TEXT,
     is_open BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -175,12 +179,14 @@ CREATE TABLE IF NOT EXISTS matches (
     post_id UUID NOT NULL REFERENCES collab_posts(id) ON DELETE CASCADE,
     user_a UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     user_b UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'completed', 'cancelled')),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_matches_user_a ON matches(user_a);
 CREATE INDEX IF NOT EXISTS idx_matches_user_b ON matches(user_b);
 CREATE INDEX IF NOT EXISTS idx_matches_post_id ON matches(post_id);
+CREATE INDEX IF NOT EXISTS idx_matches_status ON matches(status);
 
 ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 
@@ -191,6 +197,11 @@ USING (auth.uid() = user_a OR auth.uid() = user_b);
 CREATE POLICY "System can create matches"
 ON matches FOR INSERT TO authenticated
 WITH CHECK (auth.uid() = user_a);
+
+CREATE POLICY "Participants update match status"
+ON matches FOR UPDATE TO authenticated
+USING (auth.uid() = user_a OR auth.uid() = user_b)
+WITH CHECK (auth.uid() = user_a OR auth.uid() = user_b);
 
 -- Auto-create match when interest is accepted
 CREATE OR REPLACE FUNCTION handle_interest_accepted()
@@ -260,13 +271,46 @@ USING (
 );
 
 -- =====================================================
+-- 6.5. COLLAB REVIEWS TABLE
+-- =====================================================
+CREATE TABLE IF NOT EXISTS collab_reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    match_id UUID NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+    reviewer_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    reviewee_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    review_text TEXT CHECK (char_length(review_text) <= 300),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(match_id, reviewer_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_collab_reviews_reviewee_id ON collab_reviews(reviewee_id);
+CREATE INDEX IF NOT EXISTS idx_collab_reviews_match_id ON collab_reviews(match_id);
+
+ALTER TABLE collab_reviews ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Reviews viewable by authenticated"
+ON collab_reviews FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Participants create reviews"
+ON collab_reviews FOR INSERT TO authenticated
+WITH CHECK (
+    auth.uid() = reviewer_id AND reviewer_id != reviewee_id
+    AND match_id IN (
+        SELECT id FROM matches WHERE status = 'completed'
+        AND (user_a = auth.uid() OR user_b = auth.uid())
+    )
+);
+
+-- =====================================================
 -- 7. NOTIFICATIONS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS notifications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     type TEXT NOT NULL CHECK (type IN (
-        'new_interest', 'interest_accepted', 'interest_declined', 'new_message', 'new_match'
+        'new_interest', 'interest_accepted', 'interest_declined', 'new_message', 'new_match',
+        'new_review', 'collab_completed'
     )),
     title TEXT NOT NULL,
     body TEXT,
@@ -363,6 +407,54 @@ CREATE TRIGGER trigger_notify_interest_response
     AFTER UPDATE ON interests
     FOR EACH ROW
     EXECUTE FUNCTION notify_interest_response();
+
+-- =====================================================
+-- 8.5. REVIEW & COMPLETION NOTIFICATION TRIGGERS
+-- =====================================================
+
+CREATE OR REPLACE FUNCTION notify_new_review()
+RETURNS TRIGGER AS $$
+DECLARE v_name TEXT;
+BEGIN
+    SELECT full_name INTO v_name FROM profiles WHERE id = NEW.reviewer_id;
+    INSERT INTO notifications (user_id, type, title, body, data) VALUES (
+        NEW.reviewee_id, 'new_review',
+        'You received a new review!',
+        COALESCE(v_name, 'Someone') || ' left you a ' || NEW.rating || '-star review',
+        jsonb_build_object('match_id', NEW.match_id, 'review_id', NEW.id)
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_notify_new_review
+    AFTER INSERT ON collab_reviews
+    FOR EACH ROW
+    EXECUTE FUNCTION notify_new_review();
+
+CREATE OR REPLACE FUNCTION notify_collab_completed()
+RETURNS TRIGGER AS $$
+DECLARE v_other UUID; v_name TEXT; v_title TEXT;
+BEGIN
+    IF NEW.status = 'completed' AND OLD.status = 'active' THEN
+        v_other := CASE WHEN NEW.user_a = auth.uid() THEN NEW.user_b ELSE NEW.user_a END;
+        SELECT full_name INTO v_name FROM profiles WHERE id = auth.uid();
+        SELECT title INTO v_title FROM collab_posts WHERE id = NEW.post_id;
+        INSERT INTO notifications (user_id, type, title, body, data) VALUES (
+            v_other, 'collab_completed',
+            'Collab marked as completed!',
+            COALESCE(v_name, 'Your partner') || ' marked "' || COALESCE(v_title, 'a collab') || '" as completed. Leave a review!',
+            jsonb_build_object('match_id', NEW.id)
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_notify_collab_completed
+    AFTER UPDATE ON matches
+    FOR EACH ROW
+    EXECUTE FUNCTION notify_collab_completed();
 
 -- =====================================================
 -- 9. ENABLE REALTIME

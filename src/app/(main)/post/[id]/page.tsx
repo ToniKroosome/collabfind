@@ -5,7 +5,7 @@ import { InterestButton } from '@/components/post/interest-button'
 import { InterestList } from '@/components/post/interest-list'
 import { Badge } from '@/components/ui/badge'
 import { COLLAB_TYPES, COLLAB_TYPE_COLORS, FOLLOWER_RANGES } from '@/lib/constants'
-import { MapPin, Users } from 'lucide-react'
+import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign } from 'lucide-react'
 import { timeAgo } from '@/components/shared/time-ago'
 import type { InterestWithProfile } from '@/types/database'
 
@@ -95,6 +95,49 @@ export default async function PostDetailPage({
         <p className="whitespace-pre-wrap text-sm leading-relaxed">
           {post.description}
         </p>
+
+        {/* Collab Details */}
+        {(post.timeline || post.deliverables || post.requirements || post.compensation) && (
+          <div className="space-y-3 rounded-lg border p-4">
+            <h2 className="text-sm font-semibold">Collab Details</h2>
+            {post.timeline && (
+              <div className="flex items-start gap-2 text-sm">
+                <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Timeline</p>
+                  <p>{post.timeline}</p>
+                </div>
+              </div>
+            )}
+            {post.deliverables && (
+              <div className="flex items-start gap-2 text-sm">
+                <FileText className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Deliverables</p>
+                  <p className="whitespace-pre-wrap">{post.deliverables}</p>
+                </div>
+              </div>
+            )}
+            {post.requirements && (
+              <div className="flex items-start gap-2 text-sm">
+                <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Requirements</p>
+                  <p className="whitespace-pre-wrap">{post.requirements}</p>
+                </div>
+              </div>
+            )}
+            {post.compensation && (
+              <div className="flex items-start gap-2 text-sm">
+                <DollarSign className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Compensation</p>
+                  <p>{post.compensation}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Meta info */}
         <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">

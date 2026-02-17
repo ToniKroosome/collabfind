@@ -1,6 +1,9 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { ProfileCard } from '@/components/profile/profile-card'
+import { ReputationBadge } from '@/components/shared/reputation-badge'
+import { ReviewList } from '@/components/reviews/review-list'
+import type { CollabReviewWithProfile } from '@/types/database'
 import Link from 'next/link'
 
 export default async function UserProfilePage({
@@ -26,9 +29,41 @@ export default async function UserProfilePage({
     .eq('is_open', true)
     .order('created_at', { ascending: false })
 
+  // Fetch reviews for this user
+  const { data: reviews } = await supabase
+    .from('collab_reviews')
+    .select('*, profiles:reviewer_id!collab_reviews_reviewer_id_fkey(*)')
+    .eq('reviewee_id', id)
+    .order('created_at', { ascending: false })
+    .limit(10)
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const reviewsList = (reviews as any as CollabReviewWithProfile[]) || []
+
+  // Calculate reputation stats
+  const completedCount = reviewsList.length
+  const averageRating =
+    reviewsList.length > 0
+      ? reviewsList.reduce((sum, r) => sum + r.rating, 0) / reviewsList.length
+      : null
+
   return (
     <div className="space-y-4 py-4">
       <ProfileCard profile={profile} />
+
+      {/* Reputation */}
+      {completedCount > 0 && (
+        <div className="space-y-3">
+          <ReputationBadge
+            averageRating={averageRating}
+            completedCount={completedCount}
+          />
+          <div>
+            <h2 className="mb-2 text-lg font-semibold">Reviews</h2>
+            <ReviewList reviews={reviewsList} />
+          </div>
+        </div>
+      )}
 
       <div className="mt-6">
         <h2 className="mb-3 text-lg font-semibold">

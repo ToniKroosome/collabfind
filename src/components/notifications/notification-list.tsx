@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Heart, Check, X, MessageCircle, Users } from 'lucide-react'
+import { Heart, Check, X, MessageCircle, Users, Star, CheckCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { timeAgo } from '@/components/shared/time-ago'
 import type { Notification } from '@/types/database'
@@ -20,6 +20,8 @@ const ICONS: Record<string, typeof Heart> = {
   interest_declined: X,
   new_message: MessageCircle,
   new_match: Users,
+  new_review: Star,
+  collab_completed: CheckCircle,
 }
 
 const ICON_COLORS: Record<string, string> = {
@@ -28,6 +30,8 @@ const ICON_COLORS: Record<string, string> = {
   interest_declined: 'text-gray-400 bg-gray-50',
   new_message: 'text-blue-500 bg-blue-50',
   new_match: 'text-indigo-500 bg-indigo-50',
+  new_review: 'text-yellow-500 bg-yellow-50',
+  collab_completed: 'text-green-500 bg-green-50',
 }
 
 export function NotificationList({ notifications: initial }: NotificationListProps) {
@@ -59,6 +63,10 @@ export function NotificationList({ notifications: initial }: NotificationListPro
     } else if (notification.type === 'new_message') {
       router.push('/messages')
     } else if (notification.type === 'new_match') {
+      router.push('/matches')
+    } else if (notification.type === 'new_review') {
+      router.push('/matches')
+    } else if (notification.type === 'collab_completed') {
       router.push('/matches')
     }
   }

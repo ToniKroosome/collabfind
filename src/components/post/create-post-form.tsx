@@ -25,6 +25,11 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [audienceMin, setAudienceMin] = useState(0)
   const [audienceMax, setAudienceMax] = useState(0)
   const [location, setLocation] = useState('')
+  const [showDetails, setShowDetails] = useState(false)
+  const [timeline, setTimeline] = useState('')
+  const [deliverables, setDeliverables] = useState('')
+  const [requirements, setRequirements] = useState('')
+  const [compensation, setCompensation] = useState('')
   const [saving, setSaving] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -77,6 +82,10 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       preferred_audience_min: audienceMin,
       preferred_audience_max: audienceMax,
       location: location.trim() || null,
+      timeline: timeline.trim() || null,
+      deliverables: deliverables.trim() || null,
+      requirements: requirements.trim() || null,
+      compensation: compensation.trim() || null,
     })
 
     if (error) {
@@ -192,6 +201,67 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
           onChange={(e) => setLocation(e.target.value)}
           placeholder="e.g., Bangkok, Thailand or Remote"
         />
+      </div>
+
+      {/* Collab Details (collapsible) */}
+      <div className="space-y-2">
+        <button
+          type="button"
+          onClick={() => setShowDetails(!showDetails)}
+          className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+        >
+          {showDetails ? '− Hide collab details' : '+ Add collab details (optional)'}
+        </button>
+        {showDetails && (
+          <div className="space-y-4 rounded-lg border p-4">
+            <div className="space-y-2">
+              <Label htmlFor="timeline">Timeline</Label>
+              <Input
+                id="timeline"
+                value={timeline}
+                onChange={(e) => setTimeline(e.target.value)}
+                placeholder="e.g., March 2026, Next 2 weeks, Flexible"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="deliverables">Deliverables</Label>
+              <Textarea
+                id="deliverables"
+                value={deliverables}
+                onChange={(e) => setDeliverables(e.target.value)}
+                placeholder="e.g., Each person posts 1 Reel tagging the other"
+                maxLength={500}
+                rows={3}
+              />
+              <p className="text-xs text-muted-foreground">
+                {deliverables.length}/500
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="requirements">Requirements</Label>
+              <Textarea
+                id="requirements"
+                value={requirements}
+                onChange={(e) => setRequirements(e.target.value)}
+                placeholder="e.g., Must have 10K+ followers on Instagram"
+                maxLength={500}
+                rows={3}
+              />
+              <p className="text-xs text-muted-foreground">
+                {requirements.length}/500
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="compensation">Compensation</Label>
+              <Input
+                id="compensation"
+                value={compensation}
+                onChange={(e) => setCompensation(e.target.value)}
+                placeholder="e.g., Cross-promotion only, Revenue split 50/50"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <Button type="submit" className="w-full" disabled={saving}>

@@ -4,16 +4,17 @@ import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { MapPin } from 'lucide-react'
+import { MapPin, Star } from 'lucide-react'
 import { COLLAB_TYPE_COLORS, COLLAB_TYPES } from '@/lib/constants'
 import { timeAgo } from '@/components/shared/time-ago'
 import type { CollabPostWithProfile } from '@/types/database'
 
 interface CollabCardProps {
   post: CollabPostWithProfile
+  reputation?: { avgRating: number; count: number }
 }
 
-export function CollabCard({ post }: CollabCardProps) {
+export function CollabCard({ post, reputation }: CollabCardProps) {
   const typeLabel =
     COLLAB_TYPES.find((t) => t.value === post.collab_type)?.label ||
     post.collab_type
@@ -32,9 +33,17 @@ export function CollabCard({ post }: CollabCardProps) {
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">
-                {post.profiles?.full_name || 'Unknown'}
-              </p>
+              <div className="flex items-center gap-1">
+                <p className="truncate text-sm font-medium">
+                  {post.profiles?.full_name || 'Unknown'}
+                </p>
+                {reputation && reputation.count > 0 && (
+                  <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
+                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                    {reputation.avgRating.toFixed(1)}
+                  </span>
+                )}
+              </div>
             </div>
             <span className="text-xs text-muted-foreground">
               {timeAgo(post.created_at)}
@@ -65,6 +74,20 @@ export function CollabCard({ post }: CollabCardProps) {
               </span>
             )}
           </div>
+
+          {/* Compensation hint */}
+          {post.compensation && (
+            <p className="mt-1.5 text-xs font-medium text-emerald-600">
+              {post.compensation}
+            </p>
+          )}
+
+          {/* Timeline hint */}
+          {post.timeline && (
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Timeline: {post.timeline}
+            </p>
+          )}
 
           {/* Location */}
           {post.location && (
