@@ -13,6 +13,10 @@ export interface Translations {
   'common.closed': string
   'common.unknown': string
 
+  // Auth (guest)
+  'auth.signIn': string
+  'auth.loginToInterest': string
+
   // Nav
   'nav.feed': string
   'nav.post': string

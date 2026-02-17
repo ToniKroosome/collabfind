@@ -13,6 +13,10 @@ export const en: Translations = {
   'common.closed': 'Closed',
   'common.unknown': 'Unknown',
 
+  // Auth (guest)
+  'auth.signIn': 'Sign In',
+  'auth.loginToInterest': 'Log in to express interest',
+
   // Nav
   'nav.feed': 'Feed',
   'nav.post': 'Post',

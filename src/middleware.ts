@@ -29,10 +29,12 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const protectedPaths = ['/feed', '/post', '/profile', '/matches', '/messages', '/notifications']
-  const isProtected = protectedPaths.some((p) =>
-    request.nextUrl.pathname.startsWith(p)
-  )
+  // Protected paths that require authentication
+  const protectedPaths = ['/matches', '/messages', '/notifications']
+  const isProtected =
+    protectedPaths.some((p) => request.nextUrl.pathname.startsWith(p)) ||
+    request.nextUrl.pathname === '/post/new' ||
+    request.nextUrl.pathname === '/profile'
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone()

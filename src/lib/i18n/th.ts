@@ -13,6 +13,10 @@ export const th: Translations = {
   'common.closed': 'ปิดแล้ว',
   'common.unknown': 'ไม่ทราบ',
 
+  // Auth (guest)
+  'auth.signIn': 'เข้าสู่ระบบ',
+  'auth.loginToInterest': 'เข้าสู่ระบบเพื่อแสดงความสนใจ',
+
   // Nav
   'nav.feed': 'ฟีด',
   'nav.post': 'โพสต์',

@@ -7,6 +7,5 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (user) redirect('/feed')
-  else redirect('/login')
+  redirect('/feed')
 }

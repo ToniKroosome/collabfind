@@ -1,4 +1,4 @@
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { PostDetailContent } from '@/components/post/post-detail-content'
 import type { InterestWithProfile } from '@/types/database'
@@ -14,8 +14,6 @@ export default async function PostDetailPage({
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
-
   const { data: post } = await supabase
     .from('collab_posts')
     .select('*, profiles:user_id(*)')
@@ -24,11 +22,11 @@ export default async function PostDetailPage({
 
   if (!post) notFound()
 
-  const isOwner = user.id === post.user_id
+  const isOwner = user ? user.id === post.user_id : false
 
   // Check if current user already expressed interest
   let hasExpressedInterest = false
-  if (!isOwner) {
+  if (user && !isOwner) {
     const { data: existingInterest } = await supabase
       .from('interests')
       .select('id')
@@ -40,7 +38,7 @@ export default async function PostDetailPage({
 
   // If owner, fetch interests
   let interests: InterestWithProfile[] = []
-  if (isOwner) {
+  if (isOwner && user) {
     const { data } = await supabase
       .from('interests')
       .select('*, profiles:user_id(*)')
@@ -55,7 +53,7 @@ export default async function PostDetailPage({
       isOwner={isOwner}
       hasExpressedInterest={hasExpressedInterest}
       interests={interests}
-      userId={user.id}
+      userId={user?.id || null}
     />
   )
 }

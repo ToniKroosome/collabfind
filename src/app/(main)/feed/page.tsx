@@ -16,17 +16,17 @@ export default async function FeedPage({
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
+  // Check if profile is complete (only for logged-in users)
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_profile_complete')
+      .eq('id', user.id)
+      .single()
 
-  // Check if profile is complete
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
-
-  if (profile && !profile.is_profile_complete) {
-    redirect('/profile')
+    if (profile && !profile.is_profile_complete) {
+      redirect('/profile')
+    }
   }
 
   const params = await searchParams
