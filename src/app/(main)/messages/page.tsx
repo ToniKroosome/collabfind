@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
 import { SHOW_MOCK_DATA, MOCK_CONVERSATIONS } from '@/lib/mock-data'
 import Link from 'next/link'
+import { TimeAgo } from '@/components/shared/time-ago'
 import type { Message } from '@/types/database'
 
 export default async function MessagesPage() {
@@ -110,7 +111,7 @@ export default async function MessagesPage() {
                         </p>
                         {lastMessage && (
                           <span className="shrink-0 text-xs text-muted-foreground">
-                            {formatTime(lastMessage.created_at)}
+                            <TimeAgo date={lastMessage.created_at} />
                           </span>
                         )}
                       </div>
@@ -140,16 +141,3 @@ export default async function MessagesPage() {
   )
 }
 
-function formatTime(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diff = now.getTime() - date.getTime()
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-
-  if (days === 0) {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  }
-  if (days === 1) return 'Yesterday'
-  if (days < 7) return date.toLocaleDateString([], { weekday: 'short' })
-  return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
-}

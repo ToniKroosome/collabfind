@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import type { InterestWithProfile } from '@/types/database'
 import { toast } from 'sonner'
-import { timeAgo } from '@/components/shared/time-ago'
+import { TimeAgo } from '@/components/shared/time-ago'
 import Link from 'next/link'
 import { Check, X } from 'lucide-react'
 
@@ -95,7 +95,7 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
                   </p>
                 )}
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {timeAgo(interest.created_at)}
+                  <TimeAgo date={interest.created_at} />
                 </p>
               </div>
             </div>

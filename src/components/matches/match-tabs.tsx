@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { COLLAB_TYPES, MATCH_STATUS_COLORS } from '@/lib/constants'
-import { timeAgo } from '@/components/shared/time-ago'
+import { TimeAgo } from '@/components/shared/time-ago'
 import { MatchStatusControls } from '@/components/matches/match-status-controls'
 import { ReviewForm } from '@/components/reviews/review-form'
 import { MessageCircle } from 'lucide-react'
@@ -73,7 +73,7 @@ export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTab
                   </Badge>
                 )}
                 <span className="text-xs text-muted-foreground">
-                  Matched {timeAgo(match.created_at)}
+                  Matched <TimeAgo date={match.created_at} />
                 </span>
               </div>
             </div>

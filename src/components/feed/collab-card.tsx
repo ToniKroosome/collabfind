@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { MapPin, Star } from 'lucide-react'
 import { COLLAB_TYPE_COLORS, COLLAB_TYPES } from '@/lib/constants'
-import { timeAgo } from '@/components/shared/time-ago'
+import { TimeAgo } from '@/components/shared/time-ago'
 import type { CollabPostWithProfile } from '@/types/database'
 
 interface CollabCardProps {
@@ -46,7 +46,7 @@ export function CollabCard({ post, reputation }: CollabCardProps) {
               </div>
             </div>
             <span className="text-xs text-muted-foreground">
-              {timeAgo(post.created_at)}
+              <TimeAgo date={post.created_at} />
             </span>
           </div>
 

@@ -6,7 +6,7 @@ import { InterestList } from '@/components/post/interest-list'
 import { Badge } from '@/components/ui/badge'
 import { COLLAB_TYPES, COLLAB_TYPE_COLORS, FOLLOWER_RANGES } from '@/lib/constants'
 import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign } from 'lucide-react'
-import { timeAgo } from '@/components/shared/time-ago'
+import { TimeAgo } from '@/components/shared/time-ago'
 import type { InterestWithProfile } from '@/types/database'
 
 export default async function PostDetailPage({
@@ -75,7 +75,7 @@ export default async function PostDetailPage({
         <div>
           <h1 className="text-xl font-bold">{post.title}</h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {timeAgo(post.created_at)}
+            <TimeAgo date={post.created_at} />
           </p>
         </div>
 

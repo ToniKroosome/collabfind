@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Heart, Check, X, MessageCircle, Users, Star, CheckCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { timeAgo } from '@/components/shared/time-ago'
+import { TimeAgo } from '@/components/shared/time-ago'
 import type { Notification } from '@/types/database'
 
 interface NotificationListProps {
@@ -143,7 +143,7 @@ export function NotificationList({ notifications: initial }: NotificationListPro
                   </p>
                 )}
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {timeAgo(notification.created_at)}
+                  <TimeAgo date={notification.created_at} />
                 </p>
               </div>
               {!notification.is_read && (

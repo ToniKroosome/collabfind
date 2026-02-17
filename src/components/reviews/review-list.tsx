@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { StarRating } from '@/components/shared/star-rating'
-import { timeAgo } from '@/components/shared/time-ago'
+import { TimeAgo } from '@/components/shared/time-ago'
 import type { CollabReviewWithProfile } from '@/types/database'
 
 interface ReviewListProps {
@@ -27,7 +27,7 @@ export function ReviewList({ reviews }: ReviewListProps) {
               </p>
             </div>
             <span className="text-xs text-muted-foreground">
-              {timeAgo(review.created_at)}
+              <TimeAgo date={review.created_at} />
             </span>
           </div>
           <div className="mt-1.5">

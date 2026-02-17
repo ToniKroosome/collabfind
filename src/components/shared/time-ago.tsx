@@ -1,4 +1,8 @@
-export function timeAgo(dateString: string): string {
+'use client'
+
+import { useEffect, useState } from 'react'
+
+function formatTimeAgo(dateString: string): string {
   const now = new Date()
   const date = new Date(dateString)
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000)
@@ -14,3 +18,16 @@ export function timeAgo(dateString: string): string {
   if (weeks < 4) return `${weeks}w ago`
   return date.toLocaleDateString()
 }
+
+export function TimeAgo({ date }: { date: string }) {
+  const [text, setText] = useState('')
+
+  useEffect(() => {
+    setText(formatTimeAgo(date))
+  }, [date])
+
+  return <span suppressHydrationWarning>{text}</span>
+}
+
+// Keep for backward compat in client-only contexts
+export const timeAgo = formatTimeAgo
