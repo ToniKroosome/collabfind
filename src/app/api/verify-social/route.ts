@@ -47,6 +47,80 @@ function getProfileUrl(platform: Platform, username: string): string {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function verifyYouTube(username: string, code: string, userId: string, verificationId: string, supabase: any) {
+  const apiKey = process.env.YOUTUBE_API_KEY
+  if (!apiKey) {
+    return NextResponse.json({
+      error: 'failed',
+      message: 'YouTube verification is not configured. Please contact the admin.',
+    }, { status: 200 })
+  }
+
+  try {
+    // Determine if it's a channel ID (starts with UC) or a handle
+    const isChannelId = username.startsWith('UC')
+    const params = new URLSearchParams({
+      part: 'snippet',
+      key: apiKey,
+    })
+
+    if (isChannelId) {
+      params.set('id', username)
+    } else {
+      params.set('forHandle', username)
+    }
+
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/channels?${params}`,
+      { signal: AbortSignal.timeout(10000) }
+    )
+
+    if (!response.ok) {
+      return NextResponse.json({
+        error: 'failed',
+        message: 'Could not reach YouTube API. Please try again.',
+      }, { status: 200 })
+    }
+
+    const data = await response.json()
+    const channel = data.items?.[0]
+
+    if (!channel) {
+      return NextResponse.json({
+        error: 'failed',
+        message: 'YouTube channel not found. Check your URL.',
+      }, { status: 200 })
+    }
+
+    const description = channel.snippet?.description || ''
+
+    if (description.includes(code)) {
+      await supabase
+        .from('profiles')
+        .update({ youtube_verified: true })
+        .eq('id', userId)
+
+      await supabase
+        .from('social_verifications')
+        .delete()
+        .eq('id', verificationId)
+
+      return NextResponse.json({ success: true })
+    }
+
+    return NextResponse.json({
+      error: 'failed',
+      message: 'Code not found in your YouTube channel description.',
+    }, { status: 200 })
+  } catch {
+    return NextResponse.json({
+      error: 'failed',
+      message: 'Could not reach YouTube. Please try again.',
+    }, { status: 200 })
+  }
+}
+
 export async function POST(request: Request) {
   const supabase = await createClient()
   const {
@@ -126,7 +200,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Could not extract username from URL' }, { status: 400 })
     }
 
-    // Fetch the public profile page
+    // YouTube: use Data API for reliable description check
+    if (platform === 'youtube') {
+      return await verifyYouTube(username, verification.code, user.id, verification.id, supabase)
+    }
+
+    // Other platforms: fetch the public profile page
     const profileUrl = getProfileUrl(platform as Platform, username)
 
     try {

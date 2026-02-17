@@ -25,31 +25,35 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const pathname = request.nextUrl.pathname
 
   // Protected paths that require authentication
   const protectedPaths = ['/matches', '/messages', '/notifications']
   const isProtected =
-    protectedPaths.some((p) => request.nextUrl.pathname.startsWith(p)) ||
-    request.nextUrl.pathname === '/post/new' ||
-    request.nextUrl.pathname === '/profile'
+    protectedPaths.some((p) => pathname.startsWith(p)) ||
+    pathname === '/post/new' ||
+    pathname === '/profile'
 
-  if (isProtected && !user) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
-  }
+  const isAuthPage = pathname === '/login' || pathname === '/signup'
 
-  if (
-    user &&
-    (request.nextUrl.pathname === '/login' ||
-      request.nextUrl.pathname === '/signup')
-  ) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/feed'
-    return NextResponse.redirect(url)
+  // Only call getUser() when we actually need to check auth
+  // (protected routes or auth pages that should redirect logged-in users)
+  if (isProtected || isAuthPage) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (isProtected && !user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+
+    if (isAuthPage && user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/feed'
+      return NextResponse.redirect(url)
+    }
   }
 
   return supabaseResponse

@@ -1,24 +1,26 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 export function useNotifications(userId: string | undefined) {
   const [unreadCount, setUnreadCount] = useState(0)
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
 
   useEffect(() => {
     if (!userId) return
 
-    const fetchCount = async () => {
+    const supabase = supabaseRef.current
+
+    // Delay initial fetch so it doesn't block first paint
+    const timer = setTimeout(async () => {
       const { count } = await supabase
         .from('notifications')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
         .eq('is_read', false)
       setUnreadCount(count ?? 0)
-    }
-    fetchCount()
+    }, 500)
 
     const channel = supabase
       .channel(`notifications:${userId}`)
@@ -37,9 +39,10 @@ export function useNotifications(userId: string | undefined) {
       .subscribe()
 
     return () => {
+      clearTimeout(timer)
       supabase.removeChannel(channel)
     }
-  }, [userId, supabase])
+  }, [userId])
 
   const resetCount = () => setUnreadCount(0)
 

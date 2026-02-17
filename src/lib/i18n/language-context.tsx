@@ -17,17 +17,19 @@ const LanguageContext = createContext<LanguageContextType | null>(null)
 
 const STORAGE_KEY = 'ix-language'
 
+function getInitialLanguage(): Language {
+  if (typeof window === 'undefined') return 'th'
+  const stored = localStorage.getItem(STORAGE_KEY)
+  if (stored === 'en' || stored === 'th') return stored
+  return 'th'
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('th')
-  const [mounted, setMounted] = useState(false)
+  const [language, setLanguageState] = useState<Language>(getInitialLanguage)
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored === 'en' || stored === 'th') {
-      setLanguageState(stored)
-    }
-    setMounted(true)
-  }, [])
+    document.documentElement.lang = language
+  }, [language])
 
   const toggleLanguage = useCallback(() => {
     setLanguageState((prev) => {
@@ -49,15 +51,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     () => ({ language, toggleLanguage, t }),
     [language, toggleLanguage, t],
   )
-
-  if (!mounted) {
-    const defaultT = (key: keyof Translations) => translations['th'][key] || key
-    return (
-      <LanguageContext.Provider value={{ language: 'th', toggleLanguage, t: defaultT }}>
-        {children}
-      </LanguageContext.Provider>
-    )
-  }
 
   return (
     <LanguageContext.Provider value={value}>

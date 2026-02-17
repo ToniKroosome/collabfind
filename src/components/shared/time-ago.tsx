@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { useLanguage } from '@/lib/i18n'
 import type { Translations } from '@/lib/i18n'
 
@@ -24,12 +24,8 @@ function formatTimeAgo(dateString: string, t: TranslateFn): string {
 }
 
 export function TimeAgo({ date }: { date: string }) {
-  const [text, setText] = useState('')
   const { t } = useLanguage()
-
-  useEffect(() => {
-    setText(formatTimeAgo(date, t))
-  }, [date, t])
+  const text = useMemo(() => formatTimeAgo(date, t), [date, t])
 
   return <span suppressHydrationWarning>{text}</span>
 }

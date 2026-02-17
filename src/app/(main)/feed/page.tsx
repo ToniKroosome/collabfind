@@ -11,7 +11,11 @@ export default async function FeedPage({
 }: {
   searchParams: Promise<{ niche?: string; type?: string }>
 }) {
-  const supabase = await createClient()
+  const [supabase, params] = await Promise.all([
+    createClient(),
+    searchParams,
+  ])
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -29,7 +33,6 @@ export default async function FeedPage({
     }
   }
 
-  const params = await searchParams
   const nicheFilter = params.niche
   const typeFilter = params.type
 
