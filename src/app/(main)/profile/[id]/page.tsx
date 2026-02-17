@@ -1,10 +1,7 @@
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { ProfileCard } from '@/components/profile/profile-card'
-import { ReputationBadge } from '@/components/shared/reputation-badge'
-import { ReviewList } from '@/components/reviews/review-list'
+import { UserProfileContent } from '@/components/profile/user-profile-content'
 import type { CollabReviewWithProfile } from '@/types/database'
-import Link from 'next/link'
 
 export default async function UserProfilePage({
   params,
@@ -48,48 +45,12 @@ export default async function UserProfilePage({
       : null
 
   return (
-    <div className="space-y-4 py-4">
-      <ProfileCard profile={profile} />
-
-      {/* Reputation */}
-      {completedCount > 0 && (
-        <div className="space-y-3">
-          <ReputationBadge
-            averageRating={averageRating}
-            completedCount={completedCount}
-          />
-          <div>
-            <h2 className="mb-2 text-lg font-semibold">Reviews</h2>
-            <ReviewList reviews={reviewsList} />
-          </div>
-        </div>
-      )}
-
-      <div className="mt-6">
-        <h2 className="mb-3 text-lg font-semibold">
-          {profile.full_name?.split(' ')[0] || 'Their'}&apos;s Open Collabs
-        </h2>
-        {posts && posts.length > 0 ? (
-          <div className="space-y-3">
-            {posts.map((post) => (
-              <Link
-                key={post.id}
-                href={`/post/${post.id}`}
-                className="block rounded-lg border p-3 transition-colors hover:bg-muted/50"
-              >
-                <h3 className="font-medium">{post.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
-                  {post.description}
-                </p>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <p className="text-center text-sm text-muted-foreground">
-            No open collab posts yet.
-          </p>
-        )}
-      </div>
-    </div>
+    <UserProfileContent
+      profile={profile}
+      posts={posts}
+      reviews={reviewsList}
+      averageRating={averageRating}
+      completedCount={completedCount}
+    />
   )
 }

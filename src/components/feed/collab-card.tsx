@@ -5,9 +5,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { MapPin, Star } from 'lucide-react'
-import { COLLAB_TYPE_COLORS, COLLAB_TYPES } from '@/lib/constants'
+import { COLLAB_TYPE_COLORS } from '@/lib/constants'
 import { TimeAgo } from '@/components/shared/time-ago'
 import type { CollabPostWithProfile } from '@/types/database'
+import { useLanguage, getCollabTypeLabel, getNicheLabel } from '@/lib/i18n'
 
 interface CollabCardProps {
   post: CollabPostWithProfile
@@ -15,9 +16,8 @@ interface CollabCardProps {
 }
 
 export function CollabCard({ post, reputation }: CollabCardProps) {
-  const typeLabel =
-    COLLAB_TYPES.find((t) => t.value === post.collab_type)?.label ||
-    post.collab_type
+  const { t } = useLanguage()
+  const typeLabel = getCollabTypeLabel(t, post.collab_type)
   const typeColor = COLLAB_TYPE_COLORS[post.collab_type] || COLLAB_TYPE_COLORS.other
 
   return (
@@ -35,7 +35,7 @@ export function CollabCard({ post, reputation }: CollabCardProps) {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1">
                 <p className="truncate text-sm font-medium">
-                  {post.profiles?.full_name || 'Unknown'}
+                  {post.profiles?.full_name || t('common.unknown')}
                 </p>
                 {reputation && reputation.count > 0 && (
                   <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
@@ -65,7 +65,7 @@ export function CollabCard({ post, reputation }: CollabCardProps) {
             </Badge>
             {post.niche_tags.slice(0, 3).map((tag) => (
               <Badge key={tag} variant="outline" className="capitalize text-xs">
-                {tag}
+                {getNicheLabel(t, tag)}
               </Badge>
             ))}
             {post.niche_tags.length > 3 && (
@@ -85,7 +85,7 @@ export function CollabCard({ post, reputation }: CollabCardProps) {
           {/* Timeline hint */}
           {post.timeline && (
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Timeline: {post.timeline}
+              {t('card.timeline')} {post.timeline}
             </p>
           )}
 

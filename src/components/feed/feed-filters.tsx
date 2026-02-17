@@ -6,12 +6,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { NICHES, COLLAB_TYPES } from '@/lib/constants'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
+import { useLanguage, getCollabTypeLabel, getNicheLabel } from '@/lib/i18n'
 
 export function FeedFilters() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const activeNiche = searchParams.get('niche') || ''
   const activeType = searchParams.get('type') || ''
+  const { t } = useLanguage()
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -36,7 +38,7 @@ export function FeedFilters() {
             )}
             onClick={() => updateFilter('niche', '')}
           >
-            All
+            {t('common.all')}
           </Badge>
           {NICHES.map((niche) => (
             <Badge
@@ -50,7 +52,7 @@ export function FeedFilters() {
                 updateFilter('niche', activeNiche === niche ? '' : niche)
               }
             >
-              {niche}
+              {getNicheLabel(t, niche)}
             </Badge>
           ))}
         </div>
@@ -63,13 +65,13 @@ export function FeedFilters() {
         onValueChange={(val) => updateFilter('type', val === 'all' ? '' : val)}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="All collab types" />
+          <SelectValue placeholder={t('feed.allCollabTypes')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All collab types</SelectItem>
+          <SelectItem value="all">{t('feed.allCollabTypes')}</SelectItem>
           {COLLAB_TYPES.map((type) => (
             <SelectItem key={type.value} value={type.value}>
-              {type.label}
+              {getCollabTypeLabel(t, type.value)}
             </SelectItem>
           ))}
         </SelectContent>

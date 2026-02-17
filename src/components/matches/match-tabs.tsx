@@ -5,12 +5,13 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { COLLAB_TYPES, MATCH_STATUS_COLORS } from '@/lib/constants'
+import { MATCH_STATUS_COLORS } from '@/lib/constants'
 import { TimeAgo } from '@/components/shared/time-ago'
 import { MatchStatusControls } from '@/components/matches/match-status-controls'
 import { ReviewForm } from '@/components/reviews/review-form'
 import { MessageCircle } from 'lucide-react'
 import Link from 'next/link'
+import { useLanguage, getCollabTypeLabel } from '@/lib/i18n'
 
 interface MatchTabsProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,7 +21,10 @@ interface MatchTabsProps {
 }
 
 export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTabsProps) {
+  const { t } = useLanguage()
   const reviewedSet = new Set(reviewedMatchIds)
+
+  const pageTitle = t('matches.title')
 
   const activeMatches = matches.filter((m) => (m.status || 'active') === 'active')
   const completedMatches = matches.filter((m) => m.status === 'completed')
@@ -30,9 +34,7 @@ export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTab
       match.user_a === currentUserId ? match.partner_b : match.partner_a
     const partnerId =
       match.user_a === currentUserId ? match.user_b : match.user_a
-    const typeLabel =
-      COLLAB_TYPES.find((t) => t.value === match.collab_posts?.collab_type)
-        ?.label || match.collab_posts?.collab_type
+    const typeLabel = getCollabTypeLabel(t, match.collab_posts?.collab_type)
     const status = match.status || 'active'
     const statusColor = MATCH_STATUS_COLORS[status] || MATCH_STATUS_COLORS.active
     const isMock = match.id?.startsWith('mock-')
@@ -73,7 +75,7 @@ export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTab
                   </Badge>
                 )}
                 <span className="text-xs text-muted-foreground">
-                  Matched <TimeAgo date={match.created_at} />
+                  {t('matches.matched')} <TimeAgo date={match.created_at} />
                 </span>
               </div>
             </div>
@@ -87,7 +89,7 @@ export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTab
                 className="bg-indigo-600 hover:bg-indigo-700"
               >
                 <MessageCircle className="mr-1 h-4 w-4" />
-                Chat
+                {t('matches.chat')}
               </Button>
             </Link>
 
@@ -117,29 +119,31 @@ export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTab
 
   const emptyState = (
     <div className="py-12 text-center">
-      <p className="text-lg font-medium">No matches yet</p>
+      <p className="text-lg font-medium">{t('matches.noMatchesYet')}</p>
       <p className="mt-1 text-sm text-muted-foreground">
-        Express interest in collab posts to get matched with other creators!
+        {t('matches.noMatchesHint')}
       </p>
       <Link href="/feed">
         <Button variant="link" className="mt-2 text-indigo-600">
-          Browse Collabs
+          {t('matches.browseCollabs')}
         </Button>
       </Link>
     </div>
   )
 
   return (
+    <>
+    <h1 className="text-2xl font-bold">{pageTitle}</h1>
     <Tabs defaultValue="active">
       <TabsList className="w-full">
         <TabsTrigger value="active" className="flex-1">
-          Active ({activeMatches.length})
+          {t('matches.active')} ({activeMatches.length})
         </TabsTrigger>
         <TabsTrigger value="completed" className="flex-1">
-          Completed ({completedMatches.length})
+          {t('matches.completed')} ({completedMatches.length})
         </TabsTrigger>
         <TabsTrigger value="all" className="flex-1">
-          All ({matches.length})
+          {t('matches.all')} ({matches.length})
         </TabsTrigger>
       </TabsList>
 
@@ -155,7 +159,7 @@ export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTab
           : (
             <div className="py-12 text-center">
               <p className="text-sm text-muted-foreground">
-                No completed collabs yet. Mark a collab as complete when you&apos;re done!
+                {t('matches.noCompletedYet')}
               </p>
             </div>
           )}
@@ -165,5 +169,6 @@ export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTab
         {matches.length > 0 ? matches.map(renderMatch) : emptyState}
       </TabsContent>
     </Tabs>
+    </>
   )
 }

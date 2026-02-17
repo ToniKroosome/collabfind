@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES } from '@/lib/constants'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { useLanguage, getCollabTypeLabel, getNicheLabel } from '@/lib/i18n'
 
 interface CreatePostFormProps {
   userId: string
@@ -33,6 +34,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [saving, setSaving] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useLanguage()
 
   const toggleNiche = (niche: string) => {
     setNicheTags((prev) =>
@@ -59,15 +61,15 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     e.preventDefault()
 
     if (!title.trim()) {
-      toast.error('Please enter a title')
+      toast.error(t('toast.enterTitle'))
       return
     }
     if (!description.trim()) {
-      toast.error('Please enter a description')
+      toast.error(t('toast.enterDescription'))
       return
     }
     if (!collabType) {
-      toast.error('Please select a collab type')
+      toast.error(t('toast.selectCollabType'))
       return
     }
 
@@ -89,12 +91,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
     })
 
     if (error) {
-      toast.error('Failed to create post')
+      toast.error(t('toast.failedCreatePost'))
       setSaving(false)
       return
     }
 
-    toast.success('Collab post created!')
+    toast.success(t('toast.postCreated'))
     router.push('/feed')
     router.refresh()
   }
@@ -102,20 +104,20 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 py-4">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Create a Collab Post</h1>
+        <h1 className="text-2xl font-bold">{t('createPost.title')}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Describe the collaboration you&apos;re looking for
+          {t('createPost.subtitle')}
         </p>
       </div>
 
       {/* Title */}
       <div className="space-y-2">
-        <Label htmlFor="title">Title *</Label>
+        <Label htmlFor="title">{t('createPost.titleLabel')}</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g., Looking for a tech reviewer to collab on a video"
+          placeholder={t('createPost.titlePlaceholder')}
           required
           maxLength={100}
         />
@@ -123,12 +125,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
       {/* Description */}
       <div className="space-y-2">
-        <Label htmlFor="description">Description *</Label>
+        <Label htmlFor="description">{t('createPost.descriptionLabel')}</Label>
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Describe what you're looking for, what you'll do together, and what you bring to the table..."
+          placeholder={t('createPost.descriptionPlaceholder')}
           required
           maxLength={1000}
           rows={5}
@@ -140,15 +142,15 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
       {/* Collab Type */}
       <div className="space-y-2">
-        <Label>Collab Type *</Label>
+        <Label>{t('createPost.collabTypeLabel')}</Label>
         <Select value={collabType} onValueChange={setCollabType}>
           <SelectTrigger>
-            <SelectValue placeholder="Select the type of collaboration" />
+            <SelectValue placeholder={t('createPost.collabTypePlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             {COLLAB_TYPES.map((type) => (
               <SelectItem key={type.value} value={type.value}>
-                {type.label}
+                {getCollabTypeLabel(t, type.value)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -157,7 +159,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
       {/* Niche Tags */}
       <div className="space-y-2">
-        <Label>Niche Tags</Label>
+        <Label>{t('createPost.nicheTags')}</Label>
         <div className="flex flex-wrap gap-2">
           {NICHES.map((niche) => (
             <Badge
@@ -169,7 +171,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
               )}
               onClick={() => toggleNiche(niche)}
             >
-              {niche}
+              {getNicheLabel(t, niche)}
             </Badge>
           ))}
         </div>
@@ -177,10 +179,10 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
       {/* Preferred Audience Size */}
       <div className="space-y-2">
-        <Label>Preferred Partner Audience Size</Label>
+        <Label>{t('createPost.audienceSize')}</Label>
         <Select value={getCurrentRange()} onValueChange={handleAudienceRange}>
           <SelectTrigger>
-            <SelectValue placeholder="Any size is fine" />
+            <SelectValue placeholder={t('createPost.audiencePlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             {FOLLOWER_RANGES.map((range) => (
@@ -194,12 +196,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
       {/* Location */}
       <div className="space-y-2">
-        <Label htmlFor="location">Location (optional)</Label>
+        <Label htmlFor="location">{t('createPost.location')}</Label>
         <Input
           id="location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          placeholder="e.g., Bangkok, Thailand or Remote"
+          placeholder={t('createPost.locationPlaceholder')}
         />
       </div>
 
@@ -210,26 +212,26 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
           onClick={() => setShowDetails(!showDetails)}
           className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
         >
-          {showDetails ? '− Hide collab details' : '+ Add collab details (optional)'}
+          {showDetails ? t('createPost.hideDetails') : t('createPost.showDetails')}
         </button>
         {showDetails && (
           <div className="space-y-4 rounded-lg border p-4">
             <div className="space-y-2">
-              <Label htmlFor="timeline">Timeline</Label>
+              <Label htmlFor="timeline">{t('common.timeline')}</Label>
               <Input
                 id="timeline"
                 value={timeline}
                 onChange={(e) => setTimeline(e.target.value)}
-                placeholder="e.g., March 2026, Next 2 weeks, Flexible"
+                placeholder={t('createPost.timelinePlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="deliverables">Deliverables</Label>
+              <Label htmlFor="deliverables">{t('common.deliverables')}</Label>
               <Textarea
                 id="deliverables"
                 value={deliverables}
                 onChange={(e) => setDeliverables(e.target.value)}
-                placeholder="e.g., Each person posts 1 Reel tagging the other"
+                placeholder={t('createPost.deliverablesPH')}
                 maxLength={500}
                 rows={3}
               />
@@ -238,12 +240,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="requirements">Requirements</Label>
+              <Label htmlFor="requirements">{t('common.requirements')}</Label>
               <Textarea
                 id="requirements"
                 value={requirements}
                 onChange={(e) => setRequirements(e.target.value)}
-                placeholder="e.g., Must have 10K+ followers on Instagram"
+                placeholder={t('createPost.requirementsPH')}
                 maxLength={500}
                 rows={3}
               />
@@ -252,12 +254,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="compensation">Compensation</Label>
+              <Label htmlFor="compensation">{t('common.compensation')}</Label>
               <Input
                 id="compensation"
                 value={compensation}
                 onChange={(e) => setCompensation(e.target.value)}
-                placeholder="e.g., Cross-promotion only, Revenue split 50/50"
+                placeholder={t('createPost.compensationPH')}
               />
             </div>
           </div>
@@ -265,7 +267,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       </div>
 
       <Button type="submit" className="w-full" disabled={saving}>
-        {saving ? 'Creating...' : 'Create Collab Post'}
+        {saving ? t('createPost.creating') : t('createPost.create')}
       </Button>
     </form>
   )

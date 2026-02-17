@@ -1,5 +1,8 @@
+'use client'
+
 import { StarRating } from '@/components/shared/star-rating'
 import { CheckCircle } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 interface ReputationBadgeProps {
   averageRating: number | null
@@ -7,6 +10,8 @@ interface ReputationBadgeProps {
 }
 
 export function ReputationBadge({ averageRating, completedCount }: ReputationBadgeProps) {
+  const { t } = useLanguage()
+
   if (completedCount === 0) return null
 
   return (
@@ -19,7 +24,7 @@ export function ReputationBadge({ averageRating, completedCount }: ReputationBad
       )}
       <span className="flex items-center gap-0.5">
         <CheckCircle className="h-3 w-3 text-green-500" />
-        {completedCount} collab{completedCount !== 1 ? 's' : ''}
+        {completedCount} {completedCount !== 1 ? t('reputation.collabs') : t('reputation.collab')}
       </span>
     </div>
   )

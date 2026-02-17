@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { Heart, Check } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 interface InterestButtonProps {
   postId: string
@@ -26,6 +27,7 @@ export function InterestButton({
   const [sent, setSent] = useState(hasExpressedInterest)
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useLanguage()
 
   const handleSubmit = async () => {
     setSending(true)
@@ -39,17 +41,17 @@ export function InterestButton({
 
     if (error) {
       if (error.code === '23505') {
-        toast.error("You've already expressed interest")
+        toast.error(t('toast.alreadyInterested'))
         setSent(true)
       } else {
-        toast.error('Failed to express interest')
+        toast.error(t('toast.failedInterest'))
       }
       setSending(false)
       setOpen(false)
       return
     }
 
-    toast.success('Interest sent! The creator will be notified.')
+    toast.success(t('toast.interestSent'))
     setSent(true)
     setSending(false)
     setOpen(false)
@@ -60,7 +62,7 @@ export function InterestButton({
     return (
       <Button disabled className="w-full" variant="outline">
         <Check className="mr-2 h-4 w-4" />
-        Interest Sent
+        {t('interest.interestSent')}
       </Button>
     )
   }
@@ -70,19 +72,18 @@ export function InterestButton({
       <DialogTrigger asChild>
         <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
           <Heart className="mr-2 h-4 w-4" />
-          I&apos;m Interested
+          {t('interest.imInterested')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Express Interest</DialogTitle>
+          <DialogTitle>{t('interest.expressInterest')}</DialogTitle>
           <DialogDescription>
-            Send a short intro to the creator. This helps them understand why
-            you&apos;d be a great collab partner!
+            {t('interest.expressDescription')}
           </DialogDescription>
         </DialogHeader>
         <Textarea
-          placeholder="Hi! I'd love to collab because..."
+          placeholder={t('interest.messagePlaceholder')}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           maxLength={500}
@@ -90,14 +91,14 @@ export function InterestButton({
         />
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={sending}
             className="bg-indigo-600 hover:bg-indigo-700"
           >
-            {sending ? 'Sending...' : 'Send Interest'}
+            {sending ? t('interest.sending') : t('interest.sendInterest')}
           </Button>
         </div>
       </DialogContent>

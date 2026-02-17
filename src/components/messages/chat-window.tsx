@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import type { Message, Profile } from '@/types/database'
 import { Send } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 interface ChatWindowProps {
   matchId: string
@@ -24,6 +25,7 @@ export function ChatWindow({
   initialMessages,
   isMock = false,
 }: ChatWindowProps) {
+  const { t } = useLanguage()
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [content, setContent] = useState('')
   const [sending, setSending] = useState(false)
@@ -149,7 +151,7 @@ export function ChatWindow({
         {messages.length === 0 && (
           <div className="flex h-full items-center justify-center">
             <p className="text-sm text-muted-foreground">
-              Say hi to {partner.full_name?.split(' ')[0]}! 👋
+              {t('messages.sayHi').replace('{name}', partner.full_name?.split(' ')[0] || '')}
             </p>
           </div>
         )}
@@ -196,7 +198,7 @@ export function ChatWindow({
         <Input
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Type a message..."
+          placeholder={t('messages.typePlaceholder')}
           className="flex-1"
           autoComplete="off"
         />

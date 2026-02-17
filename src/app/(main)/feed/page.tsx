@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { CollabCard } from '@/components/feed/collab-card'
 import { FeedFilters } from '@/components/feed/feed-filters'
+import { FeedEmptyState } from '@/components/feed/feed-empty-state'
 import { SHOW_MOCK_DATA, MOCK_POSTS, MOCK_REPUTATION } from '@/lib/mock-data'
 import type { CollabPostWithProfile } from '@/types/database'
 
@@ -112,12 +113,7 @@ export default async function FeedPage({
           ))}
         </div>
       ) : (
-        <div className="py-12 text-center">
-          <p className="text-lg font-medium">No collab posts yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Be the first to post a collaboration opportunity!
-          </p>
-        </div>
+        <FeedEmptyState />
       )}
     </div>
   )

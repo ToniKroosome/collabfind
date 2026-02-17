@@ -8,6 +8,7 @@ import { MapPin, ExternalLink } from 'lucide-react'
 import type { Profile } from '@/types/database'
 import { FOLLOWER_RANGES } from '@/lib/constants'
 import Link from 'next/link'
+import { useLanguage, getNicheLabel } from '@/lib/i18n'
 
 interface ProfileCardProps {
   profile: Profile
@@ -16,6 +17,8 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({ profile, showEditButton, compact }: ProfileCardProps) {
+  const { t } = useLanguage()
+
   const followerLabel = FOLLOWER_RANGES.find(
     (r) =>
       r.min === profile.follower_count_min &&
@@ -23,10 +26,10 @@ export function ProfileCard({ profile, showEditButton, compact }: ProfileCardPro
   )?.label
 
   const socialLinks = [
-    { url: profile.instagram_url, label: 'Instagram' },
-    { url: profile.tiktok_url, label: 'TikTok' },
-    { url: profile.youtube_url, label: 'YouTube' },
-    { url: profile.twitter_url, label: 'Twitter/X' },
+    { url: profile.instagram_url, label: t('profile.instagram').replace(' URL', '') },
+    { url: profile.tiktok_url, label: t('profile.tiktok').replace(' URL', '') },
+    { url: profile.youtube_url, label: t('profile.youtube').replace(' URL', '') },
+    { url: profile.twitter_url, label: t('profile.twitterX').replace(' URL', '') },
   ].filter((l) => l.url)
 
   return (
@@ -44,7 +47,7 @@ export function ProfileCard({ profile, showEditButton, compact }: ProfileCardPro
           <div className="min-w-0 flex-1">
             <Link href={`/profile/${profile.id}`}>
               <h3 className="font-semibold hover:underline">
-                {profile.full_name || 'Unknown'}
+                {profile.full_name || t('common.unknown')}
               </h3>
             </Link>
             {profile.username && (
@@ -61,7 +64,7 @@ export function ProfileCard({ profile, showEditButton, compact }: ProfileCardPro
           {showEditButton && (
             <Link href="/profile">
               <Button variant="outline" size="sm">
-                Edit
+                {t('profile.edit')}
               </Button>
             </Link>
           )}
@@ -74,7 +77,7 @@ export function ProfileCard({ profile, showEditButton, compact }: ProfileCardPro
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {profile.niche.map((n) => (
                   <Badge key={n} variant="secondary" className="capitalize text-xs">
-                    {n}
+                    {getNicheLabel(t, n)}
                   </Badge>
                 ))}
               </div>
@@ -82,7 +85,7 @@ export function ProfileCard({ profile, showEditButton, compact }: ProfileCardPro
 
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
               {followerLabel && (
-                <span className="font-medium">{followerLabel} followers</span>
+                <span className="font-medium">{followerLabel} {t('profile.followers')}</span>
               )}
               {profile.location && (
                 <span className="flex items-center gap-1">

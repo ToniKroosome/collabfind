@@ -16,6 +16,7 @@ import {
 import { StarRating } from '@/components/shared/star-rating'
 import { toast } from 'sonner'
 import { Star, CheckCircle } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 interface ReviewFormProps {
   matchId: string
@@ -34,6 +35,7 @@ export function ReviewForm({
   alreadyReviewed = false,
   isMock = false,
 }: ReviewFormProps) {
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [rating, setRating] = useState(0)
   const [reviewText, setReviewText] = useState('')
@@ -46,14 +48,14 @@ export function ReviewForm({
     return (
       <Button size="sm" variant="outline" disabled>
         <CheckCircle className="mr-1 h-3.5 w-3.5 text-green-500" />
-        Reviewed
+        {t('reviews.reviewed')}
       </Button>
     )
   }
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      toast.error('Please select a rating')
+      toast.error(t('toast.selectRating'))
       return
     }
 
@@ -69,7 +71,7 @@ export function ReviewForm({
       })
 
       if (error) {
-        toast.error('Failed to submit review')
+        toast.error(t('toast.failedSubmitReview'))
         setSending(false)
         return
       }
@@ -78,7 +80,7 @@ export function ReviewForm({
     setSubmitted(true)
     setOpen(false)
     setSending(false)
-    toast.success('Review submitted!')
+    toast.success(t('toast.reviewSubmitted'))
     router.refresh()
   }
 
@@ -87,19 +89,19 @@ export function ReviewForm({
       <DialogTrigger asChild>
         <Button size="sm" variant="outline">
           <Star className="mr-1 h-3.5 w-3.5" />
-          Review
+          {t('reviews.review')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Review {revieweeName}</DialogTitle>
+          <DialogTitle>{t('reviews.review')} {revieweeName}</DialogTitle>
           <DialogDescription>
-            How was your collab experience? Your review helps others find great partners.
+            {t('reviews.reviewDescription')}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <p className="text-sm font-medium">Rating</p>
+            <p className="text-sm font-medium">{t('reviews.rating')}</p>
             <StarRating
               rating={rating}
               size="md"
@@ -108,11 +110,11 @@ export function ReviewForm({
             />
           </div>
           <div className="space-y-2">
-            <p className="text-sm font-medium">Review (optional)</p>
+            <p className="text-sm font-medium">{t('reviews.reviewOptional')}</p>
             <Textarea
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
-              placeholder="Share your experience working together..."
+              placeholder={t('reviews.reviewPlaceholder')}
               maxLength={300}
               rows={3}
             />
@@ -122,14 +124,14 @@ export function ReviewForm({
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={rating === 0 || sending}
               className="bg-indigo-600 hover:bg-indigo-700"
             >
-              {sending ? 'Submitting...' : 'Submit Review'}
+              {sending ? t('reviews.submitting') : t('reviews.submitReview')}
             </Button>
           </div>
         </div>

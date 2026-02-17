@@ -31,7 +31,6 @@ export default async function NotificationsPage() {
 
   return (
     <div className="space-y-4 py-4">
-      <h1 className="text-2xl font-bold">Notifications</h1>
       <NotificationList notifications={allNotifications} />
     </div>
   )

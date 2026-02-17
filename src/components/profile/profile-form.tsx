@@ -15,6 +15,7 @@ import type { Profile } from '@/types/database'
 import { toast } from 'sonner'
 import { Camera } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useLanguage, getNicheLabel } from '@/lib/i18n'
 
 interface ProfileFormProps {
   profile: Profile
@@ -22,6 +23,7 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
+  const { t } = useLanguage()
   const [formData, setFormData] = useState({
     username: profile.username || '',
     full_name: profile.full_name || '',
@@ -97,7 +99,7 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
     e.preventDefault()
 
     if (!formData.full_name.trim()) {
-      toast.error('Please enter your name')
+      toast.error(t('toast.enterName'))
       return
     }
 
@@ -114,15 +116,15 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
 
     if (error) {
       if (error.code === '23505') {
-        toast.error('Username is already taken')
+        toast.error(t('toast.usernameTaken'))
       } else {
-        toast.error('Failed to save profile')
+        toast.error(t('toast.failedSaveProfile'))
       }
       setSaving(false)
       return
     }
 
-    toast.success('Profile saved!')
+    toast.success(t('toast.profileSaved'))
     router.push('/feed')
     router.refresh()
   }
@@ -131,9 +133,9 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
     <form onSubmit={handleSave} className="space-y-6">
       {isOnboarding && (
         <div className="text-center">
-          <h1 className="text-2xl font-bold">Complete your profile</h1>
+          <h1 className="text-2xl font-bold">{t('profile.completeProfile')}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Help others find and connect with you
+            {t('profile.completeProfileHint')}
           </p>
         </div>
       )}
@@ -162,41 +164,41 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
 
       {/* Name */}
       <div className="space-y-2">
-        <Label htmlFor="full_name">Full Name *</Label>
+        <Label htmlFor="full_name">{t('profile.fullName')}</Label>
         <Input
           id="full_name"
           value={formData.full_name}
           onChange={(e) =>
             setFormData((p) => ({ ...p, full_name: e.target.value }))
           }
-          placeholder="Your full name"
+          placeholder={t('profile.fullNamePlaceholder')}
           required
         />
       </div>
 
       {/* Username */}
       <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="username">{t('profile.username')}</Label>
         <Input
           id="username"
           value={formData.username}
           onChange={(e) =>
             setFormData((p) => ({ ...p, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') }))
           }
-          placeholder="your_username"
+          placeholder={t('profile.usernamePlaceholder')}
         />
       </div>
 
       {/* Bio */}
       <div className="space-y-2">
-        <Label htmlFor="bio">Bio</Label>
+        <Label htmlFor="bio">{t('profile.bio')}</Label>
         <Textarea
           id="bio"
           value={formData.bio}
           onChange={(e) =>
             setFormData((p) => ({ ...p, bio: e.target.value }))
           }
-          placeholder="Tell others about yourself and what kind of collabs you're looking for..."
+          placeholder={t('profile.bioPlaceholder')}
           maxLength={300}
           rows={3}
         />
@@ -207,7 +209,7 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
 
       {/* Niche */}
       <div className="space-y-2">
-        <Label>Your Niche(s)</Label>
+        <Label>{t('profile.yourNiches')}</Label>
         <div className="flex flex-wrap gap-2">
           {NICHES.map((niche) => (
             <Badge
@@ -219,7 +221,7 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
               )}
               onClick={() => toggleNiche(niche)}
             >
-              {niche}
+              {getNicheLabel(t, niche)}
             </Badge>
           ))}
         </div>
@@ -227,10 +229,10 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
 
       {/* Follower Range */}
       <div className="space-y-2">
-        <Label>Follower Count Range</Label>
+        <Label>{t('profile.followerRange')}</Label>
         <Select value={getCurrentRange()} onValueChange={handleFollowerRange}>
           <SelectTrigger>
-            <SelectValue placeholder="Select your audience size" />
+            <SelectValue placeholder={t('profile.followerPlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             {FOLLOWER_RANGES.map((range) => (
@@ -244,30 +246,30 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
 
       {/* Social Links */}
       <div className="space-y-3">
-        <Label>Social Links</Label>
+        <Label>{t('profile.socialLinks')}</Label>
         <Input
-          placeholder="Instagram URL"
+          placeholder={t('profile.instagram')}
           value={formData.instagram_url}
           onChange={(e) =>
             setFormData((p) => ({ ...p, instagram_url: e.target.value }))
           }
         />
         <Input
-          placeholder="TikTok URL"
+          placeholder={t('profile.tiktok')}
           value={formData.tiktok_url}
           onChange={(e) =>
             setFormData((p) => ({ ...p, tiktok_url: e.target.value }))
           }
         />
         <Input
-          placeholder="YouTube URL"
+          placeholder={t('profile.youtube')}
           value={formData.youtube_url}
           onChange={(e) =>
             setFormData((p) => ({ ...p, youtube_url: e.target.value }))
           }
         />
         <Input
-          placeholder="Twitter/X URL"
+          placeholder={t('profile.twitterX')}
           value={formData.twitter_url}
           onChange={(e) =>
             setFormData((p) => ({ ...p, twitter_url: e.target.value }))
@@ -277,19 +279,19 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
 
       {/* Location */}
       <div className="space-y-2">
-        <Label htmlFor="location">Location</Label>
+        <Label htmlFor="location">{t('profile.locationLabel')}</Label>
         <Input
           id="location"
           value={formData.location}
           onChange={(e) =>
             setFormData((p) => ({ ...p, location: e.target.value }))
           }
-          placeholder="City, Country"
+          placeholder={t('profile.locationPlaceholder')}
         />
       </div>
 
       <Button type="submit" className="w-full" disabled={saving}>
-        {saving ? 'Saving...' : isOnboarding ? 'Complete Profile' : 'Save Changes'}
+        {saving ? t('profile.saving') : isOnboarding ? t('profile.completeProfileBtn') : t('profile.saveChanges')}
       </Button>
     </form>
   )

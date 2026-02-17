@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import { TimeAgo } from '@/components/shared/time-ago'
 import Link from 'next/link'
 import { Check, X } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 interface InterestListProps {
   interests: InterestWithProfile[]
@@ -21,6 +22,7 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
   const [interests, setInterests] = useState(initialInterests)
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useLanguage()
 
   const handleAction = async (interestId: string, action: 'accepted' | 'declined') => {
     const { error } = await supabase
@@ -29,7 +31,7 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
       .eq('id', interestId)
 
     if (error) {
-      toast.error(`Failed to ${action === 'accepted' ? 'accept' : 'decline'}`)
+      toast.error(t('toast.failedAcceptDecline'))
       return
     }
 
@@ -39,8 +41,8 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
 
     toast.success(
       action === 'accepted'
-        ? "Interest accepted! You're now matched."
-        : 'Interest declined.'
+        ? t('toast.interestAccepted')
+        : t('toast.interestDeclined')
     )
     router.refresh()
   }
@@ -48,7 +50,7 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
   if (interests.length === 0) {
     return (
       <p className="py-4 text-center text-sm text-muted-foreground">
-        No one has expressed interest yet.
+        {t('interest.noInterestsYet')}
       </p>
     )
   }
@@ -56,7 +58,7 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
   return (
     <div className="space-y-3">
       <h3 className="font-semibold">
-        Interests ({interests.length})
+        {t('interest.interests')} ({interests.length})
       </h3>
       {interests.map((interest) => (
         <Card key={interest.id}>
@@ -107,7 +109,7 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
                   onClick={() => handleAction(interest.id, 'accepted')}
                 >
                   <Check className="mr-1 h-4 w-4" />
-                  Accept
+                  {t('interest.accept')}
                 </Button>
                 <Button
                   size="sm"
@@ -116,7 +118,7 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
                   onClick={() => handleAction(interest.id, 'declined')}
                 >
                   <X className="mr-1 h-4 w-4" />
-                  Decline
+                  {t('interest.decline')}
                 </Button>
               </div>
             )}
@@ -128,11 +130,13 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useLanguage()
+
   if (status === 'accepted') {
-    return <Badge className="bg-green-100 text-green-700 text-xs">Accepted</Badge>
+    return <Badge className="bg-green-100 text-green-700 text-xs">{t('interest.accepted')}</Badge>
   }
   if (status === 'declined') {
-    return <Badge className="bg-red-100 text-red-700 text-xs">Declined</Badge>
+    return <Badge className="bg-red-100 text-red-700 text-xs">{t('interest.declined')}</Badge>
   }
-  return <Badge className="bg-yellow-100 text-yellow-700 text-xs">Pending</Badge>
+  return <Badge className="bg-yellow-100 text-yellow-700 text-xs">{t('interest.pending')}</Badge>
 }

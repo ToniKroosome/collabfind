@@ -1,11 +1,18 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Noto_Sans_Thai } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
+import { LanguageProvider } from '@/lib/i18n'
 import './globals.css'
 
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
+})
+
+const notoSansThai = Noto_Sans_Thai({
+  variable: '--font-noto-thai',
+  subsets: ['thai'],
+  weight: ['400', '500', '600', '700'],
 })
 
 export const metadata: Metadata = {
@@ -35,14 +42,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="th" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
-        <Toaster position="top-center" />
+      <body className={`${inter.variable} ${notoSansThai.variable} font-sans antialiased`}>
+        <LanguageProvider>
+          {children}
+          <Toaster position="top-center" />
+        </LanguageProvider>
       </body>
     </html>
   )

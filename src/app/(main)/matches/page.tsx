@@ -40,7 +40,6 @@ export default async function MatchesPage() {
 
   return (
     <div className="space-y-4 py-4">
-      <h1 className="text-2xl font-bold">Your Matches</h1>
       <MatchTabs
         matches={allMatches}
         currentUserId={user.id}

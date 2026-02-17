@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { CheckCircle, XCircle } from 'lucide-react'
+import { useLanguage } from '@/lib/i18n'
 
 interface MatchStatusControlsProps {
   matchId: string
@@ -26,6 +27,7 @@ export function MatchStatusControls({
   currentStatus,
   isMock = false,
 }: MatchStatusControlsProps) {
+  const { t } = useLanguage()
   const [status, setStatus] = useState(currentStatus)
   const [updating, setUpdating] = useState(false)
   const [completeOpen, setCompleteOpen] = useState(false)
@@ -45,7 +47,7 @@ export function MatchStatusControls({
         .eq('id', matchId)
 
       if (error) {
-        toast.error('Failed to update status')
+        toast.error(t('toast.failedUpdateStatus'))
         setUpdating(false)
         return
       }
@@ -57,8 +59,8 @@ export function MatchStatusControls({
     setUpdating(false)
     toast.success(
       newStatus === 'completed'
-        ? 'Collab marked as completed!'
-        : 'Collab cancelled'
+        ? t('toast.collabCompleted')
+        : t('toast.collabCancelled')
     )
     router.refresh()
   }
@@ -69,26 +71,26 @@ export function MatchStatusControls({
         <DialogTrigger asChild>
           <Button size="sm" className="bg-green-600 hover:bg-green-700">
             <CheckCircle className="mr-1 h-3.5 w-3.5" />
-            Complete
+            {t('matches.complete')}
           </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Mark as Completed?</DialogTitle>
+            <DialogTitle>{t('matches.markCompleteTitle')}</DialogTitle>
             <DialogDescription>
-              This means the collab is done. Both of you will be able to leave reviews for each other.
+              {t('matches.markCompleteDesc')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setCompleteOpen(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               className="bg-green-600 hover:bg-green-700"
               onClick={() => updateStatus('completed')}
               disabled={updating}
             >
-              {updating ? 'Updating...' : 'Yes, Mark Complete'}
+              {updating ? t('matches.updating') : t('matches.yesComplete')}
             </Button>
           </div>
         </DialogContent>
@@ -98,26 +100,26 @@ export function MatchStatusControls({
         <DialogTrigger asChild>
           <Button size="sm" variant="outline">
             <XCircle className="mr-1 h-3.5 w-3.5" />
-            Cancel
+            {t('matches.cancelCollab')}
           </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancel this collab?</DialogTitle>
+            <DialogTitle>{t('matches.cancelCollabTitle')}</DialogTitle>
             <DialogDescription>
-              This will mark the collab as cancelled. You can still message each other.
+              {t('matches.cancelCollabDesc')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setCancelOpen(false)}>
-              Go Back
+              {t('matches.goBack')}
             </Button>
             <Button
               variant="destructive"
               onClick={() => updateStatus('cancelled')}
               disabled={updating}
             >
-              {updating ? 'Updating...' : 'Yes, Cancel Collab'}
+              {updating ? t('matches.updating') : t('matches.yesCancelCollab')}
             </Button>
           </div>
         </DialogContent>

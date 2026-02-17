@@ -1,10 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Card, CardContent } from '@/components/ui/card'
 import { SHOW_MOCK_DATA, MOCK_CONVERSATIONS } from '@/lib/mock-data'
-import Link from 'next/link'
-import { TimeAgo } from '@/components/shared/time-ago'
+import { ConversationList } from '@/components/messages/conversation-list'
 import type { Message } from '@/types/database'
 
 export default async function MessagesPage() {
@@ -69,75 +66,10 @@ export default async function MessagesPage() {
 
   return (
     <div className="space-y-4 py-4">
-      <h1 className="text-2xl font-bold">Messages</h1>
-
-      {allConversations.length > 0 ? (
-        <div className="space-y-2">
-          {allConversations.map(({ match, lastMessage, unreadCount }) => {
-            const partner =
-              match.user_a === user.id ? match.partner_b : match.partner_a
-
-            return (
-              <Link key={match.id} href={`/messages/${match.id}`}>
-                <Card
-                  className={`transition-colors hover:bg-muted/50 ${
-                    unreadCount > 0 ? 'border-indigo-200 bg-indigo-50/50' : ''
-                  }`}
-                >
-                  <CardContent className="flex items-center gap-3 p-3">
-                    <div className="relative">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage
-                          src={partner.avatar_url || undefined}
-                        />
-                        <AvatarFallback>
-                          {partner.full_name?.charAt(0) || '?'}
-                        </AvatarFallback>
-                      </Avatar>
-                      {unreadCount > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-indigo-600 px-1 text-[10px] font-medium text-white">
-                          {unreadCount}
-                        </span>
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between">
-                        <p
-                          className={`truncate font-medium ${
-                            unreadCount > 0 ? 'font-semibold' : ''
-                          }`}
-                        >
-                          {partner.full_name}
-                        </p>
-                        {lastMessage && (
-                          <span className="shrink-0 text-xs text-muted-foreground">
-                            <TimeAgo date={lastMessage.created_at} />
-                          </span>
-                        )}
-                      </div>
-                      <p className="truncate text-sm text-muted-foreground">
-                        {lastMessage
-                          ? lastMessage.sender_id === user.id
-                            ? `You: ${lastMessage.content}`
-                            : lastMessage.content
-                          : 'No messages yet — say hi!'}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            )
-          })}
-        </div>
-      ) : (
-        <div className="py-12 text-center">
-          <p className="text-lg font-medium">No conversations yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Get matched with creators to start chatting!
-          </p>
-        </div>
-      )}
+      <ConversationList
+        conversations={allConversations}
+        currentUserId={user.id}
+      />
     </div>
   )
 }
-

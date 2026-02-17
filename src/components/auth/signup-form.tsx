@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { useLanguage } from '@/lib/i18n'
 
 export function SignupForm() {
   const [email, setEmail] = useState('')
@@ -19,17 +20,18 @@ export function SignupForm() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useLanguage()
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match')
+      toast.error(t('toast.passwordsMismatch'))
       return
     }
 
     if (password.length < 6) {
-      toast.error('Password must be at least 6 characters')
+      toast.error(t('toast.passwordTooShort'))
       return
     }
 
@@ -51,7 +53,7 @@ export function SignupForm() {
       return
     }
 
-    toast.success('Account created!')
+    toast.success(t('toast.accountCreated'))
     router.push('/feed')
     router.refresh()
   }
@@ -75,39 +77,39 @@ export function SignupForm() {
         <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-lg font-bold text-white">
           IX
         </div>
-        <CardTitle className="text-2xl">Create your account</CardTitle>
-        <CardDescription>Join IntrovertxCollab and find your next collab</CardDescription>
+        <CardTitle className="text-2xl">{t('signup.createAccount')}</CardTitle>
+        <CardDescription>{t('signup.joinDescription')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSignup} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
+            <Label htmlFor="fullName">{t('signup.fullName')}</Label>
             <Input
               id="fullName"
               type="text"
-              placeholder="Your name"
+              placeholder={t('signup.namePlaceholder')}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('login.email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t('login.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('signup.password')}</Label>
             <Input
               id="password"
               type="password"
-              placeholder="At least 6 characters"
+              placeholder={t('signup.passwordPlaceholder')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -115,11 +117,11 @@ export function SignupForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{t('signup.confirmPassword')}</Label>
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="Confirm your password"
+              placeholder={t('signup.confirmPlaceholder')}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -127,13 +129,13 @@ export function SignupForm() {
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Creating account...' : 'Create Account'}
+            {loading ? t('signup.creating') : t('signup.create')}
           </Button>
         </form>
 
         <div className="my-4 flex items-center gap-3">
           <Separator className="flex-1" />
-          <span className="text-xs text-muted-foreground">OR</span>
+          <span className="text-xs text-muted-foreground">{t('common.or')}</span>
           <Separator className="flex-1" />
         </div>
 
@@ -160,13 +162,13 @@ export function SignupForm() {
               fill="#EA4335"
             />
           </svg>
-          Continue with Google
+          {t('signup.continueGoogle')}
         </Button>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
+          {t('signup.hasAccount')}{' '}
           <Link href="/login" className="font-medium text-indigo-600 hover:underline">
-            Sign in
+            {t('signup.signIn')}
           </Link>
         </p>
       </CardContent>

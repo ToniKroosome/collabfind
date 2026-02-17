@@ -9,6 +9,7 @@ import { Heart, Check, X, MessageCircle, Users, Star, CheckCircle } from 'lucide
 import { cn } from '@/lib/utils'
 import { TimeAgo } from '@/components/shared/time-ago'
 import type { Notification } from '@/types/database'
+import { useLanguage } from '@/lib/i18n'
 
 interface NotificationListProps {
   notifications: Notification[]
@@ -35,6 +36,7 @@ const ICON_COLORS: Record<string, string> = {
 }
 
 export function NotificationList({ notifications: initial }: NotificationListProps) {
+  const { t } = useLanguage()
   const [notifications, setNotifications] = useState(initial)
   const router = useRouter()
   const supabase = createClient()
@@ -87,21 +89,26 @@ export function NotificationList({ notifications: initial }: NotificationListPro
 
   if (notifications.length === 0) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-lg font-medium">No notifications</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          You&apos;ll be notified when someone is interested in your collabs!
-        </p>
-      </div>
+      <>
+        <h1 className="text-2xl font-bold">{t('notifications.title')}</h1>
+        <div className="py-12 text-center">
+          <p className="text-lg font-medium">{t('notifications.noNotifications')}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t('notifications.noNotificationsHint')}
+          </p>
+        </div>
+      </>
     )
   }
 
   return (
+    <>
+    <h1 className="text-2xl font-bold">{t('notifications.title')}</h1>
     <div className="space-y-3">
       {unreadCount > 0 && (
         <div className="flex justify-end">
           <Button variant="ghost" size="sm" onClick={markAllRead} className="text-xs">
-            Mark all as read
+            {t('notifications.markAllRead')}
           </Button>
         </div>
       )}
@@ -154,5 +161,6 @@ export function NotificationList({ notifications: initial }: NotificationListPro
         )
       })}
     </div>
+    </>
   )
 }

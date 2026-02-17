@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { useLanguage } from '@/lib/i18n'
 
 export function LoginForm() {
   const [email, setEmail] = useState('')
@@ -17,6 +18,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useLanguage()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,41 +58,41 @@ export function LoginForm() {
         <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-lg font-bold text-white">
           IX
         </div>
-        <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to IntrovertxCollab</CardDescription>
+        <CardTitle className="text-2xl">{t('login.welcomeBack')}</CardTitle>
+        <CardDescription>{t('login.signInTo')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('login.email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t('login.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('login.password')}</Label>
             <Input
               id="password"
               type="password"
-              placeholder="Your password"
+              placeholder={t('login.passwordPlaceholder')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? t('login.signingIn') : t('login.signIn')}
           </Button>
         </form>
 
         <div className="my-4 flex items-center gap-3">
           <Separator className="flex-1" />
-          <span className="text-xs text-muted-foreground">OR</span>
+          <span className="text-xs text-muted-foreground">{t('common.or')}</span>
           <Separator className="flex-1" />
         </div>
 
@@ -117,13 +119,13 @@ export function LoginForm() {
               fill="#EA4335"
             />
           </svg>
-          Continue with Google
+          {t('login.continueGoogle')}
         </Button>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
+          {t('login.noAccount')}{' '}
           <Link href="/signup" className="font-medium text-indigo-600 hover:underline">
-            Sign up
+            {t('login.signUp')}
           </Link>
         </p>
       </CardContent>
