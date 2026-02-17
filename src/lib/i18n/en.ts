@@ -163,6 +163,7 @@ export const en: Translations = {
   'profile.tiktok': 'TikTok URL',
   'profile.youtube': 'YouTube URL',
   'profile.twitterX': 'Twitter/X URL',
+  'profile.facebook': 'Facebook URL',
   'profile.locationLabel': 'Location',
   'profile.locationPlaceholder': 'City, Country',
   'profile.saving': 'Saving...',
@@ -188,7 +189,23 @@ export const en: Translations = {
   'reputation.collab': 'collab',
   'reputation.collabs': 'collabs',
 
+  // Verification
+  'verify.verify': 'Verify',
+  'verify.verified': 'Verified',
+  'verify.verifyTitle': 'Verify {platform}',
+  'verify.generateCode': 'Generate Verification Code',
+  'verify.step1': '1. Copy this code:',
+  'verify.step2': '2. Add it to your {platform} bio',
+  'verify.step3': '3. Click "Check Verification" below',
+  'verify.check': 'Check Verification',
+  'verify.checking': 'Checking...',
+  'verify.copied': 'Copied!',
+  'verify.success': 'Account verified successfully!',
+  'verify.failed': 'Code not found in your bio. Make sure it\'s visible publicly.',
+  'verify.expired': 'Verification code expired. Please generate a new one.',
+
   // Toast messages
+  'toast.verificationFailed': 'Verification failed. Please try again.',
   'toast.passwordsMismatch': 'Passwords do not match',
   'toast.passwordTooShort': 'Password must be at least 6 characters',
   'toast.accountCreated': 'Account created!',

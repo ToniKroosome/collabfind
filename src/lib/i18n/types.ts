@@ -163,6 +163,7 @@ export interface Translations {
   'profile.tiktok': string
   'profile.youtube': string
   'profile.twitterX': string
+  'profile.facebook': string
   'profile.locationLabel': string
   'profile.locationPlaceholder': string
   'profile.saving': string
@@ -188,7 +189,23 @@ export interface Translations {
   'reputation.collab': string
   'reputation.collabs': string
 
+  // Verification
+  'verify.verify': string
+  'verify.verified': string
+  'verify.verifyTitle': string
+  'verify.generateCode': string
+  'verify.step1': string
+  'verify.step2': string
+  'verify.step3': string
+  'verify.check': string
+  'verify.checking': string
+  'verify.copied': string
+  'verify.success': string
+  'verify.failed': string
+  'verify.expired': string
+
   // Toast messages
+  'toast.verificationFailed': string
   'toast.passwordsMismatch': string
   'toast.passwordTooShort': string
   'toast.accountCreated': string

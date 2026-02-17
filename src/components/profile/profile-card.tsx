@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { MapPin, ExternalLink } from 'lucide-react'
+import { MapPin, ExternalLink, BadgeCheck } from 'lucide-react'
 import type { Profile } from '@/types/database'
 import { FOLLOWER_RANGES } from '@/lib/constants'
 import Link from 'next/link'
@@ -26,10 +26,11 @@ export function ProfileCard({ profile, showEditButton, compact }: ProfileCardPro
   )?.label
 
   const socialLinks = [
-    { url: profile.instagram_url, label: t('profile.instagram').replace(' URL', '') },
-    { url: profile.tiktok_url, label: t('profile.tiktok').replace(' URL', '') },
-    { url: profile.youtube_url, label: t('profile.youtube').replace(' URL', '') },
-    { url: profile.twitter_url, label: t('profile.twitterX').replace(' URL', '') },
+    { url: profile.instagram_url, label: t('profile.instagram').replace(' URL', ''), verified: profile.instagram_verified },
+    { url: profile.tiktok_url, label: t('profile.tiktok').replace(' URL', ''), verified: profile.tiktok_verified },
+    { url: profile.youtube_url, label: t('profile.youtube').replace(' URL', ''), verified: profile.youtube_verified },
+    { url: profile.twitter_url, label: t('profile.twitterX').replace(' URL', ''), verified: profile.twitter_verified },
+    { url: profile.facebook_url, label: t('profile.facebook').replace(' URL', ''), verified: profile.facebook_verified },
   ].filter((l) => l.url)
 
   return (
@@ -107,7 +108,11 @@ export function ProfileCard({ profile, showEditButton, compact }: ProfileCardPro
                     className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:underline"
                   >
                     {link.label}
-                    <ExternalLink className="h-3 w-3" />
+                    {link.verified ? (
+                      <BadgeCheck className="h-3.5 w-3.5 text-green-600" />
+                    ) : (
+                      <ExternalLink className="h-3 w-3" />
+                    )}
                   </a>
                 ))}
               </div>

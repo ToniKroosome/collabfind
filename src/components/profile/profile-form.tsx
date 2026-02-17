@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 import { Camera } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useLanguage, getNicheLabel } from '@/lib/i18n'
+import { SocialVerifyDialog } from '@/components/profile/social-verify-dialog'
 
 interface ProfileFormProps {
   profile: Profile
@@ -35,6 +36,7 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
     tiktok_url: profile.tiktok_url || '',
     youtube_url: profile.youtube_url || '',
     twitter_url: profile.twitter_url || '',
+    facebook_url: profile.facebook_url || '',
     location: profile.location || '',
   })
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || '')
@@ -247,34 +249,86 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
       {/* Social Links */}
       <div className="space-y-3">
         <Label>{t('profile.socialLinks')}</Label>
-        <Input
-          placeholder={t('profile.instagram')}
-          value={formData.instagram_url}
-          onChange={(e) =>
-            setFormData((p) => ({ ...p, instagram_url: e.target.value }))
-          }
-        />
-        <Input
-          placeholder={t('profile.tiktok')}
-          value={formData.tiktok_url}
-          onChange={(e) =>
-            setFormData((p) => ({ ...p, tiktok_url: e.target.value }))
-          }
-        />
-        <Input
-          placeholder={t('profile.youtube')}
-          value={formData.youtube_url}
-          onChange={(e) =>
-            setFormData((p) => ({ ...p, youtube_url: e.target.value }))
-          }
-        />
-        <Input
-          placeholder={t('profile.twitterX')}
-          value={formData.twitter_url}
-          onChange={(e) =>
-            setFormData((p) => ({ ...p, twitter_url: e.target.value }))
-          }
-        />
+        <div className="flex items-center gap-2">
+          <Input
+            className="flex-1"
+            placeholder={t('profile.instagram')}
+            value={formData.instagram_url}
+            onChange={(e) =>
+              setFormData((p) => ({ ...p, instagram_url: e.target.value }))
+            }
+          />
+          <SocialVerifyDialog
+            platform="instagram"
+            platformLabel="Instagram"
+            isVerified={profile.instagram_verified}
+            hasUrl={!!formData.instagram_url}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            className="flex-1"
+            placeholder={t('profile.tiktok')}
+            value={formData.tiktok_url}
+            onChange={(e) =>
+              setFormData((p) => ({ ...p, tiktok_url: e.target.value }))
+            }
+          />
+          <SocialVerifyDialog
+            platform="tiktok"
+            platformLabel="TikTok"
+            isVerified={profile.tiktok_verified}
+            hasUrl={!!formData.tiktok_url}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            className="flex-1"
+            placeholder={t('profile.youtube')}
+            value={formData.youtube_url}
+            onChange={(e) =>
+              setFormData((p) => ({ ...p, youtube_url: e.target.value }))
+            }
+          />
+          <SocialVerifyDialog
+            platform="youtube"
+            platformLabel="YouTube"
+            isVerified={profile.youtube_verified}
+            hasUrl={!!formData.youtube_url}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            className="flex-1"
+            placeholder={t('profile.twitterX')}
+            value={formData.twitter_url}
+            onChange={(e) =>
+              setFormData((p) => ({ ...p, twitter_url: e.target.value }))
+            }
+          />
+          <SocialVerifyDialog
+            platform="twitter"
+            platformLabel="Twitter/X"
+            isVerified={profile.twitter_verified}
+            hasUrl={!!formData.twitter_url}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            className="flex-1"
+            placeholder={t('profile.facebook')}
+            value={formData.facebook_url}
+            onChange={(e) =>
+              setFormData((p) => ({ ...p, facebook_url: e.target.value }))
+            }
+          />
+          <SocialVerifyDialog
+            platform="facebook"
+            platformLabel="Facebook"
+            isVerified={profile.facebook_verified}
+            hasUrl={!!formData.facebook_url}
+          />
+        </div>
       </div>
 
       {/* Location */}

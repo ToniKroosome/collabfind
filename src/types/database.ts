@@ -23,8 +23,14 @@ export interface Database {
           tiktok_url: string | null
           youtube_url: string | null
           twitter_url: string | null
+          facebook_url: string | null
           location: string | null
           is_profile_complete: boolean
+          instagram_verified: boolean
+          tiktok_verified: boolean
+          youtube_verified: boolean
+          twitter_verified: boolean
+          facebook_verified: boolean
           created_at: string
           updated_at: string
         }
@@ -41,8 +47,14 @@ export interface Database {
           tiktok_url?: string | null
           youtube_url?: string | null
           twitter_url?: string | null
+          facebook_url?: string | null
           location?: string | null
           is_profile_complete?: boolean
+          instagram_verified?: boolean
+          tiktok_verified?: boolean
+          youtube_verified?: boolean
+          twitter_verified?: boolean
+          facebook_verified?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -59,12 +71,53 @@ export interface Database {
           tiktok_url?: string | null
           youtube_url?: string | null
           twitter_url?: string | null
+          facebook_url?: string | null
           location?: string | null
           is_profile_complete?: boolean
+          instagram_verified?: boolean
+          tiktok_verified?: boolean
+          youtube_verified?: boolean
+          twitter_verified?: boolean
+          facebook_verified?: boolean
           created_at?: string
           updated_at?: string
         }
         Relationships: []
+      }
+      social_verifications: {
+        Row: {
+          id: string
+          user_id: string
+          platform: string
+          code: string
+          created_at: string
+          expires_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          platform: string
+          code: string
+          created_at?: string
+          expires_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          platform?: string
+          code?: string
+          created_at?: string
+          expires_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       collab_posts: {
         Row: {

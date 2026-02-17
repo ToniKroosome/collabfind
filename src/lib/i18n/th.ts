@@ -163,6 +163,7 @@ export const th: Translations = {
   'profile.tiktok': 'TikTok URL',
   'profile.youtube': 'YouTube URL',
   'profile.twitterX': 'Twitter/X URL',
+  'profile.facebook': 'Facebook URL',
   'profile.locationLabel': 'สถานที่',
   'profile.locationPlaceholder': 'เมือง, ประเทศ',
   'profile.saving': 'กำลังบันทึก...',
@@ -188,7 +189,23 @@ export const th: Translations = {
   'reputation.collab': 'คอลแลป',
   'reputation.collabs': 'คอลแลป',
 
+  // Verification
+  'verify.verify': 'ยืนยัน',
+  'verify.verified': 'ยืนยันแล้ว',
+  'verify.verifyTitle': 'ยืนยัน {platform}',
+  'verify.generateCode': 'สร้างรหัสยืนยัน',
+  'verify.step1': '1. คัดลอกรหัสนี้:',
+  'verify.step2': '2. เพิ่มลงในประวัติ {platform} ของคุณ',
+  'verify.step3': '3. กด "ตรวจสอบการยืนยัน" ด้านล่าง',
+  'verify.check': 'ตรวจสอบการยืนยัน',
+  'verify.checking': 'กำลังตรวจสอบ...',
+  'verify.copied': 'คัดลอกแล้ว!',
+  'verify.success': 'ยืนยันบัญชีสำเร็จ!',
+  'verify.failed': 'ไม่พบรหัสในประวัติของคุณ ตรวจสอบว่าแสดงแบบสาธารณะ',
+  'verify.expired': 'รหัสยืนยันหมดอายุ กรุณาสร้างรหัสใหม่',
+
   // Toast messages
+  'toast.verificationFailed': 'การยืนยันล้มเหลว กรุณาลองใหม่อีกครั้ง',
   'toast.passwordsMismatch': 'รหัสผ่านไม่ตรงกัน',
   'toast.passwordTooShort': 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร',
   'toast.accountCreated': 'สร้างบัญชีสำเร็จ!',

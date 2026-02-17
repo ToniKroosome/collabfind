@@ -484,3 +484,30 @@ USING (bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::tex
 CREATE POLICY "Users can delete their own avatar"
 ON storage.objects FOR DELETE TO authenticated
 USING (bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+-- =====================================================
+-- 11. SOCIAL MEDIA VERIFICATION
+-- Run these ALTER TABLE statements if the database already exists.
+-- =====================================================
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS facebook_url TEXT;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS instagram_verified BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS tiktok_verified BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS youtube_verified BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS twitter_verified BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS facebook_verified BOOLEAN DEFAULT FALSE;
+
+CREATE TABLE IF NOT EXISTS social_verifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    platform TEXT NOT NULL,
+    code TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    expires_at TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '24 hours'),
+    UNIQUE(user_id, platform)
+);
+
+ALTER TABLE social_verifications ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own verifications"
+ON social_verifications FOR ALL TO authenticated
+USING (auth.uid() = user_id);
