@@ -42,8 +42,8 @@ CREATE INDEX IF NOT EXISTS idx_profiles_created_at ON profiles(created_at DESC);
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public profiles are viewable by authenticated users"
-ON profiles FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Public profiles are viewable by everyone"
+ON profiles FOR SELECT USING (true);
 
 CREATE POLICY "Users can insert their own profile"
 ON profiles FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
@@ -108,8 +108,8 @@ CREATE INDEX IF NOT EXISTS idx_collab_posts_created_at ON collab_posts(created_a
 
 ALTER TABLE collab_posts ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Open collab posts are viewable by authenticated users"
-ON collab_posts FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Open collab posts are viewable by everyone"
+ON collab_posts FOR SELECT USING (true);
 
 CREATE POLICY "Users can create their own collab posts"
 ON collab_posts FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
@@ -289,8 +289,8 @@ CREATE INDEX IF NOT EXISTS idx_collab_reviews_match_id ON collab_reviews(match_i
 
 ALTER TABLE collab_reviews ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Reviews viewable by authenticated"
-ON collab_reviews FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Reviews viewable by everyone"
+ON collab_reviews FOR SELECT USING (true);
 
 CREATE POLICY "Participants create reviews"
 ON collab_reviews FOR INSERT TO authenticated
