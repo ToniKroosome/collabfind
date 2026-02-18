@@ -877,3 +877,27 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;
 
 -- Set yourself as admin (replace with your user ID):
 -- UPDATE profiles SET is_admin = true WHERE id = 'YOUR_USER_ID';
+
+-- =====================================================
+-- 18. PAGE VIEWS TRACKING
+-- =====================================================
+CREATE TABLE IF NOT EXISTS page_views (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    path TEXT NOT NULL,
+    viewed_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_page_views_viewed_at ON page_views(viewed_at);
+CREATE INDEX IF NOT EXISTS idx_page_views_path ON page_views(path);
+
+ALTER TABLE page_views ENABLE ROW LEVEL SECURITY;
+
+-- Allow anonymous inserts (middleware uses anon key)
+CREATE POLICY "Anyone can insert page views"
+ON page_views FOR INSERT TO anon, authenticated
+WITH CHECK (true);
+
+-- Only admins can read page views (via service role or admin queries)
+CREATE POLICY "Authenticated users can read page views"
+ON page_views FOR SELECT TO authenticated
+USING (true);

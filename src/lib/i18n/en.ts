@@ -403,6 +403,11 @@ export const en: Translations = {
   'admin.signupsLast7Days': 'Signups (Last 7 Days)',
   'admin.postsLast7Days': 'Posts (Last 7 Days)',
   'admin.recentSignups': 'Recent Signups',
+  'admin.totalPageViews': 'Total Page Views',
+  'admin.uniqueVisitors': 'Unique Visitors',
+  'admin.viewsLast7Days': 'Page Views (Last 7 Days)',
+  'admin.topPages': 'Top Pages',
+  'admin.views': 'views',
 
   // Time ago
   'time.justNow': 'just now',

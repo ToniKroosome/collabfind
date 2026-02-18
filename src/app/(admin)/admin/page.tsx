@@ -21,6 +21,9 @@ export default async function AdminPage() {
     recentSignupsResult,
     signupsLast7Result,
     postsLast7Result,
+    pageViewsResult,
+    pageViewsLast7Result,
+    topPagesResult,
   ] = await Promise.all([
     // Total users
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
@@ -65,6 +68,19 @@ export default async function AdminPage() {
       .select('created_at')
       .gte('created_at', sevenDaysAgoISO)
       .order('created_at', { ascending: true }),
+    // Total page views
+    supabase.from('page_views').select('*', { count: 'exact', head: true }),
+    // Page views last 7 days
+    supabase
+      .from('page_views')
+      .select('viewed_at')
+      .gte('viewed_at', sevenDaysAgoISO)
+      .order('viewed_at', { ascending: true }),
+    // Top pages (all time, we'll group client-side)
+    supabase
+      .from('page_views')
+      .select('path')
+      .limit(5000),
   ])
 
   const totalUsers = usersResult.count ?? 0
@@ -102,6 +118,35 @@ export default async function AdminPage() {
   const signupsLast7Days = groupByDay(signupsLast7Result.data)
   const postsLast7Days = groupByDay(postsLast7Result.data)
 
+  const totalPageViews = pageViewsResult.count ?? 0
+
+  // Group page views by day
+  const viewsLast7Days = (() => {
+    const map = new Map<string, number>()
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date()
+      d.setDate(d.getDate() - i)
+      map.set(d.toISOString().split('T')[0], 0)
+    }
+    for (const row of pageViewsLast7Result.data ?? []) {
+      const day = row.viewed_at.split('T')[0]
+      map.set(day, (map.get(day) ?? 0) + 1)
+    }
+    return Array.from(map.entries()).map(([date, count]) => ({ date, count }))
+  })()
+
+  // Top pages by view count
+  const topPages = (() => {
+    const map = new Map<string, number>()
+    for (const row of topPagesResult.data ?? []) {
+      map.set(row.path, (map.get(row.path) ?? 0) + 1)
+    }
+    return Array.from(map.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([path, count]) => ({ path, count }))
+  })()
+
   const recentSignups = (recentSignupsResult.data ?? []).map((u) => ({
     id: u.id,
     full_name: u.full_name,
@@ -124,6 +169,9 @@ export default async function AdminPage() {
       signupsLast7Days={signupsLast7Days}
       postsLast7Days={postsLast7Days}
       recentSignups={recentSignups}
+      totalPageViews={totalPageViews}
+      viewsLast7Days={viewsLast7Days}
+      topPages={topPages}
     />
   )
 }

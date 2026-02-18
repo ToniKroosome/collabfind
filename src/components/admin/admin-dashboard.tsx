@@ -8,6 +8,8 @@ import {
   MessageCircle,
   Star,
   TrendingUp,
+  Eye,
+  BarChart3,
 } from 'lucide-react'
 
 interface DailyCount {
@@ -20,6 +22,11 @@ interface RecentUser {
   full_name: string | null
   username: string | null
   created_at: string
+}
+
+interface TopPage {
+  path: string
+  count: number
 }
 
 interface AdminDashboardProps {
@@ -36,6 +43,9 @@ interface AdminDashboardProps {
   signupsLast7Days: DailyCount[]
   postsLast7Days: DailyCount[]
   recentSignups: RecentUser[]
+  totalPageViews: number
+  viewsLast7Days: DailyCount[]
+  topPages: TopPage[]
 }
 
 function StatCard({
@@ -114,6 +124,9 @@ export function AdminDashboard({
   signupsLast7Days,
   postsLast7Days,
   recentSignups,
+  totalPageViews,
+  viewsLast7Days,
+  topPages,
 }: AdminDashboardProps) {
   const { t } = useLanguage()
 
@@ -149,10 +162,19 @@ export function AdminDashboard({
           value={totalReviews}
           sub={`${t('admin.avgRating')}: ${avgRating > 0 ? avgRating.toFixed(1) : '—'}`}
         />
+        <StatCard
+          icon={Eye}
+          label={t('admin.totalPageViews')}
+          value={totalPageViews}
+        />
       </div>
 
       {/* Charts */}
       <div className="grid gap-3 sm:grid-cols-2">
+        <MiniBarChart
+          data={viewsLast7Days}
+          label={t('admin.viewsLast7Days')}
+        />
         <MiniBarChart
           data={signupsLast7Days}
           label={t('admin.signupsLast7Days')}
@@ -161,6 +183,31 @@ export function AdminDashboard({
           data={postsLast7Days}
           label={t('admin.postsLast7Days')}
         />
+
+        {/* Top pages */}
+        <div className="rounded-xl border bg-card p-4">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+            <BarChart3 className="h-4 w-4" />
+            {t('admin.topPages')}
+          </h3>
+          {topPages.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No data yet</p>
+          ) : (
+            <div className="space-y-1.5">
+              {topPages.map((page) => (
+                <div
+                  key={page.path}
+                  className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-1.5"
+                >
+                  <span className="truncate text-sm">{page.path}</span>
+                  <span className="ml-2 shrink-0 text-xs text-muted-foreground">
+                    {page.count} {t('admin.views')}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Recent signups */}

@@ -403,6 +403,11 @@ export const th: Translations = {
   'admin.signupsLast7Days': 'สมัครสมาชิก (7 วันล่าสุด)',
   'admin.postsLast7Days': 'โพสต์ (7 วันล่าสุด)',
   'admin.recentSignups': 'สมัครสมาชิกล่าสุด',
+  'admin.totalPageViews': 'การเข้าชมทั้งหมด',
+  'admin.uniqueVisitors': 'ผู้เข้าชมไม่ซ้ำ',
+  'admin.viewsLast7Days': 'การเข้าชม (7 วันล่าสุด)',
+  'admin.topPages': 'หน้ายอดนิยม',
+  'admin.views': 'ครั้ง',
 
   // Time ago
   'time.justNow': 'เมื่อกี้',

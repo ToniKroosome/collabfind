@@ -72,6 +72,22 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Log page view (non-blocking, skip api/admin/auth routes)
+  const isTrackable =
+    !pathname.startsWith('/api') &&
+    !pathname.startsWith('/admin') &&
+    !pathname.startsWith('/auth')
+
+  if (isTrackable) {
+    const userAgent = request.headers.get('user-agent') || ''
+    const isBot = /bot|crawl|spider|slurp|bingpreview/i.test(userAgent)
+    if (!isBot) {
+      supabase.from('page_views').insert({
+        path: pathname,
+      }).then() // fire and forget
+    }
+  }
+
   return supabaseResponse
 }
 

@@ -403,6 +403,11 @@ export interface Translations {
   'admin.signupsLast7Days': string
   'admin.postsLast7Days': string
   'admin.recentSignups': string
+  'admin.totalPageViews': string
+  'admin.uniqueVisitors': string
+  'admin.viewsLast7Days': string
+  'admin.topPages': string
+  'admin.views': string
 
   // Time ago
   'time.justNow': string

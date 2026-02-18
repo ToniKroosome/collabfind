@@ -603,6 +603,24 @@ export interface Database {
           }
         ]
       }
+      page_views: {
+        Row: {
+          id: string
+          path: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          path: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          path?: string
+          viewed_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
