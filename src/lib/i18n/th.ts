@@ -387,6 +387,23 @@ export const th: Translations = {
   'collab.viewChat': 'ดูแชท',
   'collab.memberCount': '{n} สมาชิก',
 
+  // Admin
+  'admin.title': 'แดชบอร์ดผู้ดูแล',
+  'admin.backToApp': 'กลับสู่แอป',
+  'admin.totalUsers': 'ผู้ใช้ทั้งหมด',
+  'admin.totalPosts': 'โพสต์ทั้งหมด',
+  'admin.openPosts': 'เปิดอยู่',
+  'admin.closedPosts': 'ปิดแล้ว',
+  'admin.totalMatches': 'แมตช์ทั้งหมด',
+  'admin.activeMatches': 'กำลังดำเนินการ',
+  'admin.completedMatches': 'เสร็จสิ้น',
+  'admin.totalMessages': 'ข้อความทั้งหมด',
+  'admin.totalReviews': 'รีวิวทั้งหมด',
+  'admin.avgRating': 'คะแนนเฉลี่ย',
+  'admin.signupsLast7Days': 'สมัครสมาชิก (7 วันล่าสุด)',
+  'admin.postsLast7Days': 'โพสต์ (7 วันล่าสุด)',
+  'admin.recentSignups': 'สมัครสมาชิกล่าสุด',
+
   // Time ago
   'time.justNow': 'เมื่อกี้',
   'time.minutesAgo': '{n} นาทีที่แล้ว',

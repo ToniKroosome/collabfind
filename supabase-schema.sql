@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS profiles (
     twitter_url TEXT,
     location TEXT,
     is_profile_complete BOOLEAN DEFAULT FALSE,
+    is_admin BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -867,3 +868,12 @@ USING (post_id IN (SELECT post_id FROM matches WHERE user_a = auth.uid() OR user
 DROP POLICY IF EXISTS "Match participants can create storyboards" ON storyboards;
 CREATE POLICY "Match participants can create storyboards" ON storyboards FOR INSERT TO authenticated
 WITH CHECK (auth.uid() = created_by AND post_id IN (SELECT post_id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)));
+
+-- =====================================================
+-- 17. ADMIN DASHBOARD MIGRATION
+-- Run this if the database already exists.
+-- =====================================================
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;
+
+-- Set yourself as admin (replace with your user ID):
+-- UPDATE profiles SET is_admin = true WHERE id = 'YOUR_USER_ID';

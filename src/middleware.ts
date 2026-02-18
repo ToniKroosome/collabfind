@@ -28,13 +28,14 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Protected paths that require authentication
-  const protectedPaths = ['/matches', '/messages', '/notifications']
+  const protectedPaths = ['/matches', '/messages', '/notifications', '/admin']
   const isProtected =
     protectedPaths.some((p) => pathname.startsWith(p)) ||
     pathname === '/post/new' ||
     pathname === '/profile'
 
   const isAuthPage = pathname === '/login' || pathname === '/signup'
+  const isAdminPage = pathname.startsWith('/admin')
 
   // Only call getUser() when we actually need to check auth
   // (protected routes or auth pages that should redirect logged-in users)
@@ -53,6 +54,21 @@ export async function middleware(request: NextRequest) {
       const url = request.nextUrl.clone()
       url.pathname = '/feed'
       return NextResponse.redirect(url)
+    }
+
+    // Admin route: check is_admin on profile
+    if (isAdminPage && user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', user.id)
+        .single()
+
+      if (!profile?.is_admin) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/feed'
+        return NextResponse.redirect(url)
+      }
     }
   }
 

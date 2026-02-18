@@ -387,6 +387,23 @@ export interface Translations {
   'collab.viewChat': string
   'collab.memberCount': string
 
+  // Admin
+  'admin.title': string
+  'admin.backToApp': string
+  'admin.totalUsers': string
+  'admin.totalPosts': string
+  'admin.openPosts': string
+  'admin.closedPosts': string
+  'admin.totalMatches': string
+  'admin.activeMatches': string
+  'admin.completedMatches': string
+  'admin.totalMessages': string
+  'admin.totalReviews': string
+  'admin.avgRating': string
+  'admin.signupsLast7Days': string
+  'admin.postsLast7Days': string
+  'admin.recentSignups': string
+
   // Time ago
   'time.justNow': string
   'time.minutesAgo': string

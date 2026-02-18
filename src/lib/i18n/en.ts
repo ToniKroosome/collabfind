@@ -387,6 +387,23 @@ export const en: Translations = {
   'collab.viewChat': 'View Chat',
   'collab.memberCount': '{n} members',
 
+  // Admin
+  'admin.title': 'Admin Dashboard',
+  'admin.backToApp': 'Back to App',
+  'admin.totalUsers': 'Total Users',
+  'admin.totalPosts': 'Total Posts',
+  'admin.openPosts': 'Open',
+  'admin.closedPosts': 'Closed',
+  'admin.totalMatches': 'Total Matches',
+  'admin.activeMatches': 'Active',
+  'admin.completedMatches': 'Completed',
+  'admin.totalMessages': 'Total Messages',
+  'admin.totalReviews': 'Total Reviews',
+  'admin.avgRating': 'Avg Rating',
+  'admin.signupsLast7Days': 'Signups (Last 7 Days)',
+  'admin.postsLast7Days': 'Posts (Last 7 Days)',
+  'admin.recentSignups': 'Recent Signups',
+
   // Time ago
   'time.justNow': 'just now',
   'time.minutesAgo': '{n}m ago',

@@ -31,6 +31,7 @@ export interface Database {
           youtube_verified: boolean
           twitter_verified: boolean
           facebook_verified: boolean
+          is_admin: boolean
           created_at: string
           updated_at: string
         }
@@ -55,6 +56,7 @@ export interface Database {
           youtube_verified?: boolean
           twitter_verified?: boolean
           facebook_verified?: boolean
+          is_admin?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -79,6 +81,7 @@ export interface Database {
           youtube_verified?: boolean
           twitter_verified?: boolean
           facebook_verified?: boolean
+          is_admin?: boolean
           created_at?: string
           updated_at?: string
         }
