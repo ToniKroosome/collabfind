@@ -16,3 +16,8 @@ export function getNicheLabel(t: TranslateFn, value: string): string {
   const key = `niche.${value}` as keyof Translations
   return t(key)
 }
+
+export function getDeliverableTypeLabel(t: TranslateFn, value: string): string {
+  const key = `deliverable.${value}` as keyof Translations
+  return t(key)
+}

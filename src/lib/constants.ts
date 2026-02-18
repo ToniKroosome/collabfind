@@ -70,3 +70,26 @@ export const SUBMISSION_STATUS_COLORS: Record<string, string> = {
   approved: 'bg-green-100 text-green-700',
   revision_requested: 'bg-orange-100 text-orange-700',
 }
+
+export const DELIVERABLE_CONTENT_TYPES = [
+  'video',
+  'photo',
+  'reel',
+  'story',
+  'post',
+  'blog',
+  'livestream',
+  'review',
+  'shoutout',
+  'other',
+] as const
+
+export type DeliverableContentType = (typeof DELIVERABLE_CONTENT_TYPES)[number]
+
+export const DELIVERABLE_QUANTITIES = [
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+] as const

@@ -1,15 +1,28 @@
 'use client'
 
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { ProfileCard } from '@/components/profile/profile-card'
 import { InterestButton } from '@/components/post/interest-button'
 import { InterestList } from '@/components/post/interest-list'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { COLLAB_TYPE_COLORS, FOLLOWER_RANGES } from '@/lib/constants'
-import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn } from 'lucide-react'
+import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn, Trash2 } from 'lucide-react'
 import { TimeAgo } from '@/components/shared/time-ago'
+import { toast } from 'sonner'
 import type { InterestWithProfile } from '@/types/database'
-import { useLanguage, getCollabTypeLabel, getNicheLabel } from '@/lib/i18n'
+import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel } from '@/lib/i18n'
+import type { DeliverableSlot } from '@/types/database'
 import Link from 'next/link'
 
 interface PostDetailContentProps {
@@ -29,6 +42,9 @@ export function PostDetailContent({
   userId,
 }: PostDetailContentProps) {
   const { t } = useLanguage()
+  const router = useRouter()
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const typeLabel = getCollabTypeLabel(t, post.collab_type)
   const typeColor = COLLAB_TYPE_COLORS[post.collab_type] || COLLAB_TYPE_COLORS.other
 
@@ -37,6 +53,25 @@ export function PostDetailContent({
       r.min === post.preferred_audience_min &&
       r.max === post.preferred_audience_max
   )?.label
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('collab_posts')
+      .delete()
+      .eq('id', post.id)
+
+    if (error) {
+      toast.error(t('toast.failedDeletePost' as any))
+      setDeleting(false)
+      return
+    }
+
+    toast.success(t('toast.postDeleted' as any))
+    router.push('/feed')
+    router.refresh()
+  }
 
   return (
     <div className="space-y-4 py-4">
@@ -70,7 +105,7 @@ export function PostDetailContent({
         </p>
 
         {/* Collab Details */}
-        {(post.timeline || post.deliverables || post.requirements || post.compensation) && (
+        {(post.timeline || post.deliverables || post.deliverable_slots || post.requirements || post.compensation) && (
           <div className="space-y-3 rounded-lg border p-4">
             <h2 className="text-sm font-semibold">{t('postDetail.collabDetails')}</h2>
             {post.timeline && (
@@ -82,7 +117,25 @@ export function PostDetailContent({
                 </div>
               </div>
             )}
-            {post.deliverables && (
+            {/* Structured deliverable slots */}
+            {post.deliverable_slots && Array.isArray(post.deliverable_slots) && post.deliverable_slots.length > 0 ? (
+              <div className="flex items-start gap-2 text-sm">
+                <FileText className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                <div className="space-y-1.5">
+                  <p className="text-xs font-medium text-muted-foreground">{t('common.deliverables')}</p>
+                  {(post.deliverable_slots as DeliverableSlot[]).map((slot: DeliverableSlot, idx: number) => (
+                    <div key={idx} className="flex items-center gap-1.5">
+                      <Badge variant="secondary" className="text-xs">
+                        {slot.quantity}x {getDeliverableTypeLabel(t, slot.content_type)}
+                      </Badge>
+                      {slot.description && (
+                        <span className="text-muted-foreground">{slot.description}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : post.deliverables ? (
               <div className="flex items-start gap-2 text-sm">
                 <FileText className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                 <div>
@@ -90,7 +143,7 @@ export function PostDetailContent({
                   <p className="whitespace-pre-wrap">{post.deliverables}</p>
                 </div>
               </div>
-            )}
+            ) : null}
             {post.requirements && (
               <div className="flex items-start gap-2 text-sm">
                 <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
@@ -155,6 +208,37 @@ export function PostDetailContent({
 
       {/* Owner: interest list */}
       {isOwner && <InterestList interests={interests} />}
+
+      {/* Owner: delete post */}
+      {isOwner && (
+        <>
+          <Button
+            variant="ghost"
+            className="w-full text-destructive hover:text-destructive"
+            onClick={() => setShowDeleteDialog(true)}
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            {t('postDetail.deletePost' as any)}
+          </Button>
+
+          <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t('postDetail.deleteTitle' as any)}</DialogTitle>
+                <DialogDescription>{t('postDetail.deleteDesc' as any)}</DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2 sm:gap-0">
+                <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+                  {t('common.cancel')}
+                </Button>
+                <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+                  {deleting ? t('postDetail.deleting' as any) : t('postDetail.confirmDelete' as any)}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </div>
   )
 }

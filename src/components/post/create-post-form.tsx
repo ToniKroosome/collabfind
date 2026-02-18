@@ -9,10 +9,12 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES } from '@/lib/constants'
+import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIVERABLE_QUANTITIES } from '@/lib/constants'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import { useLanguage, getCollabTypeLabel, getNicheLabel } from '@/lib/i18n'
+import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel } from '@/lib/i18n'
+import { Plus, X } from 'lucide-react'
+import type { DeliverableSlot, Json } from '@/types/database'
 
 interface CreatePostFormProps {
   userId: string
@@ -28,7 +30,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [location, setLocation] = useState('')
   const [showDetails, setShowDetails] = useState(false)
   const [timeline, setTimeline] = useState('')
-  const [deliverables, setDeliverables] = useState('')
+  const [deliverableSlots, setDeliverableSlots] = useState<DeliverableSlot[]>([])
   const [requirements, setRequirements] = useState('')
   const [compensation, setCompensation] = useState('')
   const [saving, setSaving] = useState(false)
@@ -80,6 +82,12 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
     setSaving(true)
 
+    // Build deliverables text summary from slots for backward compat
+    const filledSlots = deliverableSlots.filter((s) => s.content_type)
+    const deliverablesText = filledSlots.length > 0
+      ? filledSlots.map((s) => `${s.quantity}x ${s.content_type}${s.description ? ` — ${s.description}` : ''}`).join('\n')
+      : null
+
     const { error } = await supabase.from('collab_posts').insert({
       user_id: userId,
       title: title.trim(),
@@ -90,7 +98,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       preferred_audience_max: audienceMax,
       location: location.trim() || null,
       timeline: timeline.trim() || null,
-      deliverables: deliverables.trim() || null,
+      deliverables: deliverablesText,
+      deliverable_slots: filledSlots.length > 0 ? (filledSlots as unknown as Json) : null,
       requirements: requirements.trim() || null,
       compensation: compensation.trim() || null,
     })
@@ -231,19 +240,88 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 placeholder={t('createPost.timelinePlaceholder')}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="deliverables">{t('common.deliverables')}</Label>
-              <Textarea
-                id="deliverables"
-                value={deliverables}
-                onChange={(e) => setDeliverables(e.target.value)}
-                placeholder={t('createPost.deliverablesPH')}
-                maxLength={500}
-                rows={3}
-              />
-              <p className="text-xs text-muted-foreground">
-                {deliverables.length}/500
-              </p>
+            {/* Deliverable Slots */}
+            <div className="space-y-3">
+              <Label>{t('deliverable.whatYouNeed' as any)}</Label>
+              {deliverableSlots.map((slot, idx) => (
+                <div key={idx} className="space-y-2 rounded-lg border p-3">
+                  <div className="flex items-center gap-2">
+                    {/* Content Type */}
+                    <Select
+                      value={slot.content_type}
+                      onValueChange={(val) => {
+                        const updated = [...deliverableSlots]
+                        updated[idx] = { ...slot, content_type: val }
+                        setDeliverableSlots(updated)
+                      }}
+                    >
+                      <SelectTrigger className="w-[130px]">
+                        <SelectValue placeholder={t('deliverable.contentType' as any)} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DELIVERABLE_CONTENT_TYPES.map((ct) => (
+                          <SelectItem key={ct} value={ct}>
+                            {getDeliverableTypeLabel(t, ct)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Quantity */}
+                    <Select
+                      value={slot.quantity}
+                      onValueChange={(val) => {
+                        const updated = [...deliverableSlots]
+                        updated[idx] = { ...slot, quantity: val }
+                        setDeliverableSlots(updated)
+                      }}
+                    >
+                      <SelectTrigger className="w-[70px]">
+                        <SelectValue placeholder={t('deliverable.quantity' as any)} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DELIVERABLE_QUANTITIES.map((q) => (
+                          <SelectItem key={q} value={q}>{q}x</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <div className="flex-1" />
+
+                    {/* Remove */}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-destructive hover:text-destructive"
+                      onClick={() => setDeliverableSlots(deliverableSlots.filter((_, i) => i !== idx))}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+
+                  {/* Details input */}
+                  <Input
+                    value={slot.description}
+                    onChange={(e) => {
+                      const updated = [...deliverableSlots]
+                      updated[idx] = { ...slot, description: e.target.value }
+                      setDeliverableSlots(updated)
+                    }}
+                    placeholder={t('deliverable.detailsPlaceholder' as any)}
+                    className="text-sm"
+                  />
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setDeliverableSlots([...deliverableSlots, { content_type: '', quantity: '1', description: '' }])}
+              >
+                <Plus className="mr-1 h-3.5 w-3.5" />
+                {t('deliverable.addSlot' as any)}
+              </Button>
             </div>
             <div className="space-y-2">
               <Label htmlFor="requirements">{t('common.requirements')}</Label>

@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS collab_posts (
     location TEXT,
     timeline TEXT,
     deliverables TEXT,
+    deliverable_slots JSONB,
     requirements TEXT,
     compensation TEXT,
     is_open BOOLEAN DEFAULT TRUE,

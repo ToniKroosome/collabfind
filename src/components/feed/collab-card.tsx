@@ -8,7 +8,8 @@ import { MapPin, Star } from 'lucide-react'
 import { COLLAB_TYPE_COLORS } from '@/lib/constants'
 import { TimeAgo } from '@/components/shared/time-ago'
 import type { CollabPostWithProfile } from '@/types/database'
-import { useLanguage, getCollabTypeLabel, getNicheLabel } from '@/lib/i18n'
+import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel } from '@/lib/i18n'
+import type { DeliverableSlot } from '@/types/database'
 
 interface CollabCardProps {
   post: CollabPostWithProfile
@@ -74,6 +75,17 @@ export function CollabCard({ post, reputation }: CollabCardProps) {
               </span>
             )}
           </div>
+
+          {/* Deliverable badges */}
+          {post.deliverable_slots && Array.isArray(post.deliverable_slots) && post.deliverable_slots.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {(post.deliverable_slots as unknown as DeliverableSlot[]).map((slot, idx) => (
+                <Badge key={idx} variant="outline" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200">
+                  {slot.quantity}x {getDeliverableTypeLabel(t, slot.content_type)}
+                </Badge>
+              ))}
+            </div>
+          )}
 
           {/* Compensation hint */}
           {post.compensation && (

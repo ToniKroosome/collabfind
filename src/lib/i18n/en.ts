@@ -87,6 +87,11 @@ export const en: Translations = {
   'postDetail.collabDetails': 'Collab Details',
   'postDetail.lookingFor': 'Looking for {range} followers',
   'postDetail.noLongerAccepting': 'This collab post is no longer accepting interests.',
+  'postDetail.deletePost': 'Delete Post',
+  'postDetail.deleteTitle': 'Delete this post?',
+  'postDetail.deleteDesc': 'This will permanently remove the post and all related interests. This action cannot be undone.',
+  'postDetail.confirmDelete': 'Yes, Delete',
+  'postDetail.deleting': 'Deleting...',
 
   // Interest
   'interest.imInterested': "I'm Interested",
@@ -222,6 +227,8 @@ export const en: Translations = {
   'toast.selectCollabType': 'Please select a collab type',
   'toast.failedCreatePost': 'Failed to create post',
   'toast.postCreated': 'Collab post created!',
+  'toast.failedDeletePost': 'Failed to delete post',
+  'toast.postDeleted': 'Post deleted!',
   'toast.alreadyInterested': "You've already expressed interest",
   'toast.failedInterest': 'Failed to express interest',
   'toast.interestSent': 'Interest sent! The creator will be notified.',
@@ -346,6 +353,26 @@ export const en: Translations = {
   'toast.enterSubmissionDesc': 'Please describe your completed work',
   'toast.storyboardSaved': 'Storyboard saved!',
   'toast.failedSaveStoryboard': 'Failed to save storyboard',
+
+  // Deliverable content types
+  'deliverable.video': 'Video',
+  'deliverable.photo': 'Photo',
+  'deliverable.reel': 'Reel',
+  'deliverable.story': 'Story',
+  'deliverable.post': 'Post',
+  'deliverable.blog': 'Blog',
+  'deliverable.livestream': 'Livestream',
+  'deliverable.review': 'Review',
+  'deliverable.shoutout': 'Shoutout',
+  'deliverable.other': 'Other',
+
+  // Deliverable form
+  'deliverable.whatYouNeed': 'What do you need from your partner?',
+  'deliverable.addSlot': 'Add Deliverable',
+  'deliverable.contentType': 'Content Type',
+  'deliverable.quantity': 'Qty',
+  'deliverable.details': 'Details',
+  'deliverable.detailsPlaceholder': 'Specify details, e.g., 30s vertical format...',
 
   // Time ago
   'time.justNow': 'just now',

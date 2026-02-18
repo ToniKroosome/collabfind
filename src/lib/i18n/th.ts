@@ -87,6 +87,11 @@ export const th: Translations = {
   'postDetail.collabDetails': 'รายละเอียดคอลแลป',
   'postDetail.lookingFor': 'มองหาผู้ติดตาม {range}',
   'postDetail.noLongerAccepting': 'โพสต์คอลแลปนี้ไม่รับความสนใจแล้ว',
+  'postDetail.deletePost': 'ลบโพสต์',
+  'postDetail.deleteTitle': 'ลบโพสต์นี้?',
+  'postDetail.deleteDesc': 'โพสต์และความสนใจทั้งหมดจะถูกลบอย่างถาวร ไม่สามารถย้อนกลับได้',
+  'postDetail.confirmDelete': 'ใช่ ลบเลย',
+  'postDetail.deleting': 'กำลังลบ...',
 
   // Interest
   'interest.imInterested': 'ฉันสนใจ',
@@ -222,6 +227,8 @@ export const th: Translations = {
   'toast.selectCollabType': 'กรุณาเลือกประเภทคอลแลป',
   'toast.failedCreatePost': 'ไม่สามารถสร้างโพสต์ได้',
   'toast.postCreated': 'สร้างโพสต์คอลแลปแล้ว!',
+  'toast.failedDeletePost': 'ไม่สามารถลบโพสต์ได้',
+  'toast.postDeleted': 'ลบโพสต์แล้ว!',
   'toast.alreadyInterested': 'คุณแสดงความสนใจไปแล้ว',
   'toast.failedInterest': 'ไม่สามารถแสดงความสนใจได้',
   'toast.interestSent': 'ส่งความสนใจแล้ว! ครีเอเตอร์จะได้รับการแจ้งเตือน',
@@ -346,6 +353,26 @@ export const th: Translations = {
   'toast.enterSubmissionDesc': 'กรุณาอธิบายผลงานที่เสร็จแล้ว',
   'toast.storyboardSaved': 'บันทึกสตอรี่บอร์ดแล้ว!',
   'toast.failedSaveStoryboard': 'ไม่สามารถบันทึกสตอรี่บอร์ดได้',
+
+  // Deliverable content types
+  'deliverable.video': 'วิดีโอ',
+  'deliverable.photo': 'รูปภาพ',
+  'deliverable.reel': 'Reel',
+  'deliverable.story': 'Story',
+  'deliverable.post': 'โพสต์',
+  'deliverable.blog': 'บล็อก',
+  'deliverable.livestream': 'ไลฟ์สด',
+  'deliverable.review': 'รีวิว',
+  'deliverable.shoutout': 'Shoutout',
+  'deliverable.other': 'อื่นๆ',
+
+  // Deliverable form
+  'deliverable.whatYouNeed': 'คุณต้องการอะไรจากพาร์ทเนอร์?',
+  'deliverable.addSlot': 'เพิ่มผลงาน',
+  'deliverable.contentType': 'ประเภทคอนเทนต์',
+  'deliverable.quantity': 'จำนวน',
+  'deliverable.details': 'รายละเอียด',
+  'deliverable.detailsPlaceholder': 'ระบุรายละเอียด เช่น วิดีโอแนวตั้ง 30 วินาที...',
 
   // Time ago
   'time.justNow': 'เมื่อกี้',

@@ -87,6 +87,11 @@ export interface Translations {
   'postDetail.collabDetails': string
   'postDetail.lookingFor': string
   'postDetail.noLongerAccepting': string
+  'postDetail.deletePost': string
+  'postDetail.deleteTitle': string
+  'postDetail.deleteDesc': string
+  'postDetail.confirmDelete': string
+  'postDetail.deleting': string
 
   // Interest
   'interest.imInterested': string
@@ -222,6 +227,8 @@ export interface Translations {
   'toast.selectCollabType': string
   'toast.failedCreatePost': string
   'toast.postCreated': string
+  'toast.failedDeletePost': string
+  'toast.postDeleted': string
   'toast.alreadyInterested': string
   'toast.failedInterest': string
   'toast.interestSent': string
@@ -346,6 +353,26 @@ export interface Translations {
   'toast.enterSubmissionDesc': string
   'toast.storyboardSaved': string
   'toast.failedSaveStoryboard': string
+
+  // Deliverable content types
+  'deliverable.video': string
+  'deliverable.photo': string
+  'deliverable.reel': string
+  'deliverable.story': string
+  'deliverable.post': string
+  'deliverable.blog': string
+  'deliverable.livestream': string
+  'deliverable.review': string
+  'deliverable.shoutout': string
+  'deliverable.other': string
+
+  // Deliverable form
+  'deliverable.whatYouNeed': string
+  'deliverable.addSlot': string
+  'deliverable.contentType': string
+  'deliverable.quantity': string
+  'deliverable.details': string
+  'deliverable.detailsPlaceholder': string
 
   // Time ago
   'time.justNow': string

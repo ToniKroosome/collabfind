@@ -132,6 +132,7 @@ export interface Database {
           location: string | null
           timeline: string | null
           deliverables: string | null
+          deliverable_slots: Json | null
           requirements: string | null
           compensation: string | null
           is_open: boolean
@@ -150,6 +151,7 @@ export interface Database {
           location?: string | null
           timeline?: string | null
           deliverables?: string | null
+          deliverable_slots?: Json | null
           requirements?: string | null
           compensation?: string | null
           is_open?: boolean
@@ -168,6 +170,7 @@ export interface Database {
           location?: string | null
           timeline?: string | null
           deliverables?: string | null
+          deliverable_slots?: Json | null
           requirements?: string | null
           compensation?: string | null
           is_open?: boolean
@@ -634,6 +637,12 @@ export interface StoryboardSlot {
   order: number
   description: string
   assigned_to: string // user_id of the assigned person
+}
+
+export interface DeliverableSlot {
+  content_type: string // video, photo, reel, story, post, blog, etc.
+  quantity: string // 1, 2, 3, etc.
+  description: string // specific details
 }
 
 export interface ContractWithSubmissions extends CollabContract {
