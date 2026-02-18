@@ -374,6 +374,19 @@ export interface Translations {
   'deliverable.details': string
   'deliverable.detailsPlaceholder': string
 
+  // Multi-collaborator
+  'collab.maxCollaborators': string
+  'collab.collabMode': string
+  'collab.group': string
+  'collab.separate': string
+  'collab.groupDesc': string
+  'collab.separateDesc': string
+  'collab.slotsProgress': string
+  'collab.lookingForN': string
+  'collab.groupChat': string
+  'collab.viewChat': string
+  'collab.memberCount': string
+
   // Time ago
   'time.justNow': string
   'time.minutesAgo': string

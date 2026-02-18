@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { MapPin, Star } from 'lucide-react'
+import { MapPin, Star, Users } from 'lucide-react'
 import { COLLAB_TYPE_COLORS } from '@/lib/constants'
 import { TimeAgo } from '@/components/shared/time-ago'
 import type { CollabPostWithProfile } from '@/types/database'
@@ -84,6 +84,14 @@ export function CollabCard({ post, reputation }: CollabCardProps) {
                   {slot.quantity}x {getDeliverableTypeLabel(t, slot.content_type)}
                 </Badge>
               ))}
+            </div>
+          )}
+
+          {/* Collaborator count */}
+          {post.max_collaborators > 1 && (
+            <div className="mt-1.5 flex items-center gap-1 text-xs font-medium text-indigo-600">
+              <Users className="h-3 w-3" />
+              {t('collab.lookingForN').replace('{n}', String(post.max_collaborators))}
             </div>
           )}
 

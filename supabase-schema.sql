@@ -96,6 +96,9 @@ CREATE TABLE IF NOT EXISTS collab_posts (
     deliverable_slots JSONB,
     requirements TEXT,
     compensation TEXT,
+    max_collaborators INT NOT NULL DEFAULT 1,
+    collab_mode TEXT NOT NULL DEFAULT 'separate'
+        CHECK (collab_mode IN ('separate', 'group')),
     is_open BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -176,13 +179,18 @@ CREATE TRIGGER trigger_interests_updated_at
 -- =====================================================
 CREATE TABLE IF NOT EXISTS matches (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    interest_id UUID NOT NULL UNIQUE REFERENCES interests(id) ON DELETE CASCADE,
+    interest_id UUID NOT NULL REFERENCES interests(id) ON DELETE CASCADE,
     post_id UUID NOT NULL REFERENCES collab_posts(id) ON DELETE CASCADE,
     user_a UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     user_b UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    members UUID[] DEFAULT '{}',
+    collab_mode TEXT DEFAULT 'separate'
+        CHECK (collab_mode IN ('separate', 'group')),
     status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'completed', 'cancelled')),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS idx_matches_interest_id ON matches(interest_id);
 
 CREATE INDEX IF NOT EXISTS idx_matches_user_a ON matches(user_a);
 CREATE INDEX IF NOT EXISTS idx_matches_user_b ON matches(user_b);
@@ -193,7 +201,7 @@ ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own matches"
 ON matches FOR SELECT TO authenticated
-USING (auth.uid() = user_a OR auth.uid() = user_b);
+USING (auth.uid() = user_a OR auth.uid() = user_b OR auth.uid() = ANY(members));
 
 CREATE POLICY "System can create matches"
 ON matches FOR INSERT TO authenticated
@@ -201,22 +209,53 @@ WITH CHECK (auth.uid() = user_a);
 
 CREATE POLICY "Participants update match status"
 ON matches FOR UPDATE TO authenticated
-USING (auth.uid() = user_a OR auth.uid() = user_b)
-WITH CHECK (auth.uid() = user_a OR auth.uid() = user_b);
+USING (auth.uid() = user_a OR auth.uid() = user_b OR auth.uid() = ANY(members))
+WITH CHECK (auth.uid() = user_a OR auth.uid() = user_b OR auth.uid() = ANY(members));
 
--- Auto-create match when interest is accepted
+-- Auto-create match when interest is accepted (supports multi-collaborator)
 CREATE OR REPLACE FUNCTION handle_interest_accepted()
 RETURNS TRIGGER AS $$
 DECLARE
     v_post_owner UUID;
+    v_post_mode TEXT;
+    v_max INT;
+    v_accepted_count INT;
+    v_existing_match_id UUID;
 BEGIN
     IF NEW.status = 'accepted' AND OLD.status = 'pending' THEN
-        SELECT user_id INTO v_post_owner
+        SELECT user_id, collab_mode, max_collaborators
+        INTO v_post_owner, v_post_mode, v_max
         FROM collab_posts WHERE id = NEW.post_id;
 
-        INSERT INTO matches (interest_id, post_id, user_a, user_b)
-        VALUES (NEW.id, NEW.post_id, v_post_owner, NEW.user_id)
-        ON CONFLICT (interest_id) DO NOTHING;
+        IF v_post_mode = 'group' THEN
+            -- Group mode: reuse single match, add member
+            SELECT id INTO v_existing_match_id
+            FROM matches WHERE post_id = NEW.post_id AND collab_mode = 'group' AND status = 'active'
+            LIMIT 1;
+
+            IF v_existing_match_id IS NULL THEN
+                INSERT INTO matches (interest_id, post_id, user_a, user_b, collab_mode, members)
+                VALUES (NEW.id, NEW.post_id, v_post_owner, NEW.user_id, 'group',
+                        ARRAY[v_post_owner, NEW.user_id]);
+            ELSE
+                UPDATE matches
+                SET members = array_append(members, NEW.user_id), interest_id = NEW.id
+                WHERE id = v_existing_match_id AND NOT (NEW.user_id = ANY(members));
+            END IF;
+        ELSE
+            -- Separate mode: one match per collaborator
+            INSERT INTO matches (interest_id, post_id, user_a, user_b, collab_mode, members)
+            VALUES (NEW.id, NEW.post_id, v_post_owner, NEW.user_id, 'separate',
+                    ARRAY[v_post_owner, NEW.user_id])
+            ON CONFLICT DO NOTHING;
+        END IF;
+
+        -- Auto-close post when all slots filled
+        SELECT COUNT(*) INTO v_accepted_count
+        FROM interests WHERE post_id = NEW.post_id AND status = 'accepted';
+        IF v_accepted_count >= v_max THEN
+            UPDATE collab_posts SET is_open = false WHERE id = NEW.post_id;
+        END IF;
     END IF;
     RETURN NEW;
 END;
@@ -249,7 +288,7 @@ CREATE POLICY "Match participants can view messages"
 ON messages FOR SELECT TO authenticated
 USING (
     match_id IN (
-        SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+        SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)
     )
 );
 
@@ -258,7 +297,7 @@ ON messages FOR INSERT TO authenticated
 WITH CHECK (
     auth.uid() = sender_id
     AND match_id IN (
-        SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+        SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)
     )
 );
 
@@ -267,7 +306,7 @@ ON messages FOR UPDATE TO authenticated
 USING (
     auth.uid() != sender_id
     AND match_id IN (
-        SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+        SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)
     )
 );
 
@@ -299,7 +338,7 @@ WITH CHECK (
     auth.uid() = reviewer_id AND reviewer_id != reviewee_id
     AND match_id IN (
         SELECT id FROM matches WHERE status = 'completed'
-        AND (user_a = auth.uid() OR user_b = auth.uid())
+        AND (user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members))
     )
 );
 
@@ -539,7 +578,7 @@ ALTER TABLE collab_contracts ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Match participants can view contracts"
 ON collab_contracts FOR SELECT TO authenticated
 USING (match_id IN (
-    SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+    SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)
 ));
 
 CREATE POLICY "Match participants can create contracts"
@@ -548,14 +587,14 @@ WITH CHECK (
     auth.uid() = created_by
     AND match_id IN (
         SELECT id FROM matches
-        WHERE (user_a = auth.uid() OR user_b = auth.uid()) AND status = 'active'
+        WHERE (user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)) AND status = 'active'
     )
 );
 
 CREATE POLICY "Match participants can update contracts"
 ON collab_contracts FOR UPDATE TO authenticated
 USING (match_id IN (
-    SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+    SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)
 ));
 
 CREATE TRIGGER trigger_collab_contracts_updated_at
@@ -590,7 +629,7 @@ ON contract_submissions FOR SELECT TO authenticated
 USING (contract_id IN (
     SELECT c.id FROM collab_contracts c
     JOIN matches m ON c.match_id = m.id
-    WHERE m.user_a = auth.uid() OR m.user_b = auth.uid()
+    WHERE m.user_a = auth.uid() OR m.user_b = auth.uid() OR auth.uid() = ANY(m.members)
 ));
 
 CREATE POLICY "Match participants can create submissions"
@@ -600,7 +639,7 @@ WITH CHECK (
     AND contract_id IN (
         SELECT c.id FROM collab_contracts c
         JOIN matches m ON c.match_id = m.id
-        WHERE (m.user_a = auth.uid() OR m.user_b = auth.uid()) AND c.status = 'accepted'
+        WHERE (m.user_a = auth.uid() OR m.user_b = auth.uid() OR auth.uid() = ANY(m.members)) AND c.status = 'accepted'
     )
 );
 
@@ -611,7 +650,7 @@ USING (
     AND contract_id IN (
         SELECT c.id FROM collab_contracts c
         JOIN matches m ON c.match_id = m.id
-        WHERE m.user_a = auth.uid() OR m.user_b = auth.uid()
+        WHERE m.user_a = auth.uid() OR m.user_b = auth.uid() OR auth.uid() = ANY(m.members)
     )
 );
 
@@ -625,7 +664,8 @@ CREATE TRIGGER trigger_contract_submissions_updated_at
 -- =====================================================
 CREATE TABLE IF NOT EXISTS storyboards (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    match_id UUID NOT NULL REFERENCES matches(id) ON DELETE CASCADE UNIQUE,
+    match_id UUID NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+    post_id UUID REFERENCES collab_posts(id) ON DELETE CASCADE UNIQUE,
     created_by UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     slots JSONB NOT NULL DEFAULT '[]',
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -636,16 +676,18 @@ ALTER TABLE storyboards ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Match participants can view storyboards"
 ON storyboards FOR SELECT TO authenticated
-USING (match_id IN (
-    SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
-));
+USING (
+    post_id IN (
+        SELECT post_id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)
+    )
+);
 
 CREATE POLICY "Match participants can create storyboards"
 ON storyboards FOR INSERT TO authenticated
 WITH CHECK (
     auth.uid() = created_by
-    AND match_id IN (
-        SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+    AND post_id IN (
+        SELECT post_id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)
     )
 );
 
@@ -768,3 +810,60 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER trigger_notify_submission_review
     AFTER UPDATE ON contract_submissions FOR EACH ROW
     EXECUTE FUNCTION notify_submission_review();
+
+-- =====================================================
+-- 16. MULTI-COLLABORATOR MIGRATION
+-- Run these ALTER TABLE statements if the database already exists.
+-- =====================================================
+
+-- Add multi-collaborator columns to collab_posts
+ALTER TABLE collab_posts
+    ADD COLUMN IF NOT EXISTS max_collaborators INT NOT NULL DEFAULT 1,
+    ADD COLUMN IF NOT EXISTS collab_mode TEXT NOT NULL DEFAULT 'separate'
+        CHECK (collab_mode IN ('separate', 'group'));
+
+-- Add multi-collaborator columns to matches
+ALTER TABLE matches
+    ADD COLUMN IF NOT EXISTS members UUID[] DEFAULT '{}',
+    ADD COLUMN IF NOT EXISTS collab_mode TEXT DEFAULT 'separate'
+        CHECK (collab_mode IN ('separate', 'group'));
+
+-- Drop UNIQUE on interest_id (group mode reuses one match)
+ALTER TABLE matches DROP CONSTRAINT IF EXISTS matches_interest_id_key;
+CREATE INDEX IF NOT EXISTS idx_matches_interest_id ON matches(interest_id);
+
+-- Add post_id to storyboards, change from match-unique to post-unique
+ALTER TABLE storyboards
+    ADD COLUMN IF NOT EXISTS post_id UUID REFERENCES collab_posts(id) ON DELETE CASCADE;
+UPDATE storyboards s SET post_id = m.post_id FROM matches m WHERE s.match_id = m.id AND s.post_id IS NULL;
+ALTER TABLE storyboards DROP CONSTRAINT IF EXISTS storyboards_match_id_key;
+ALTER TABLE storyboards ADD CONSTRAINT storyboards_post_id_key UNIQUE (post_id);
+
+-- Update RLS policies for group mode (members array check)
+DROP POLICY IF EXISTS "Users can view their own matches" ON matches;
+CREATE POLICY "Users can view their own matches" ON matches FOR SELECT TO authenticated
+USING (auth.uid() = user_a OR auth.uid() = user_b OR auth.uid() = ANY(members));
+
+DROP POLICY IF EXISTS "Participants update match status" ON matches;
+CREATE POLICY "Participants update match status" ON matches FOR UPDATE TO authenticated
+USING (auth.uid() = user_a OR auth.uid() = user_b OR auth.uid() = ANY(members));
+
+DROP POLICY IF EXISTS "Match participants can view messages" ON messages;
+CREATE POLICY "Match participants can view messages" ON messages FOR SELECT TO authenticated
+USING (match_id IN (SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)));
+
+DROP POLICY IF EXISTS "Match participants can send messages" ON messages;
+CREATE POLICY "Match participants can send messages" ON messages FOR INSERT TO authenticated
+WITH CHECK (auth.uid() = sender_id AND match_id IN (SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)));
+
+DROP POLICY IF EXISTS "Users can mark messages as read" ON messages;
+CREATE POLICY "Users can mark messages as read" ON messages FOR UPDATE TO authenticated
+USING (auth.uid() != sender_id AND match_id IN (SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)));
+
+DROP POLICY IF EXISTS "Match participants can view storyboards" ON storyboards;
+CREATE POLICY "Match participants can view storyboards" ON storyboards FOR SELECT TO authenticated
+USING (post_id IN (SELECT post_id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)));
+
+DROP POLICY IF EXISTS "Match participants can create storyboards" ON storyboards;
+CREATE POLICY "Match participants can create storyboards" ON storyboards FOR INSERT TO authenticated
+WITH CHECK (auth.uid() = created_by AND post_id IN (SELECT post_id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)));

@@ -16,18 +16,16 @@ import { Plus, Save, FileText } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
 import { StoryboardSlot } from '@/components/storyboard/storyboard-slot'
 import type { Json } from '@/types/database'
-import type { Storyboard, StoryboardSlot as StoryboardSlotType } from '@/types/database'
+import type { Storyboard, StoryboardSlot as StoryboardSlotType, CollabMember } from '@/types/database'
 
 interface StoryboardPanelProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   matchId: string
+  postId: string
   currentUserId: string
   storyboard: Storyboard | null
-  userAId: string
-  userBId: string
-  userAName: string
-  userBName: string
+  members: CollabMember[]
   postOwnerId: string
   onStoryboardChange: () => void
 }
@@ -36,12 +34,10 @@ export function StoryboardPanel({
   open,
   onOpenChange,
   matchId,
+  postId,
   currentUserId,
   storyboard,
-  userAId,
-  userBId,
-  userAName,
-  userBName,
+  members,
   postOwnerId,
   onStoryboardChange,
 }: StoryboardPanelProps) {
@@ -68,6 +64,7 @@ export function StoryboardPanel({
 
     const { error } = await supabase.from('storyboards').insert({
       match_id: matchId,
+      post_id: postId,
       created_by: currentUserId,
       slots: [] as unknown as Json,
     })
@@ -86,7 +83,7 @@ export function StoryboardPanel({
     const newSlot: StoryboardSlotType = {
       order: slots.length + 1,
       description: '',
-      assigned_to: userAId,
+      assigned_to: members[0]?.id || '',
     }
     setSlots([...slots, newSlot])
   }
@@ -202,10 +199,7 @@ export function StoryboardPanel({
                     slot={slot}
                     index={index}
                     isOwner={isOwner}
-                    userAName={userAName}
-                    userBName={userBName}
-                    userAId={userAId}
-                    userBId={userBId}
+                    members={members}
                     onUpdate={(updatedSlot) => handleUpdateSlot(index, updatedSlot)}
                     onDelete={() => handleDeleteSlot(index)}
                     onMoveUp={() => handleMoveUp(index)}

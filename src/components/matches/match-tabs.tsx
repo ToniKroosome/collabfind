@@ -9,7 +9,7 @@ import { MATCH_STATUS_COLORS } from '@/lib/constants'
 import { TimeAgo } from '@/components/shared/time-ago'
 import { MatchStatusControls } from '@/components/matches/match-status-controls'
 import { ReviewForm } from '@/components/reviews/review-form'
-import { MessageCircle } from 'lucide-react'
+import { MessageCircle, Users } from 'lucide-react'
 import Link from 'next/link'
 import { useLanguage, getCollabTypeLabel } from '@/lib/i18n'
 
@@ -30,44 +30,65 @@ export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTab
   const completedMatches = matches.filter((m) => m.status === 'completed')
 
   const renderMatch = (match: (typeof matches)[0]) => {
-    const partner =
-      match.user_a === currentUserId ? match.partner_b : match.partner_a
-    const partnerId =
-      match.user_a === currentUserId ? match.user_b : match.user_a
+    const isGroup = match.collab_mode === 'group'
+    const partner = isGroup
+      ? null
+      : match.user_a === currentUserId ? match.partner_b : match.partner_a
+    const partnerId = isGroup
+      ? null
+      : match.user_a === currentUserId ? match.user_b : match.user_a
     const typeLabel = getCollabTypeLabel(t, match.collab_posts?.collab_type)
     const status = match.status || 'active'
     const statusColor = MATCH_STATUS_COLORS[status] || MATCH_STATUS_COLORS.active
     const isMock = match.id?.startsWith('mock-')
 
+    const displayName = isGroup
+      ? (match.collab_posts?.title || t('collab.groupChat'))
+      : partner?.full_name
+
     return (
       <Card key={match.id}>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
-            <Link href={`/profile/${partner.id}`}>
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={partner.avatar_url || undefined} />
-                <AvatarFallback>
-                  {partner.full_name?.charAt(0) || '?'}
-                </AvatarFallback>
-              </Avatar>
-            </Link>
+            {isGroup ? (
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100">
+                <Users className="h-5 w-5 text-indigo-600" />
+              </div>
+            ) : (
+              <Link href={`/profile/${partner?.id}`}>
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={partner?.avatar_url || undefined} />
+                  <AvatarFallback>
+                    {partner?.full_name?.charAt(0) || '?'}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
+            )}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <Link
-                  href={`/profile/${partner.id}`}
-                  className="font-semibold hover:underline"
-                >
-                  {partner.full_name}
-                </Link>
+                {isGroup ? (
+                  <span className="font-semibold">{displayName}</span>
+                ) : (
+                  <Link
+                    href={`/profile/${partner?.id}`}
+                    className="font-semibold hover:underline"
+                  >
+                    {displayName}
+                  </Link>
+                )}
                 <Badge className={`${statusColor} text-[10px]`} variant="secondary">
                   {status}
                 </Badge>
               </div>
-              {match.collab_posts && (
+              {isGroup ? (
+                <p className="text-xs text-muted-foreground">
+                  {t('collab.memberCount').replace('{n}', String(match.members?.length || 0))}
+                </p>
+              ) : match.collab_posts ? (
                 <p className="text-sm text-muted-foreground line-clamp-1">
                   {match.collab_posts.title}
                 </p>
-              )}
+              ) : null}
               <div className="mt-1 flex items-center gap-2">
                 {typeLabel && (
                   <Badge variant="secondary" className="text-xs">
@@ -101,12 +122,12 @@ export function MatchTabs({ matches, currentUserId, reviewedMatchIds }: MatchTab
               />
             )}
 
-            {status === 'completed' && (
+            {status === 'completed' && !isGroup && partnerId && (
               <ReviewForm
                 matchId={match.id}
                 reviewerId={currentUserId}
                 revieweeId={partnerId}
-                revieweeName={partner.full_name || 'this creator'}
+                revieweeName={partner?.full_name || 'this creator'}
                 alreadyReviewed={reviewedSet.has(match.id)}
                 isMock={isMock}
               />

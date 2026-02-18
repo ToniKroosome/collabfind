@@ -6,8 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import type { Message, Profile, ContractWithSubmissions, Storyboard } from '@/types/database'
-import { Send, FileText, Clapperboard } from 'lucide-react'
+import type { Message, Profile, ContractWithSubmissions, Storyboard, CollabMember } from '@/types/database'
+import { Send, FileText, Clapperboard, Users } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
 import { ChatContractBar } from '@/components/contracts/chat-contract-bar'
 import { ContractPanel } from '@/components/contracts/contract-panel'
@@ -15,8 +15,11 @@ import { StoryboardPanel } from '@/components/storyboard/storyboard-panel'
 
 interface ChatWindowProps {
   matchId: string
+  postId?: string
   currentUserId: string
-  partner: Profile
+  partner: Profile | null
+  groupMembers?: CollabMember[]
+  isGroupMode?: boolean
   initialMessages: Message[]
   isMock?: boolean
   initialContract?: ContractWithSubmissions | null
@@ -28,8 +31,11 @@ interface ChatWindowProps {
 
 export function ChatWindow({
   matchId,
+  postId = '',
   currentUserId,
   partner,
+  groupMembers = [],
+  isGroupMode = false,
   initialMessages,
   isMock = false,
   initialContract = null,
@@ -49,17 +55,6 @@ export function ChatWindow({
   const scrollRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
-  // Get partner name for storyboard
-  const currentUserName = userAId === currentUserId
-    ? (partner.full_name || '?') // if current is A, partner is B — but we need our own name
-    : (partner.full_name || '?')
-  const userAName = userAId === currentUserId
-    ? 'You'
-    : (partner.full_name || '?')
-  const userBName = userBId === currentUserId
-    ? 'You'
-    : (partner.full_name || '?')
-
   // Refresh contract data
   const refreshContract = useCallback(async () => {
     const { data } = await supabase
@@ -71,15 +66,16 @@ export function ChatWindow({
     setContract((data?.[0] as ContractWithSubmissions) || null)
   }, [matchId, supabase])
 
-  // Refresh storyboard data
+  // Refresh storyboard data (now by post_id)
   const refreshStoryboard = useCallback(async () => {
+    if (!postId) return
     const { data } = await supabase
       .from('storyboards')
       .select('*')
-      .eq('match_id', matchId)
-      .single()
+      .eq('post_id', postId)
+      .maybeSingle()
     setStoryboard((data as Storyboard) || null)
-  }, [matchId, supabase])
+  }, [postId, supabase])
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -138,7 +134,7 @@ export function ChatWindow({
             return [...prev, newMessage]
           })
 
-          // Mark as read if from partner
+          // Mark as read if from someone else
           if (newMessage.sender_id !== currentUserId) {
             supabase
               .from('messages')
@@ -191,22 +187,44 @@ export function ChatWindow({
     setSending(false)
   }
 
+  // Helper to find sender name in group mode
+  const getSenderName = (senderId: string) => {
+    const member = groupMembers.find((m) => m.id === senderId)
+    return member?.full_name?.split(' ')[0] || '?'
+  }
+
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col">
       {/* Header */}
       <div className="flex items-center gap-3 border-b px-4 py-3">
-        <Avatar className="h-9 w-9">
-          <AvatarImage src={partner.avatar_url || undefined} />
-          <AvatarFallback className="text-sm">
-            {partner.full_name?.charAt(0) || '?'}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <p className="font-semibold text-sm">{partner.full_name}</p>
-          {partner.username && (
-            <p className="text-xs text-muted-foreground">@{partner.username}</p>
-          )}
-        </div>
+        {isGroupMode ? (
+          <>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100">
+              <Users className="h-4 w-4 text-indigo-600" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-sm">{t('collab.groupChat')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('collab.memberCount').replace('{n}', String(groupMembers.length))}
+              </p>
+            </div>
+          </>
+        ) : partner ? (
+          <>
+            <Avatar className="h-9 w-9">
+              <AvatarImage src={partner.avatar_url || undefined} />
+              <AvatarFallback className="text-sm">
+                {partner.full_name?.charAt(0) || '?'}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <p className="font-semibold text-sm">{partner.full_name}</p>
+              {partner.username && (
+                <p className="text-xs text-muted-foreground">@{partner.username}</p>
+              )}
+            </div>
+          </>
+        ) : null}
         {!isMock && userAId && (
           <div className="flex items-center gap-1">
             <Button
@@ -217,20 +235,22 @@ export function ChatWindow({
             >
               <Clapperboard className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => setContractPanelOpen(true)}
-            >
-              <FileText className="h-4 w-4" />
-            </Button>
+            {!isGroupMode && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setContractPanelOpen(true)}
+              >
+                <FileText className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         )}
       </div>
 
-      {/* Contract Status Bar */}
-      {!isMock && userAId && (
+      {/* Contract Status Bar (hide in group mode for now) */}
+      {!isMock && userAId && !isGroupMode && partner && (
         <ChatContractBar
           contract={contract}
           currentUserId={currentUserId}
@@ -244,7 +264,9 @@ export function ChatWindow({
         {messages.length === 0 && (
           <div className="flex h-full items-center justify-center">
             <p className="text-sm text-muted-foreground">
-              {t('messages.sayHi').replace('{name}', partner.full_name?.split(' ')[0] || '')}
+              {isGroupMode
+                ? t('messages.noMessagesYet')
+                : t('messages.sayHi').replace('{name}', partner?.full_name?.split(' ')[0] || '')}
             </p>
           </div>
         )}
@@ -263,6 +285,12 @@ export function ChatWindow({
                     : 'bg-muted rounded-bl-md'
                 )}
               >
+                {/* Show sender name in group mode for non-own messages */}
+                {isGroupMode && !isOwn && (
+                  <p className="mb-0.5 text-xs font-medium text-indigo-600">
+                    {getSenderName(message.sender_id)}
+                  </p>
+                )}
                 <p className="whitespace-pre-wrap break-words">
                   {message.content}
                 </p>
@@ -305,8 +333,8 @@ export function ChatWindow({
         </Button>
       </form>
 
-      {/* Contract Panel */}
-      {!isMock && userAId && (
+      {/* Contract Panel (hide in group mode for now) */}
+      {!isMock && userAId && !isGroupMode && partner && (
         <ContractPanel
           open={contractPanelOpen}
           onOpenChange={setContractPanelOpen}
@@ -326,12 +354,10 @@ export function ChatWindow({
           open={storyboardPanelOpen}
           onOpenChange={setStoryboardPanelOpen}
           matchId={matchId}
+          postId={postId}
           currentUserId={currentUserId}
           storyboard={storyboard}
-          userAId={userAId}
-          userBId={userBId}
-          userAName={userAName}
-          userBName={userBName}
+          members={groupMembers}
           postOwnerId={postOwnerId}
           onStoryboardChange={refreshStoryboard}
         />

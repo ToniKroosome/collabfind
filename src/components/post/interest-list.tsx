@@ -11,18 +11,27 @@ import type { InterestWithProfile } from '@/types/database'
 import { toast } from 'sonner'
 import { TimeAgo } from '@/components/shared/time-ago'
 import Link from 'next/link'
-import { Check, X } from 'lucide-react'
+import { Check, X, MessageCircle } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
 
 interface InterestListProps {
   interests: InterestWithProfile[]
+  maxCollaborators?: number
+  collabMode?: string
 }
 
-export function InterestList({ interests: initialInterests }: InterestListProps) {
+export function InterestList({
+  interests: initialInterests,
+  maxCollaborators = 1,
+  collabMode = 'separate',
+}: InterestListProps) {
   const [interests, setInterests] = useState(initialInterests)
   const router = useRouter()
   const supabase = createClient()
   const { t } = useLanguage()
+
+  const acceptedCount = interests.filter((i) => i.status === 'accepted').length
+  const slotsFull = acceptedCount >= maxCollaborators
 
   const handleAction = async (interestId: string, action: 'accepted' | 'declined') => {
     const { error } = await supabase
@@ -45,8 +54,8 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
         : t('toast.interestDeclined')
     )
 
-    // If accepted, redirect to the new chat
-    if (action === 'accepted') {
+    // Single-collab mode: redirect to chat after accept
+    if (action === 'accepted' && maxCollaborators === 1) {
       const { data: match } = await supabase
         .from('matches')
         .select('id')
@@ -62,6 +71,32 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
     router.refresh()
   }
 
+  const handleViewChat = async (interest: InterestWithProfile) => {
+    if (collabMode === 'group') {
+      // Group mode: find the single group match for this post
+      const { data: match } = await supabase
+        .from('matches')
+        .select('id')
+        .eq('post_id', interest.post_id)
+        .eq('collab_mode', 'group')
+        .eq('status', 'active')
+        .limit(1)
+        .maybeSingle()
+      if (match) router.push(`/messages/${match.id}`)
+    } else {
+      // Separate mode: find the 1-on-1 match for this user
+      const { data: match } = await supabase
+        .from('matches')
+        .select('id')
+        .eq('post_id', interest.post_id)
+        .eq('user_b', interest.user_id)
+        .eq('status', 'active')
+        .limit(1)
+        .maybeSingle()
+      if (match) router.push(`/messages/${match.id}`)
+    }
+  }
+
   if (interests.length === 0) {
     return (
       <p className="py-4 text-center text-sm text-muted-foreground">
@@ -72,9 +107,18 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
 
   return (
     <div className="space-y-3">
-      <h3 className="font-semibold">
-        {t('interest.interests')} ({interests.length})
-      </h3>
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold">
+          {t('interest.interests')} ({interests.length})
+        </h3>
+        {maxCollaborators > 1 && (
+          <span className="text-sm text-muted-foreground">
+            {t('collab.slotsProgress')
+              .replace('{accepted}', String(acceptedCount))
+              .replace('{max}', String(maxCollaborators))}
+          </span>
+        )}
+      </div>
       {interests.map((interest) => (
         <Card key={interest.id}>
           <CardContent className="p-3">
@@ -122,6 +166,7 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
                   size="sm"
                   className="flex-1 bg-green-600 hover:bg-green-700"
                   onClick={() => handleAction(interest.id, 'accepted')}
+                  disabled={slotsFull}
                 >
                   <Check className="mr-1 h-4 w-4" />
                   {t('interest.accept')}
@@ -134,6 +179,19 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
                 >
                   <X className="mr-1 h-4 w-4" />
                   {t('interest.decline')}
+                </Button>
+              </div>
+            )}
+            {interest.status === 'accepted' && maxCollaborators > 1 && (
+              <div className="mt-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs"
+                  onClick={() => handleViewChat(interest)}
+                >
+                  <MessageCircle className="mr-1 h-3 w-3" />
+                  {t('collab.viewChat')}
                 </Button>
               </div>
             )}

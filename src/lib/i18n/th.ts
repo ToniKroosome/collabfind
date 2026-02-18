@@ -374,6 +374,19 @@ export const th: Translations = {
   'deliverable.details': 'รายละเอียด',
   'deliverable.detailsPlaceholder': 'ระบุรายละเอียด เช่น วิดีโอแนวตั้ง 30 วินาที...',
 
+  // Multi-collaborator
+  'collab.maxCollaborators': 'จำนวนผู้ร่วมงาน',
+  'collab.collabMode': 'โหมดแชท',
+  'collab.group': 'แชทกลุ่ม',
+  'collab.separate': 'แชทแยก',
+  'collab.groupDesc': 'ผู้ร่วมงานทุกคนใช้แชทกลุ่มเดียวกัน',
+  'collab.separateDesc': 'แชทตัวต่อตัวกับผู้ร่วมงานแต่ละคน',
+  'collab.slotsProgress': '{accepted}/{max} ผู้ร่วมงานที่ยอมรับแล้ว',
+  'collab.lookingForN': 'มองหาผู้ร่วมงาน {n} คน',
+  'collab.groupChat': 'แชทกลุ่ม',
+  'collab.viewChat': 'ดูแชท',
+  'collab.memberCount': '{n} สมาชิก',
+
   // Time ago
   'time.justNow': 'เมื่อกี้',
   'time.minutesAgo': '{n} นาทีที่แล้ว',

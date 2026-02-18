@@ -92,6 +92,12 @@ export function PostDetailContent({
           <Badge className={`${typeColor} text-xs`} variant="secondary">
             {typeLabel}
           </Badge>
+          {post.max_collaborators > 1 && (
+            <Badge variant="secondary" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200">
+              <Users className="mr-1 h-3 w-3" />
+              {t('collab.lookingForN').replace('{n}', String(post.max_collaborators))}
+            </Badge>
+          )}
           {post.niche_tags.map((tag: string) => (
             <Badge key={tag} variant="outline" className="capitalize text-xs">
               {getNicheLabel(t, tag)}
@@ -207,7 +213,13 @@ export function PostDetailContent({
       )}
 
       {/* Owner: interest list */}
-      {isOwner && <InterestList interests={interests} />}
+      {isOwner && (
+        <InterestList
+          interests={interests}
+          maxCollaborators={post.max_collaborators || 1}
+          collabMode={post.collab_mode || 'separate'}
+        />
+      )}
 
       {/* Owner: delete post */}
       {isOwner && (

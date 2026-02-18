@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIVERABLE_QUANTITIES } from '@/lib/constants'
+import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIVERABLE_QUANTITIES, MAX_COLLABORATORS } from '@/lib/constants'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel } from '@/lib/i18n'
@@ -33,6 +33,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [deliverableSlots, setDeliverableSlots] = useState<DeliverableSlot[]>([])
   const [requirements, setRequirements] = useState('')
   const [compensation, setCompensation] = useState('')
+  const [maxCollaborators, setMaxCollaborators] = useState(1)
+  const [collabMode, setCollabMode] = useState('separate')
   const [saving, setSaving] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -102,6 +104,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       deliverable_slots: filledSlots.length > 0 ? (filledSlots as unknown as Json) : null,
       requirements: requirements.trim() || null,
       compensation: compensation.trim() || null,
+      max_collaborators: maxCollaborators,
+      collab_mode: maxCollaborators > 1 ? collabMode : 'separate',
     })
 
     if (error) {
@@ -219,6 +223,49 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
           placeholder={t('createPost.locationPlaceholder')}
         />
       </div>
+
+      {/* Number of Collaborators */}
+      <div className="space-y-2">
+        <Label>{t('collab.maxCollaborators')}</Label>
+        <Select
+          value={String(maxCollaborators)}
+          onValueChange={(v) => setMaxCollaborators(Number(v))}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {Array.from({ length: MAX_COLLABORATORS }, (_, i) => i + 1).map((n) => (
+              <SelectItem key={n} value={String(n)}>
+                {n}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Chat Mode - only show when maxCollaborators > 1 */}
+      {maxCollaborators > 1 && (
+        <div className="space-y-2">
+          <Label>{t('collab.collabMode')}</Label>
+          <Select value={collabMode} onValueChange={setCollabMode}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="separate">
+                {t('collab.separate')}
+              </SelectItem>
+              <SelectItem value="group">
+                {t('collab.group')}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            {collabMode === 'group' ? t('collab.groupDesc') : t('collab.separateDesc')}
+          </p>
+        </div>
+      )}
 
       {/* Collab Details (collapsible) */}
       <div className="space-y-2">

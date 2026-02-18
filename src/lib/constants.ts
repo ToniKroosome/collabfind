@@ -93,3 +93,5 @@ export const DELIVERABLE_QUANTITIES = [
   '4',
   '5',
 ] as const
+
+export const MAX_COLLABORATORS = 10

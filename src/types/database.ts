@@ -136,6 +136,8 @@ export interface Database {
           requirements: string | null
           compensation: string | null
           is_open: boolean
+          max_collaborators: number
+          collab_mode: string
           created_at: string
           updated_at: string
         }
@@ -155,6 +157,8 @@ export interface Database {
           requirements?: string | null
           compensation?: string | null
           is_open?: boolean
+          max_collaborators?: number
+          collab_mode?: string
           created_at?: string
           updated_at?: string
         }
@@ -174,6 +178,8 @@ export interface Database {
           requirements?: string | null
           compensation?: string | null
           is_open?: boolean
+          max_collaborators?: number
+          collab_mode?: string
           created_at?: string
           updated_at?: string
         }
@@ -239,6 +245,8 @@ export interface Database {
           post_id: string
           user_a: string
           user_b: string
+          members: string[]
+          collab_mode: string
           status: 'active' | 'completed' | 'cancelled'
           created_at: string
         }
@@ -248,6 +256,8 @@ export interface Database {
           post_id: string
           user_a: string
           user_b: string
+          members?: string[]
+          collab_mode?: string
           status?: 'active' | 'completed' | 'cancelled'
           created_at?: string
         }
@@ -257,6 +267,8 @@ export interface Database {
           post_id?: string
           user_a?: string
           user_b?: string
+          members?: string[]
+          collab_mode?: string
           status?: 'active' | 'completed' | 'cancelled'
           created_at?: string
         }
@@ -547,6 +559,7 @@ export interface Database {
         Row: {
           id: string
           match_id: string
+          post_id: string | null
           created_by: string
           slots: Json
           created_at: string
@@ -555,6 +568,7 @@ export interface Database {
         Insert: {
           id?: string
           match_id: string
+          post_id?: string | null
           created_by: string
           slots?: Json
           created_at?: string
@@ -563,6 +577,7 @@ export interface Database {
         Update: {
           id?: string
           match_id?: string
+          post_id?: string | null
           created_by?: string
           slots?: Json
           created_at?: string
@@ -647,4 +662,12 @@ export interface DeliverableSlot {
 
 export interface ContractWithSubmissions extends CollabContract {
   contract_submissions: ContractSubmission[]
+}
+
+export type CollabMode = 'separate' | 'group'
+
+export interface CollabMember {
+  id: string
+  full_name: string | null
+  avatar_url: string | null
 }

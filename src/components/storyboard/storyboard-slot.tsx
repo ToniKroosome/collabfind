@@ -12,16 +12,13 @@ import {
 } from '@/components/ui/select'
 import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
-import type { StoryboardSlot as StoryboardSlotType } from '@/types/database'
+import type { StoryboardSlot as StoryboardSlotType, CollabMember } from '@/types/database'
 
 interface StoryboardSlotProps {
   slot: StoryboardSlotType
   index: number
   isOwner: boolean
-  userAName: string
-  userBName: string
-  userAId: string
-  userBId: string
+  members: CollabMember[]
   onUpdate: (slot: StoryboardSlotType) => void
   onDelete: () => void
   onMoveUp: () => void
@@ -34,10 +31,7 @@ export function StoryboardSlot({
   slot,
   index,
   isOwner,
-  userAName,
-  userBName,
-  userAId,
-  userBId,
+  members,
   onUpdate,
   onDelete,
   onMoveUp,
@@ -47,12 +41,8 @@ export function StoryboardSlot({
 }: StoryboardSlotProps) {
   const { t } = useLanguage()
 
-  const assignedName =
-    slot.assigned_to === userAId
-      ? userAName
-      : slot.assigned_to === userBId
-        ? userBName
-        : ''
+  const member = members.find((m) => m.id === slot.assigned_to)
+  const assignedName = member?.full_name || '?'
 
   return (
     <div className="space-y-2 rounded-lg border p-3">
@@ -93,8 +83,11 @@ export function StoryboardSlot({
               <SelectValue placeholder={t('storyboard.assignedTo')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={userAId}>{userAName}</SelectItem>
-              <SelectItem value={userBId}>{userBName}</SelectItem>
+              {members.map((m) => (
+                <SelectItem key={m.id} value={m.id}>
+                  {m.full_name || '?'}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         ) : (

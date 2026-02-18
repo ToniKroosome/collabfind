@@ -374,6 +374,19 @@ export const en: Translations = {
   'deliverable.details': 'Details',
   'deliverable.detailsPlaceholder': 'Specify details, e.g., 30s vertical format...',
 
+  // Multi-collaborator
+  'collab.maxCollaborators': 'Number of Collaborators',
+  'collab.collabMode': 'Chat Mode',
+  'collab.group': 'Group Chat',
+  'collab.separate': 'Separate Chats',
+  'collab.groupDesc': 'All collaborators share one group chat',
+  'collab.separateDesc': 'Individual 1-on-1 chats with each collaborator',
+  'collab.slotsProgress': '{accepted}/{max} collaborators accepted',
+  'collab.lookingForN': 'Looking for {n} collaborators',
+  'collab.groupChat': 'Group Chat',
+  'collab.viewChat': 'View Chat',
+  'collab.memberCount': '{n} members',
+
   // Time ago
   'time.justNow': 'just now',
   'time.minutesAgo': '{n}m ago',
