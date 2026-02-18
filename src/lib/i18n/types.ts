@@ -262,6 +262,91 @@ export interface Translations {
   'niche.health': string
   'niche.photography': string
 
+  // Contracts
+  'contract.createContract': string
+  'contract.title': string
+  'contract.titlePlaceholder': string
+  'contract.requirementsFor': string
+  'contract.requirementsPlaceholder': string
+  'contract.deadline': string
+  'contract.notes': string
+  'contract.notesPlaceholder': string
+  'contract.create': string
+  'contract.creating': string
+  'contract.viewContract': string
+  'contract.contractDetails': string
+  'contract.yourRequirements': string
+  'contract.partnerRequirements': string
+  'contract.pending': string
+  'contract.accepted': string
+  'contract.declined': string
+  'contract.completed': string
+  'contract.cancelled': string
+  'contract.accept': string
+  'contract.decline': string
+  'contract.acceptTitle': string
+  'contract.acceptDesc': string
+  'contract.declineTitle': string
+  'contract.declineDesc': string
+  'contract.noContract': string
+  'contract.noContractHint': string
+  'contract.deadlinePassed': string
+  'contract.daysRemaining': string
+  'contract.waitingResponse': string
+  'contract.newProposal': string
+  'contract.active': string
+
+  // Submissions
+  'submission.submitWork': string
+  'submission.description': string
+  'submission.descriptionPlaceholder': string
+  'submission.proofUrl': string
+  'submission.proofUrlPlaceholder': string
+  'submission.submit': string
+  'submission.submitting': string
+  'submission.submissions': string
+  'submission.noSubmissions': string
+  'submission.pending': string
+  'submission.approved': string
+  'submission.revisionRequested': string
+  'submission.approve': string
+  'submission.requestRevision': string
+  'submission.revisionNote': string
+  'submission.revisionNotePlaceholder': string
+  'submission.approveTitle': string
+  'submission.approveDesc': string
+
+  // Storyboard
+  'storyboard.storyboard': string
+  'storyboard.createStoryboard': string
+  'storyboard.addSlot': string
+  'storyboard.slotDescription': string
+  'storyboard.assignedTo': string
+  'storyboard.save': string
+  'storyboard.saving': string
+  'storyboard.noStoryboard': string
+  'storyboard.noStoryboardHint': string
+  'storyboard.slot': string
+  'storyboard.deleteSlot': string
+
+  // Toast - Contract & Submission
+  'toast.contractCreated': string
+  'toast.failedCreateContract': string
+  'toast.contractAccepted': string
+  'toast.contractDeclined': string
+  'toast.failedUpdateContract': string
+  'toast.submissionCreated': string
+  'toast.failedCreateSubmission': string
+  'toast.submissionApproved': string
+  'toast.revisionRequested': string
+  'toast.failedUpdateSubmission': string
+  'toast.enterContractTitle': string
+  'toast.enterRequirements': string
+  'toast.enterDeadline': string
+  'toast.enterSubmissionDesc': string
+  'toast.storyboardSaved': string
+  'toast.failedSaveStoryboard': string
+
   // Time ago
   'time.justNow': string
   'time.minutesAgo': string

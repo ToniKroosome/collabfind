@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { ChatWindow } from '@/components/messages/chat-window'
 import { SHOW_MOCK_DATA, getMockMatch, MOCK_MESSAGES } from '@/lib/mock-data'
-import type { Message, Profile } from '@/types/database'
+import type { Message, Profile, ContractWithSubmissions, Storyboard } from '@/types/database'
 
 export default async function ChatPage({
   params,
@@ -57,13 +57,40 @@ export default async function ChatPage({
     m.user_a === user.id ? m.partner_b : m.partner_a
   ) as Profile
 
-  // Fetch messages
-  const { data: messages } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('match_id', matchId)
-    .order('created_at', { ascending: true })
-    .limit(100)
+  // Fetch messages, contract, storyboard, and post owner in parallel
+  const [
+    { data: messages },
+    { data: contracts },
+    { data: storyboard },
+    { data: post },
+  ] = await Promise.all([
+    supabase
+      .from('messages')
+      .select('*')
+      .eq('match_id', matchId)
+      .order('created_at', { ascending: true })
+      .limit(100),
+    supabase
+      .from('collab_contracts')
+      .select('*, contract_submissions(*)')
+      .eq('match_id', matchId)
+      .order('created_at', { ascending: false })
+      .limit(1),
+    supabase
+      .from('storyboards')
+      .select('*')
+      .eq('match_id', matchId)
+      .single(),
+    supabase
+      .from('collab_posts')
+      .select('user_id')
+      .eq('id', m.post_id)
+      .single(),
+  ])
+
+  const latestContract = (contracts?.[0] as ContractWithSubmissions) || null
+  const storyboardData = (storyboard as Storyboard) || null
+  const postOwnerId = post?.user_id || m.user_a
 
   return (
     <ChatWindow
@@ -71,6 +98,11 @@ export default async function ChatPage({
       currentUserId={user.id}
       partner={partner}
       initialMessages={(messages as Message[]) || []}
+      initialContract={latestContract}
+      initialStoryboard={storyboardData}
+      userAId={m.user_a}
+      userBId={m.user_b}
+      postOwnerId={postOwnerId}
     />
   )
 }

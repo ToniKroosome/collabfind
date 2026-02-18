@@ -423,6 +423,165 @@ export interface Database {
           }
         ]
       }
+      collab_contracts: {
+        Row: {
+          id: string
+          match_id: string
+          created_by: string
+          title: string
+          requirements_a: string
+          requirements_b: string
+          deadline: string
+          notes: string | null
+          status: 'pending' | 'accepted' | 'declined' | 'completed' | 'cancelled'
+          responded_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          match_id: string
+          created_by: string
+          title: string
+          requirements_a: string
+          requirements_b: string
+          deadline: string
+          notes?: string | null
+          status?: 'pending' | 'accepted' | 'declined' | 'completed' | 'cancelled'
+          responded_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          match_id?: string
+          created_by?: string
+          title?: string
+          requirements_a?: string
+          requirements_b?: string
+          deadline?: string
+          notes?: string | null
+          status?: 'pending' | 'accepted' | 'declined' | 'completed' | 'cancelled'
+          responded_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collab_contracts_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collab_contracts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      contract_submissions: {
+        Row: {
+          id: string
+          contract_id: string
+          submitted_by: string
+          description: string
+          proof_url: string | null
+          status: 'pending' | 'approved' | 'revision_requested'
+          revision_note: string | null
+          reviewed_by: string | null
+          reviewed_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          contract_id: string
+          submitted_by: string
+          description: string
+          proof_url?: string | null
+          status?: 'pending' | 'approved' | 'revision_requested'
+          revision_note?: string | null
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          contract_id?: string
+          submitted_by?: string
+          description?: string
+          proof_url?: string | null
+          status?: 'pending' | 'approved' | 'revision_requested'
+          revision_note?: string | null
+          reviewed_by?: string | null
+          reviewed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_submissions_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "collab_contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contract_submissions_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      storyboards: {
+        Row: {
+          id: string
+          match_id: string
+          created_by: string
+          slots: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          match_id: string
+          created_by: string
+          slots?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          match_id?: string
+          created_by?: string
+          slots?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "storyboards_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: true
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "storyboards_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -465,4 +624,18 @@ export interface MatchWithDetails extends Match {
 
 export interface CollabReviewWithProfile extends CollabReview {
   profiles: Profile
+}
+
+export type CollabContract = Database['public']['Tables']['collab_contracts']['Row']
+export type ContractSubmission = Database['public']['Tables']['contract_submissions']['Row']
+export type Storyboard = Database['public']['Tables']['storyboards']['Row']
+
+export interface StoryboardSlot {
+  order: number
+  description: string
+  assigned_to: string // user_id of the assigned person
+}
+
+export interface ContractWithSubmissions extends CollabContract {
+  contract_submissions: ContractSubmission[]
 }

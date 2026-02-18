@@ -44,6 +44,21 @@ export function InterestList({ interests: initialInterests }: InterestListProps)
         ? t('toast.interestAccepted')
         : t('toast.interestDeclined')
     )
+
+    // If accepted, redirect to the new chat
+    if (action === 'accepted') {
+      const { data: match } = await supabase
+        .from('matches')
+        .select('id')
+        .eq('interest_id', interestId)
+        .single()
+
+      if (match) {
+        router.push(`/messages/${match.id}`)
+        return
+      }
+    }
+
     router.refresh()
   }
 

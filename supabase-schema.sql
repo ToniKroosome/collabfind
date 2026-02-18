@@ -511,3 +511,259 @@ ALTER TABLE social_verifications ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can manage own verifications"
 ON social_verifications FOR ALL TO authenticated
 USING (auth.uid() = user_id);
+
+-- =====================================================
+-- 12. COLLAB CONTRACTS
+-- =====================================================
+CREATE TABLE IF NOT EXISTS collab_contracts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    match_id UUID NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+    created_by UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    requirements_a TEXT NOT NULL,
+    requirements_b TEXT NOT NULL,
+    deadline TIMESTAMPTZ NOT NULL,
+    notes TEXT,
+    status TEXT NOT NULL DEFAULT 'pending'
+        CHECK (status IN ('pending','accepted','declined','completed','cancelled')),
+    responded_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_collab_contracts_match_id ON collab_contracts(match_id);
+
+ALTER TABLE collab_contracts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Match participants can view contracts"
+ON collab_contracts FOR SELECT TO authenticated
+USING (match_id IN (
+    SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+));
+
+CREATE POLICY "Match participants can create contracts"
+ON collab_contracts FOR INSERT TO authenticated
+WITH CHECK (
+    auth.uid() = created_by
+    AND match_id IN (
+        SELECT id FROM matches
+        WHERE (user_a = auth.uid() OR user_b = auth.uid()) AND status = 'active'
+    )
+);
+
+CREATE POLICY "Match participants can update contracts"
+ON collab_contracts FOR UPDATE TO authenticated
+USING (match_id IN (
+    SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+));
+
+CREATE TRIGGER trigger_collab_contracts_updated_at
+    BEFORE UPDATE ON collab_contracts
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- =====================================================
+-- 13. CONTRACT SUBMISSIONS
+-- =====================================================
+CREATE TABLE IF NOT EXISTS contract_submissions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    contract_id UUID NOT NULL REFERENCES collab_contracts(id) ON DELETE CASCADE,
+    submitted_by UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    description TEXT NOT NULL,
+    proof_url TEXT,
+    status TEXT NOT NULL DEFAULT 'pending'
+        CHECK (status IN ('pending','approved','revision_requested')),
+    revision_note TEXT,
+    reviewed_by UUID REFERENCES profiles(id),
+    reviewed_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_contract_submissions_contract_id ON contract_submissions(contract_id);
+
+ALTER TABLE contract_submissions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Match participants can view submissions"
+ON contract_submissions FOR SELECT TO authenticated
+USING (contract_id IN (
+    SELECT c.id FROM collab_contracts c
+    JOIN matches m ON c.match_id = m.id
+    WHERE m.user_a = auth.uid() OR m.user_b = auth.uid()
+));
+
+CREATE POLICY "Match participants can create submissions"
+ON contract_submissions FOR INSERT TO authenticated
+WITH CHECK (
+    auth.uid() = submitted_by
+    AND contract_id IN (
+        SELECT c.id FROM collab_contracts c
+        JOIN matches m ON c.match_id = m.id
+        WHERE (m.user_a = auth.uid() OR m.user_b = auth.uid()) AND c.status = 'accepted'
+    )
+);
+
+CREATE POLICY "Reviewers can update submissions"
+ON contract_submissions FOR UPDATE TO authenticated
+USING (
+    submitted_by != auth.uid()
+    AND contract_id IN (
+        SELECT c.id FROM collab_contracts c
+        JOIN matches m ON c.match_id = m.id
+        WHERE m.user_a = auth.uid() OR m.user_b = auth.uid()
+    )
+);
+
+CREATE TRIGGER trigger_contract_submissions_updated_at
+    BEFORE UPDATE ON contract_submissions
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- =====================================================
+-- 14. STORYBOARDS
+-- =====================================================
+CREATE TABLE IF NOT EXISTS storyboards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    match_id UUID NOT NULL REFERENCES matches(id) ON DELETE CASCADE UNIQUE,
+    created_by UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    slots JSONB NOT NULL DEFAULT '[]',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE storyboards ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Match participants can view storyboards"
+ON storyboards FOR SELECT TO authenticated
+USING (match_id IN (
+    SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+));
+
+CREATE POLICY "Match participants can create storyboards"
+ON storyboards FOR INSERT TO authenticated
+WITH CHECK (
+    auth.uid() = created_by
+    AND match_id IN (
+        SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid()
+    )
+);
+
+CREATE POLICY "Creator can update storyboard"
+ON storyboards FOR UPDATE TO authenticated
+USING (auth.uid() = created_by);
+
+CREATE TRIGGER trigger_storyboards_updated_at
+    BEFORE UPDATE ON storyboards
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- =====================================================
+-- 15. CONTRACT & SUBMISSION NOTIFICATION TRIGGERS
+-- =====================================================
+
+-- Extend notification types
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_type_check;
+ALTER TABLE notifications ADD CONSTRAINT notifications_type_check
+CHECK (type IN (
+    'new_interest', 'interest_accepted', 'interest_declined',
+    'new_message', 'new_match', 'new_review', 'collab_completed',
+    'new_contract', 'contract_accepted', 'contract_declined',
+    'new_submission', 'submission_approved', 'submission_revision_requested'
+));
+
+CREATE OR REPLACE FUNCTION notify_new_contract()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_other UUID;
+    v_name TEXT;
+BEGIN
+    SELECT CASE WHEN m.user_a = NEW.created_by THEN m.user_b ELSE m.user_a END
+    INTO v_other FROM matches m WHERE m.id = NEW.match_id;
+    SELECT full_name INTO v_name FROM profiles WHERE id = NEW.created_by;
+    INSERT INTO notifications (user_id, type, title, body, data) VALUES (
+        v_other, 'new_contract',
+        'New contract proposal!',
+        COALESCE(v_name, 'Your partner') || ' proposed a contract: "' || NEW.title || '"',
+        jsonb_build_object('match_id', NEW.match_id, 'contract_id', NEW.id)
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_notify_new_contract
+    AFTER INSERT ON collab_contracts FOR EACH ROW
+    EXECUTE FUNCTION notify_new_contract();
+
+CREATE OR REPLACE FUNCTION notify_contract_response()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.status != OLD.status AND NEW.status IN ('accepted', 'declined') THEN
+        INSERT INTO notifications (user_id, type, title, body, data) VALUES (
+            NEW.created_by,
+            CASE WHEN NEW.status = 'accepted' THEN 'contract_accepted' ELSE 'contract_declined' END,
+            CASE WHEN NEW.status = 'accepted' THEN 'Contract accepted!' ELSE 'Contract declined' END,
+            CASE WHEN NEW.status = 'accepted'
+                THEN 'Your contract "' || NEW.title || '" was accepted.'
+                ELSE 'Your contract "' || NEW.title || '" was declined.'
+            END,
+            jsonb_build_object('match_id', NEW.match_id, 'contract_id', NEW.id)
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_notify_contract_response
+    AFTER UPDATE ON collab_contracts FOR EACH ROW
+    EXECUTE FUNCTION notify_contract_response();
+
+CREATE OR REPLACE FUNCTION notify_new_submission()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_other UUID;
+    v_name TEXT;
+    v_match_id UUID;
+BEGIN
+    SELECT c.match_id INTO v_match_id FROM collab_contracts c WHERE c.id = NEW.contract_id;
+    SELECT CASE WHEN m.user_a = NEW.submitted_by THEN m.user_b ELSE m.user_a END
+    INTO v_other FROM matches m WHERE m.id = v_match_id;
+    SELECT full_name INTO v_name FROM profiles WHERE id = NEW.submitted_by;
+    INSERT INTO notifications (user_id, type, title, body, data) VALUES (
+        v_other, 'new_submission',
+        'New task submission!',
+        COALESCE(v_name, 'Your partner') || ' submitted their work for review.',
+        jsonb_build_object('match_id', v_match_id, 'contract_id', NEW.contract_id, 'submission_id', NEW.id)
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_notify_new_submission
+    AFTER INSERT ON contract_submissions FOR EACH ROW
+    EXECUTE FUNCTION notify_new_submission();
+
+CREATE OR REPLACE FUNCTION notify_submission_review()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_match_id UUID;
+BEGIN
+    IF NEW.status != OLD.status AND NEW.status IN ('approved', 'revision_requested') THEN
+        SELECT c.match_id INTO v_match_id FROM collab_contracts c WHERE c.id = NEW.contract_id;
+        INSERT INTO notifications (user_id, type, title, body, data) VALUES (
+            NEW.submitted_by,
+            CASE WHEN NEW.status = 'approved' THEN 'submission_approved' ELSE 'submission_revision_requested' END,
+            CASE WHEN NEW.status = 'approved' THEN 'Submission approved!' ELSE 'Revision requested' END,
+            CASE WHEN NEW.status = 'approved'
+                THEN 'Your work submission was approved!'
+                ELSE 'Your partner requested revisions on your submission.'
+            END,
+            jsonb_build_object('match_id', v_match_id, 'contract_id', NEW.contract_id, 'submission_id', NEW.id)
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_notify_submission_review
+    AFTER UPDATE ON contract_submissions FOR EACH ROW
+    EXECUTE FUNCTION notify_submission_review();

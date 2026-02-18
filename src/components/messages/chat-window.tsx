@@ -1,14 +1,17 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import type { Message, Profile } from '@/types/database'
-import { Send } from 'lucide-react'
+import type { Message, Profile, ContractWithSubmissions, Storyboard } from '@/types/database'
+import { Send, FileText, Clapperboard } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
+import { ChatContractBar } from '@/components/contracts/chat-contract-bar'
+import { ContractPanel } from '@/components/contracts/contract-panel'
+import { StoryboardPanel } from '@/components/storyboard/storyboard-panel'
 
 interface ChatWindowProps {
   matchId: string
@@ -16,6 +19,11 @@ interface ChatWindowProps {
   partner: Profile
   initialMessages: Message[]
   isMock?: boolean
+  initialContract?: ContractWithSubmissions | null
+  initialStoryboard?: Storyboard | null
+  userAId?: string
+  userBId?: string
+  postOwnerId?: string
 }
 
 export function ChatWindow({
@@ -24,13 +32,54 @@ export function ChatWindow({
   partner,
   initialMessages,
   isMock = false,
+  initialContract = null,
+  initialStoryboard = null,
+  userAId = '',
+  userBId = '',
+  postOwnerId = '',
 }: ChatWindowProps) {
   const { t } = useLanguage()
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [content, setContent] = useState('')
   const [sending, setSending] = useState(false)
+  const [contract, setContract] = useState<ContractWithSubmissions | null>(initialContract)
+  const [storyboard, setStoryboard] = useState<Storyboard | null>(initialStoryboard)
+  const [contractPanelOpen, setContractPanelOpen] = useState(false)
+  const [storyboardPanelOpen, setStoryboardPanelOpen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
+
+  // Get partner name for storyboard
+  const currentUserName = userAId === currentUserId
+    ? (partner.full_name || '?') // if current is A, partner is B — but we need our own name
+    : (partner.full_name || '?')
+  const userAName = userAId === currentUserId
+    ? 'You'
+    : (partner.full_name || '?')
+  const userBName = userBId === currentUserId
+    ? 'You'
+    : (partner.full_name || '?')
+
+  // Refresh contract data
+  const refreshContract = useCallback(async () => {
+    const { data } = await supabase
+      .from('collab_contracts')
+      .select('*, contract_submissions(*)')
+      .eq('match_id', matchId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+    setContract((data?.[0] as ContractWithSubmissions) || null)
+  }, [matchId, supabase])
+
+  // Refresh storyboard data
+  const refreshStoryboard = useCallback(async () => {
+    const { data } = await supabase
+      .from('storyboards')
+      .select('*')
+      .eq('match_id', matchId)
+      .single()
+    setStoryboard((data as Storyboard) || null)
+  }, [matchId, supabase])
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -70,8 +119,22 @@ export function ChatWindow({
         (payload) => {
           const newMessage = payload.new as Message
           setMessages((prev) => {
-            // Avoid duplicates
+            // Avoid duplicates (by real ID)
             if (prev.some((m) => m.id === newMessage.id)) return prev
+
+            // Replace optimistic message (temp-*) with the real one from the same sender
+            const optimisticIndex = prev.findIndex(
+              (m) =>
+                m.id.startsWith('temp-') &&
+                m.sender_id === newMessage.sender_id &&
+                m.content === newMessage.content
+            )
+            if (optimisticIndex !== -1) {
+              const updated = [...prev]
+              updated[optimisticIndex] = newMessage
+              return updated
+            }
+
             return [...prev, newMessage]
           })
 
@@ -138,13 +201,43 @@ export function ChatWindow({
             {partner.full_name?.charAt(0) || '?'}
           </AvatarFallback>
         </Avatar>
-        <div>
+        <div className="flex-1">
           <p className="font-semibold text-sm">{partner.full_name}</p>
           {partner.username && (
             <p className="text-xs text-muted-foreground">@{partner.username}</p>
           )}
         </div>
+        {!isMock && userAId && (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setStoryboardPanelOpen(true)}
+            >
+              <Clapperboard className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setContractPanelOpen(true)}
+            >
+              <FileText className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
+
+      {/* Contract Status Bar */}
+      {!isMock && userAId && (
+        <ChatContractBar
+          contract={contract}
+          currentUserId={currentUserId}
+          partner={partner}
+          onOpenPanel={() => setContractPanelOpen(true)}
+        />
+      )}
 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
@@ -211,6 +304,38 @@ export function ChatWindow({
           <Send className="h-4 w-4" />
         </Button>
       </form>
+
+      {/* Contract Panel */}
+      {!isMock && userAId && (
+        <ContractPanel
+          open={contractPanelOpen}
+          onOpenChange={setContractPanelOpen}
+          matchId={matchId}
+          currentUserId={currentUserId}
+          partner={partner}
+          userAId={userAId}
+          userBId={userBId}
+          contract={contract}
+          onContractChange={refreshContract}
+        />
+      )}
+
+      {/* Storyboard Panel */}
+      {!isMock && userAId && (
+        <StoryboardPanel
+          open={storyboardPanelOpen}
+          onOpenChange={setStoryboardPanelOpen}
+          matchId={matchId}
+          currentUserId={currentUserId}
+          storyboard={storyboard}
+          userAId={userAId}
+          userBId={userBId}
+          userAName={userAName}
+          userBName={userBName}
+          postOwnerId={postOwnerId}
+          onStoryboardChange={refreshStoryboard}
+        />
+      )}
     </div>
   )
 }

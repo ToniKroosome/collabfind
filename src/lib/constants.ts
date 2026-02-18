@@ -56,3 +56,17 @@ export const MATCH_STATUS_COLORS: Record<string, string> = {
   completed: 'bg-green-100 text-green-700',
   cancelled: 'bg-gray-100 text-gray-700',
 }
+
+export const CONTRACT_STATUS_COLORS: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-700',
+  accepted: 'bg-green-100 text-green-700',
+  declined: 'bg-red-100 text-red-700',
+  completed: 'bg-blue-100 text-blue-700',
+  cancelled: 'bg-gray-100 text-gray-700',
+}
+
+export const SUBMISSION_STATUS_COLORS: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-700',
+  approved: 'bg-green-100 text-green-700',
+  revision_requested: 'bg-orange-100 text-orange-700',
+}
