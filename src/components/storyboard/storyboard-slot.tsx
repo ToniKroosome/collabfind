@@ -55,88 +55,87 @@ export function StoryboardSlot({
         : ''
 
   return (
-    <div className="flex items-center gap-2 rounded-lg border p-3">
-      {/* Order number badge */}
-      <Badge
-        variant="secondary"
-        className="h-7 w-7 shrink-0 items-center justify-center rounded-full p-0 text-xs"
-      >
-        #{index + 1}
-      </Badge>
-
-      {/* Description */}
-      {isOwner ? (
-        <Input
-          value={slot.description}
-          onChange={(e) =>
-            onUpdate({ ...slot, description: e.target.value })
-          }
-          placeholder={t('storyboard.slotDescription')}
-          className="min-w-0 flex-1"
-        />
-      ) : (
-        <p className="min-w-0 flex-1 truncate text-sm">
-          {slot.description || '-'}
-        </p>
-      )}
-
-      {/* Person selector */}
-      {isOwner ? (
-        <Select
-          value={slot.assigned_to}
-          onValueChange={(value) =>
-            onUpdate({ ...slot, assigned_to: value })
-          }
+    <div className="space-y-2 rounded-lg border p-3">
+      {/* Row 1: Order badge + Description */}
+      <div className="flex items-center gap-2">
+        <Badge
+          variant="secondary"
+          className="h-6 shrink-0 rounded-full px-2 text-xs"
         >
-          <SelectTrigger className="w-[130px] shrink-0">
-            <SelectValue placeholder={t('storyboard.assignedTo')} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={userAId}>{userAName}</SelectItem>
-            <SelectItem value={userBId}>{userBName}</SelectItem>
-          </SelectContent>
-        </Select>
-      ) : (
-        <Badge variant="outline" className="shrink-0">
-          {assignedName}
+          #{index + 1}
         </Badge>
-      )}
+        {isOwner ? (
+          <Input
+            value={slot.description}
+            onChange={(e) =>
+              onUpdate({ ...slot, description: e.target.value })
+            }
+            placeholder={t('storyboard.slotDescription')}
+            className="min-w-0 flex-1"
+          />
+        ) : (
+          <p className="min-w-0 flex-1 text-sm">
+            {slot.description || '-'}
+          </p>
+        )}
+      </div>
 
-      {/* Move up/down buttons */}
-      {isOwner && (
-        <>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 shrink-0"
-            onClick={onMoveUp}
-            disabled={isFirst}
+      {/* Row 2: Person selector + action buttons */}
+      <div className="flex items-center gap-2">
+        {isOwner ? (
+          <Select
+            value={slot.assigned_to}
+            onValueChange={(value) =>
+              onUpdate({ ...slot, assigned_to: value })
+            }
           >
-            <ChevronUp className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 shrink-0"
-            onClick={onMoveDown}
-            disabled={isLast}
-          >
-            <ChevronDown className="h-4 w-4" />
-          </Button>
-        </>
-      )}
+            <SelectTrigger className="w-[130px]">
+              <SelectValue placeholder={t('storyboard.assignedTo')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={userAId}>{userAName}</SelectItem>
+              <SelectItem value={userBId}>{userBName}</SelectItem>
+            </SelectContent>
+          </Select>
+        ) : (
+          <Badge variant="outline">
+            {assignedName}
+          </Badge>
+        )}
 
-      {/* Delete button */}
-      {isOwner && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 shrink-0 text-destructive hover:text-destructive"
-          onClick={onDelete}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      )}
+        <div className="flex-1" />
+
+        {isOwner && (
+          <div className="flex items-center gap-0.5">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={onMoveUp}
+              disabled={isFirst}
+            >
+              <ChevronUp className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={onMoveDown}
+              disabled={isLast}
+            >
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-destructive hover:text-destructive"
+              onClick={onDelete}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
