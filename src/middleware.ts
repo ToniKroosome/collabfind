@@ -79,6 +79,7 @@ export async function middleware(request: NextRequest) {
     supabaseResponse.cookies.set('cf_visitor', visitorId, {
       httpOnly: true,
       sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 365, // 1 year
       path: '/',
     })

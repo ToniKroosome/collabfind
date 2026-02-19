@@ -899,7 +899,7 @@ CREATE POLICY "Anyone can insert page views"
 ON page_views FOR INSERT TO anon, authenticated
 WITH CHECK (true);
 
--- Only admins can read page views (via service role or admin queries)
+-- Authenticated users can read page views (visitor_id is anonymous UUID, no PII)
 CREATE POLICY "Authenticated users can read page views"
 ON page_views FOR SELECT TO authenticated
 USING (true);

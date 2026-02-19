@@ -1,8 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import { AdminDashboard } from '@/components/admin/admin-dashboard'
 
 export default async function AdminPage() {
   const supabase = await createClient()
+
+  // Server-side admin verification (defense in depth, not just middleware)
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  const { data: adminProfile } = await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', user.id)
+    .single()
+  if (!adminProfile?.is_admin) redirect('/feed')
 
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)

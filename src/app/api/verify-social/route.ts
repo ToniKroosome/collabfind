@@ -139,7 +139,7 @@ export async function POST(request: Request) {
 
   // Generate a new verification code
   if (action === 'generate') {
-    const code = `ix-${Math.random().toString(36).substring(2, 8)}`
+    const code = `ix-${crypto.randomUUID().replace(/-/g, '').substring(0, 8)}`
 
     const { error } = await supabase
       .from('social_verifications')
