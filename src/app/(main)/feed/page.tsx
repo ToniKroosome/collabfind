@@ -101,6 +101,21 @@ export default async function FeedPage({
     }
   }
 
+  // Fetch view counts for posts
+  const postPaths = posts.map((p) => `/post/${p.id}`)
+  const viewCountMap = new Map<string, number>()
+  if (postPaths.length > 0) {
+    const { data: viewData } = await supabase
+      .from('page_views')
+      .select('path')
+      .in('path', postPaths)
+    if (viewData) {
+      for (const row of viewData) {
+        viewCountMap.set(row.path, (viewCountMap.get(row.path) ?? 0) + 1)
+      }
+    }
+  }
+
   return (
     <div className="space-y-4 py-4">
       <FeedFilters />
@@ -112,6 +127,7 @@ export default async function FeedPage({
               key={post.id}
               post={post}
               reputation={reputationMap.get(post.user_id)}
+              viewCount={viewCountMap.get(`/post/${post.id}`) ?? 0}
             />
           ))}
         </div>

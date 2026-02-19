@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { MapPin, Star, Users } from 'lucide-react'
+import { Eye, MapPin, Star, Users } from 'lucide-react'
 import { COLLAB_TYPE_COLORS } from '@/lib/constants'
 import { TimeAgo } from '@/components/shared/time-ago'
 import type { CollabPostWithProfile } from '@/types/database'
@@ -14,9 +14,10 @@ import type { DeliverableSlot } from '@/types/database'
 interface CollabCardProps {
   post: CollabPostWithProfile
   reputation?: { avgRating: number; count: number }
+  viewCount?: number
 }
 
-export function CollabCard({ post, reputation }: CollabCardProps) {
+export function CollabCard({ post, reputation, viewCount }: CollabCardProps) {
   const { t } = useLanguage()
   const typeLabel = getCollabTypeLabel(t, post.collab_type)
   const typeColor = COLLAB_TYPE_COLORS[post.collab_type] || COLLAB_TYPE_COLORS.other
@@ -109,13 +110,23 @@ export function CollabCard({ post, reputation }: CollabCardProps) {
             </p>
           )}
 
-          {/* Location */}
-          {post.location && (
-            <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" />
-              {post.location}
-            </div>
-          )}
+          {/* Location & Views */}
+          <div className="mt-2 flex items-center justify-between">
+            {post.location ? (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                {post.location}
+              </div>
+            ) : (
+              <div />
+            )}
+            {viewCount != null && viewCount > 0 && (
+              <div className="flex items-center gap-0.5 text-[11px] text-muted-foreground">
+                <Eye className="h-3 w-3" />
+                {viewCount}
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </Link>

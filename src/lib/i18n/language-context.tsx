@@ -18,10 +18,10 @@ const LanguageContext = createContext<LanguageContextType | null>(null)
 const STORAGE_KEY = 'ix-language'
 
 function getInitialLanguage(): Language {
-  if (typeof window === 'undefined') return 'th'
+  if (typeof window === 'undefined') return 'en'
   const stored = localStorage.getItem(STORAGE_KEY)
   if (stored === 'en' || stored === 'th') return stored
-  return 'th'
+  return 'en'
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
