@@ -24,6 +24,7 @@ export default async function AdminPage() {
     pageViewsResult,
     pageViewsLast7Result,
     topPagesResult,
+    uniqueVisitorsResult,
   ] = await Promise.all([
     // Total users
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
@@ -81,6 +82,12 @@ export default async function AdminPage() {
       .from('page_views')
       .select('path')
       .limit(5000),
+    // Unique visitors (all visitor_ids)
+    supabase
+      .from('page_views')
+      .select('visitor_id')
+      .not('visitor_id', 'is', null)
+      .limit(10000),
   ])
 
   const totalUsers = usersResult.count ?? 0
@@ -119,6 +126,9 @@ export default async function AdminPage() {
   const postsLast7Days = groupByDay(postsLast7Result.data)
 
   const totalPageViews = pageViewsResult.count ?? 0
+  const uniqueVisitors = new Set(
+    (uniqueVisitorsResult.data ?? []).map((r) => r.visitor_id)
+  ).size
 
   // Group page views by day
   const viewsLast7Days = (() => {
@@ -170,6 +180,7 @@ export default async function AdminPage() {
       postsLast7Days={postsLast7Days}
       recentSignups={recentSignups}
       totalPageViews={totalPageViews}
+      uniqueVisitors={uniqueVisitors}
       viewsLast7Days={viewsLast7Days}
       topPages={topPages}
     />

@@ -72,6 +72,18 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Visitor tracking cookie
+  let visitorId = request.cookies.get('cf_visitor')?.value
+  if (!visitorId) {
+    visitorId = crypto.randomUUID()
+    supabaseResponse.cookies.set('cf_visitor', visitorId, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      path: '/',
+    })
+  }
+
   // Log page view (non-blocking, skip api/admin/auth routes)
   const isTrackable =
     !pathname.startsWith('/api') &&
@@ -84,6 +96,7 @@ export async function middleware(request: NextRequest) {
     if (!isBot) {
       supabase.from('page_views').insert({
         path: pathname,
+        visitor_id: visitorId,
       }).then() // fire and forget
     }
   }

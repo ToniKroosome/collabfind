@@ -884,11 +884,13 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;
 CREATE TABLE IF NOT EXISTS page_views (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     path TEXT NOT NULL,
+    visitor_id TEXT,
     viewed_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_page_views_viewed_at ON page_views(viewed_at);
 CREATE INDEX IF NOT EXISTS idx_page_views_path ON page_views(path);
+CREATE INDEX IF NOT EXISTS idx_page_views_visitor_id ON page_views(visitor_id);
 
 ALTER TABLE page_views ENABLE ROW LEVEL SECURITY;
 
@@ -901,3 +903,10 @@ WITH CHECK (true);
 CREATE POLICY "Authenticated users can read page views"
 ON page_views FOR SELECT TO authenticated
 USING (true);
+
+-- =====================================================
+-- 19. PAGE VIEWS - ADD VISITOR_ID (migration)
+-- Run this if page_views table already exists.
+-- =====================================================
+ALTER TABLE page_views ADD COLUMN IF NOT EXISTS visitor_id TEXT;
+CREATE INDEX IF NOT EXISTS idx_page_views_visitor_id ON page_views(visitor_id);

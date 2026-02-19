@@ -607,16 +607,19 @@ export interface Database {
         Row: {
           id: string
           path: string
+          visitor_id: string | null
           viewed_at: string
         }
         Insert: {
           id?: string
           path: string
+          visitor_id?: string | null
           viewed_at?: string
         }
         Update: {
           id?: string
           path?: string
+          visitor_id?: string | null
           viewed_at?: string
         }
         Relationships: []

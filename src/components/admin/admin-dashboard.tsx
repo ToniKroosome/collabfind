@@ -44,6 +44,7 @@ interface AdminDashboardProps {
   postsLast7Days: DailyCount[]
   recentSignups: RecentUser[]
   totalPageViews: number
+  uniqueVisitors: number
   viewsLast7Days: DailyCount[]
   topPages: TopPage[]
 }
@@ -125,6 +126,7 @@ export function AdminDashboard({
   postsLast7Days,
   recentSignups,
   totalPageViews,
+  uniqueVisitors,
   viewsLast7Days,
   topPages,
 }: AdminDashboardProps) {
@@ -166,6 +168,7 @@ export function AdminDashboard({
           icon={Eye}
           label={t('admin.totalPageViews')}
           value={totalPageViews}
+          sub={`${uniqueVisitors} ${t('admin.uniqueVisitors').toLowerCase()}`}
         />
       </div>
 
