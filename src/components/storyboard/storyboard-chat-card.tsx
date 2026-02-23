@@ -83,7 +83,7 @@ export function StoryboardChatCard({
         {/* Message bubble */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full rounded-2xl rounded-bl-md bg-muted px-3.5 py-2 text-sm text-left hover:bg-muted/80 transition-colors"
+          className="w-full rounded-2xl rounded-bl-md bg-indigo-50 dark:bg-indigo-950/40 px-3.5 py-2 text-sm text-left hover:bg-indigo-100 dark:hover:bg-indigo-950/60 transition-colors border border-indigo-200 dark:border-indigo-800"
         >
           <span className="flex items-center gap-1.5">
             <Clapperboard className="h-3.5 w-3.5 shrink-0 text-indigo-600" />
@@ -105,7 +105,7 @@ export function StoryboardChatCard({
 
         {/* Expanded storyboard content — slides out below the bubble */}
         {expanded && (
-          <div className="mt-1 space-y-1.5 rounded-2xl rounded-tl-md bg-muted px-3.5 py-2.5">
+          <div className="mt-1 space-y-1.5 rounded-2xl rounded-tl-md bg-muted border border-border px-3.5 py-2.5">
             {slots.length === 0 ? (
               <p className="py-1 text-xs text-muted-foreground">
                 {t('storyboard.noStoryboardHint')}
