@@ -8,7 +8,7 @@ import { useLanguage } from '@/lib/i18n'
 import { renderStrokes } from '@/lib/drawing-utils'
 import type { Storyboard, StoryboardSlot, CollabMember, DrawingStroke } from '@/types/database'
 
-const SLOT_BG = ['#ffffff', '#e4e4e7'] // white, zinc-200
+const SLOT_BG = ['#dcfce7', '#e4e4e7'] // green-100, zinc-200
 
 interface StoryboardChatCardProps {
   storyboard: Storyboard | null

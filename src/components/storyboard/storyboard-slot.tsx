@@ -15,7 +15,7 @@ import { useLanguage } from '@/lib/i18n'
 import { DrawingCanvas } from '@/components/storyboard/drawing-canvas'
 import type { StoryboardSlot as StoryboardSlotType, CollabMember } from '@/types/database'
 
-const SLOT_BG = ['#ffffff', '#e4e4e7'] // white, zinc-200
+const SLOT_BG = ['#dcfce7', '#e4e4e7'] // green-100, zinc-200
 
 interface StoryboardSlotProps {
   slot: StoryboardSlotType
