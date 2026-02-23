@@ -14,6 +14,8 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel, getTitleTemplateLabel } from '@/lib/i18n'
 import { Plus, X } from 'lucide-react'
+import { format } from 'date-fns'
+import { DatePicker } from '@/components/ui/date-picker'
 import type { DeliverableSlot, Json } from '@/types/database'
 
 interface CreatePostFormProps {
@@ -30,7 +32,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [audienceMax, setAudienceMax] = useState(0)
   const [location, setLocation] = useState('')
   const [showDetails, setShowDetails] = useState(false)
-  const [timeline, setTimeline] = useState('')
+  const [timeline, setTimeline] = useState<Date | undefined>(undefined)
   const [deliverableSlots, setDeliverableSlots] = useState<DeliverableSlot[]>([])
   const [requirements, setRequirements] = useState('')
   const [compensation, setCompensation] = useState('')
@@ -105,7 +107,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       preferred_audience_min: audienceMin,
       preferred_audience_max: audienceMax,
       location: location.trim() || null,
-      timeline: timeline.trim() || null,
+      timeline: timeline ? format(timeline, 'yyyy-MM-dd') : null,
       deliverables: deliverablesText,
       deliverable_slots: filledSlots.length > 0 ? (filledSlots as unknown as Json) : null,
       requirements: requirements.trim() || null,
@@ -312,12 +314,11 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         {showDetails && (
           <div className="space-y-4 rounded-lg border p-4">
             <div className="space-y-2">
-              <Label htmlFor="timeline">{t('common.timeline')}</Label>
-              <Input
-                id="timeline"
+              <Label>{t('common.timeline')}</Label>
+              <DatePicker
                 value={timeline}
-                onChange={(e) => setTimeline(e.target.value)}
-                placeholder={t('createPost.timelinePlaceholder')}
+                onChange={setTimeline}
+                placeholder={t('createPost.selectDate')}
               />
             </div>
             {/* Deliverable Slots */}

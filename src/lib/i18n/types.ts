@@ -84,6 +84,7 @@ export interface Translations {
   'createPost.titleTemplatePlaceholder': string
   'createPost.titleDetailPlaceholder': string
   'createPost.customTitle': string
+  'createPost.selectDate': string
   'createPost.creating': string
   'createPost.create': string
 

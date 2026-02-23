@@ -84,6 +84,7 @@ export const en: Translations = {
   'createPost.titleTemplatePlaceholder': 'Select a title or type your own',
   'createPost.titleDetailPlaceholder': 'Add more details...',
   'createPost.customTitle': 'Custom',
+  'createPost.selectDate': 'Select a date',
   'createPost.creating': 'Creating...',
   'createPost.create': 'Create Collab Post',
 

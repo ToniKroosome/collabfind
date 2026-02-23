@@ -84,6 +84,7 @@ export const th: Translations = {
   'createPost.titleTemplatePlaceholder': 'เลือกหัวข้อหรือพิมพ์เอง',
   'createPost.titleDetailPlaceholder': 'เพิ่มรายละเอียด...',
   'createPost.customTitle': 'กำหนดเอง',
+  'createPost.selectDate': 'เลือกวันที่',
   'createPost.creating': 'กำลังสร้าง...',
   'createPost.create': 'สร้างโพสต์คอลแลป',
 
