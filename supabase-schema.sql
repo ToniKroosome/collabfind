@@ -706,7 +706,8 @@ WITH CHECK (
 
 CREATE POLICY "Creator can update storyboard"
 ON storyboards FOR UPDATE TO authenticated
-USING (auth.uid() = created_by);
+USING (auth.uid() = created_by)
+WITH CHECK (auth.uid() = created_by);
 
 CREATE TRIGGER trigger_storyboards_updated_at
     BEFORE UPDATE ON storyboards
