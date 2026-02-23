@@ -51,7 +51,8 @@ ON profiles FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
 
 CREATE POLICY "Users can update their own profile"
 ON profiles FOR UPDATE TO authenticated
-USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+USING (auth.uid() = id)
+WITH CHECK (auth.uid() = id AND is_admin = (SELECT is_admin FROM profiles WHERE id = auth.uid()));
 
 -- Auto-create profile on signup
 CREATE OR REPLACE FUNCTION handle_new_user()

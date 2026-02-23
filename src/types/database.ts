@@ -672,10 +672,17 @@ export type CollabContract = Database['public']['Tables']['collab_contracts']['R
 export type ContractSubmission = Database['public']['Tables']['contract_submissions']['Row']
 export type Storyboard = Database['public']['Tables']['storyboards']['Row']
 
+export interface DrawingStroke {
+  points: number[] // Flat [x1,y1,x2,y2,...] normalized to 0-1
+  color: string
+  width: number
+}
+
 export interface StoryboardSlot {
   order: number
   description: string
   assigned_to: string // user_id of the assigned person
+  drawing?: DrawingStroke[]
 }
 
 export interface DeliverableSlot {

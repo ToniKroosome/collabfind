@@ -335,6 +335,8 @@ export const en: Translations = {
   'storyboard.noStoryboardHint': 'Create a storyboard to plan your collab step by step.',
   'storyboard.slot': 'Slot',
   'storyboard.deleteSlot': 'Delete slot',
+  'storyboard.undoStroke': 'Undo',
+  'storyboard.clearDrawing': 'Clear drawing',
 
   // Toast - Contract & Submission
   'toast.contractCreated': 'Contract created! Waiting for partner to accept.',

@@ -335,6 +335,8 @@ export interface Translations {
   'storyboard.noStoryboardHint': string
   'storyboard.slot': string
   'storyboard.deleteSlot': string
+  'storyboard.undoStroke': string
+  'storyboard.clearDrawing': string
 
   // Toast - Contract & Submission
   'toast.contractCreated': string

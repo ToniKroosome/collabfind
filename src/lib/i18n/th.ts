@@ -335,6 +335,8 @@ export const th: Translations = {
   'storyboard.noStoryboardHint': 'สร้างสตอรี่บอร์ดเพื่อวางแผนคอลแลปทีละขั้นตอน',
   'storyboard.slot': 'ช่อง',
   'storyboard.deleteSlot': 'ลบช่อง',
+  'storyboard.undoStroke': 'เลิกทำ',
+  'storyboard.clearDrawing': 'ลบภาพวาด',
 
   // Toast - Contract & Submission
   'toast.contractCreated': 'สร้างสัญญาแล้ว! รอพาร์ทเนอร์ยอมรับ',

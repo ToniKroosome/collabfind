@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/select'
 import { ChevronUp, ChevronDown, Trash2 } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
+import { DrawingCanvas } from '@/components/storyboard/drawing-canvas'
 import type { StoryboardSlot as StoryboardSlotType, CollabMember } from '@/types/database'
 
 interface StoryboardSlotProps {
@@ -70,7 +71,16 @@ export function StoryboardSlot({
         )}
       </div>
 
-      {/* Row 2: Person selector + action buttons */}
+      {/* Row 2: Drawing canvas */}
+      {(isOwner || (slot.drawing && slot.drawing.length > 0)) && (
+        <DrawingCanvas
+          strokes={slot.drawing || []}
+          onStrokesChange={(drawing) => onUpdate({ ...slot, drawing })}
+          readOnly={!isOwner}
+        />
+      )}
+
+      {/* Row 3: Person selector + action buttons */}
       <div className="flex items-center gap-2">
         {isOwner ? (
           <Select
