@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { NICHES, FOLLOWER_RANGES } from '@/lib/constants'
 import type { Profile } from '@/types/database'
 import { toast } from 'sonner'
-import { Camera } from 'lucide-react'
+import { Camera, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useLanguage, getNicheLabel } from '@/lib/i18n'
 import { SocialVerifyDialog } from '@/components/profile/social-verify-dialog'
@@ -356,6 +356,23 @@ export function ProfileForm({ profile, isOnboarding }: ProfileFormProps) {
       <Button type="submit" className="w-full" disabled={saving}>
         {saving ? t('profile.saving') : isOnboarding ? t('profile.completeProfileBtn') : t('profile.saveChanges')}
       </Button>
+
+      {isOnboarding && (
+        <div className="text-center pt-2">
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-red-500 transition-colors"
+            onClick={async () => {
+              const supabase = (await import('@/lib/supabase/client')).createClient()
+              await supabase.auth.signOut()
+              window.location.href = '/login'
+            }}
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            {t('profile.signOut')}
+          </button>
+        </div>
+      )}
     </form>
   )
 }
