@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
-import { Plus, Save, FileText } from 'lucide-react'
+import { Plus, Save, FileText, Copy, ClipboardPaste } from 'lucide-react'
 import { useLanguage } from '@/lib/i18n'
 import { StoryboardSlot } from '@/components/storyboard/storyboard-slot'
 import type { Json } from '@/types/database'
@@ -132,6 +132,31 @@ export function StoryboardPanel({
     setSlots(renumbered)
   }
 
+  const handleCopy = async () => {
+    const data = JSON.stringify(slots)
+    await navigator.clipboard.writeText(data)
+    toast.success(t('toast.storyboardCopied'))
+  }
+
+  const handlePaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText()
+      const parsed = JSON.parse(text)
+      if (!Array.isArray(parsed)) throw new Error()
+      // Validate structure and strip assigned_to (different members in new chat)
+      const pasted: StoryboardSlotType[] = parsed.map((s: StoryboardSlotType, i: number) => ({
+        order: i + 1,
+        description: s.description || '',
+        assigned_to: members[0]?.id || '',
+        ...(s.drawing ? { drawing: s.drawing } : {}),
+      }))
+      setSlots(pasted)
+      toast.success(t('toast.storyboardPasted'))
+    } catch {
+      toast.error(t('toast.invalidStoryboardData'))
+    }
+  }
+
   const handleSave = async () => {
     if (!storyboard) return
     setSaving(true)
@@ -228,6 +253,25 @@ export function StoryboardPanel({
                   <Plus className="mr-1 h-4 w-4" />
                   {t('storyboard.addSlot')}
                 </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={handleCopy}
+                    disabled={slots.length === 0}
+                    className="flex-1"
+                  >
+                    <Copy className="mr-1 h-4 w-4" />
+                    {t('storyboard.copy')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handlePaste}
+                    className="flex-1"
+                  >
+                    <ClipboardPaste className="mr-1 h-4 w-4" />
+                    {t('storyboard.paste')}
+                  </Button>
+                </div>
                 <Button
                   onClick={handleSave}
                   disabled={saving}

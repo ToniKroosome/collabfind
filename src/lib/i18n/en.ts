@@ -336,6 +336,8 @@ export const en: Translations = {
   'storyboard.noStoryboardHint': 'Create a storyboard to plan your collab step by step.',
   'storyboard.slot': 'Slot',
   'storyboard.deleteSlot': 'Delete slot',
+  'storyboard.copy': 'Copy',
+  'storyboard.paste': 'Paste',
   'storyboard.undoStroke': 'Undo',
   'storyboard.clearDrawing': 'Clear drawing',
 
@@ -357,6 +359,9 @@ export const en: Translations = {
   'toast.storyboardSaved': 'Storyboard saved!',
   'toast.failedSaveStoryboard': 'Failed to save storyboard',
   'toast.linkCopied': 'Link copied!',
+  'toast.storyboardCopied': 'Storyboard copied!',
+  'toast.storyboardPasted': 'Storyboard pasted! Remember to save.',
+  'toast.invalidStoryboardData': 'No storyboard data in clipboard',
 
   // Deliverable content types
   'deliverable.video': 'Video',

@@ -336,6 +336,8 @@ export interface Translations {
   'storyboard.noStoryboardHint': string
   'storyboard.slot': string
   'storyboard.deleteSlot': string
+  'storyboard.copy': string
+  'storyboard.paste': string
   'storyboard.undoStroke': string
   'storyboard.clearDrawing': string
 
@@ -357,6 +359,9 @@ export interface Translations {
   'toast.storyboardSaved': string
   'toast.failedSaveStoryboard': string
   'toast.linkCopied': string
+  'toast.storyboardCopied': string
+  'toast.storyboardPasted': string
+  'toast.invalidStoryboardData': string
 
   // Deliverable content types
   'deliverable.video': string

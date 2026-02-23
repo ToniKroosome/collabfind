@@ -336,6 +336,8 @@ export const th: Translations = {
   'storyboard.noStoryboardHint': 'สร้างสตอรี่บอร์ดเพื่อวางแผนคอลแลปทีละขั้นตอน',
   'storyboard.slot': 'ช่อง',
   'storyboard.deleteSlot': 'ลบช่อง',
+  'storyboard.copy': 'คัดลอก',
+  'storyboard.paste': 'วาง',
   'storyboard.undoStroke': 'เลิกทำ',
   'storyboard.clearDrawing': 'ลบภาพวาด',
 
@@ -357,6 +359,9 @@ export const th: Translations = {
   'toast.storyboardSaved': 'บันทึกสตอรี่บอร์ดแล้ว!',
   'toast.failedSaveStoryboard': 'ไม่สามารถบันทึกสตอรี่บอร์ดได้',
   'toast.linkCopied': 'คัดลอกลิงก์แล้ว!',
+  'toast.storyboardCopied': 'คัดลอกสตอรี่บอร์ดแล้ว!',
+  'toast.storyboardPasted': 'วางสตอรี่บอร์ดแล้ว! อย่าลืมบันทึก',
+  'toast.invalidStoryboardData': 'ไม่มีข้อมูลสตอรี่บอร์ดในคลิปบอร์ด',
 
   // Deliverable content types
   'deliverable.video': 'วิดีโอ',
