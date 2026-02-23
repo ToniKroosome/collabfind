@@ -15,7 +15,19 @@ import { useLanguage } from '@/lib/i18n'
 import { DrawingCanvas } from '@/components/storyboard/drawing-canvas'
 import type { StoryboardSlot as StoryboardSlotType, CollabMember } from '@/types/database'
 
-const SLOT_BG = ['#dcfce7', '#e4e4e7'] // green-100, zinc-200
+const MEMBER_COLORS = [
+  '#dcfce7', // green
+  '#dbeafe', // blue
+  '#fce7f3', // pink
+  '#fef3c7', // amber
+  '#e0e7ff', // indigo
+  '#ecfeff', // cyan
+  '#faf5ff', // purple
+  '#fff7ed', // orange
+  '#f0fdf4', // emerald
+  '#fefce8', // yellow
+]
+const UNASSIGNED_BG = '#e4e4e7' // zinc-200
 
 interface StoryboardSlotProps {
   slot: StoryboardSlotType
@@ -46,8 +58,10 @@ export function StoryboardSlot({
 
   const member = members.find((m) => m.id === slot.assigned_to)
   const assignedName = member?.full_name || '?'
+  const memberIndex = members.findIndex((m) => m.id === slot.assigned_to)
+  const slotBg = memberIndex >= 0 ? MEMBER_COLORS[memberIndex % MEMBER_COLORS.length] : UNASSIGNED_BG
   return (
-    <div className="space-y-2 rounded-lg border p-3" style={{ backgroundColor: SLOT_BG[index % 2] }}>
+    <div className="space-y-2 rounded-lg border p-3" style={{ backgroundColor: slotBg }}>
       {/* Row 1: Order badge + Description */}
       <div className="flex items-center gap-2">
         <Badge

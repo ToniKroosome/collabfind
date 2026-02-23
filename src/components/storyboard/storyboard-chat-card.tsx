@@ -8,7 +8,19 @@ import { useLanguage } from '@/lib/i18n'
 import { renderStrokes } from '@/lib/drawing-utils'
 import type { Storyboard, StoryboardSlot, CollabMember, DrawingStroke } from '@/types/database'
 
-const SLOT_BG = ['#dcfce7', '#e4e4e7'] // green-100, zinc-200
+const MEMBER_COLORS = [
+  '#dcfce7', // green
+  '#dbeafe', // blue
+  '#fce7f3', // pink
+  '#fef3c7', // amber
+  '#e0e7ff', // indigo
+  '#ecfeff', // cyan
+  '#faf5ff', // purple
+  '#fff7ed', // orange
+  '#f0fdf4', // emerald
+  '#fefce8', // yellow
+]
+const UNASSIGNED_BG = '#e4e4e7' // zinc-200
 
 interface StoryboardChatCardProps {
   storyboard: Storyboard | null
@@ -114,8 +126,11 @@ export function StoryboardChatCard({
                 {t('storyboard.noStoryboardHint')}
               </p>
             ) : (
-              slots.map((slot, i) => (
-                <div key={i} className="space-y-1 rounded-lg border p-2" style={{ backgroundColor: SLOT_BG[i % 2] }}>
+              slots.map((slot, i) => {
+                const memberIdx = members.findIndex((m) => m.id === slot.assigned_to)
+                const slotBg = memberIdx >= 0 ? MEMBER_COLORS[memberIdx % MEMBER_COLORS.length] : UNASSIGNED_BG
+                return (
+                <div key={i} className="space-y-1 rounded-lg border p-2" style={{ backgroundColor: slotBg }}>
                   <div className="flex items-start gap-1.5">
                     <Badge
                       variant="secondary"
@@ -136,7 +151,7 @@ export function StoryboardChatCard({
                     <DrawingThumbnail strokes={slot.drawing} />
                   )}
                 </div>
-              ))
+              )})
             )}
 
             {isOwner && (
