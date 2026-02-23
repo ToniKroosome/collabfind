@@ -49,17 +49,8 @@ export function PostDetailContent({
   const typeColor = COLLAB_TYPE_COLORS[post.collab_type] || COLLAB_TYPE_COLORS.other
 
   const handleShare = async () => {
-    const url = window.location.href
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: post.title, url })
-      } catch {
-        // User cancelled or share failed — ignore
-      }
-    } else {
-      await navigator.clipboard.writeText(url)
-      toast.success(t('toast.linkCopied'))
-    }
+    await navigator.clipboard.writeText(window.location.href)
+    toast.success(t('toast.linkCopied'))
   }
 
   const audienceLabel = FOLLOWER_RANGES.find(
