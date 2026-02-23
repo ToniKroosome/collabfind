@@ -139,6 +139,8 @@ export interface Database {
           requirements: string | null
           compensation: string | null
           video_resolution: string | null
+          reference_link: string | null
+          edit_level: string | null
           is_open: boolean
           max_collaborators: number
           collab_mode: string
@@ -161,6 +163,8 @@ export interface Database {
           requirements?: string | null
           compensation?: string | null
           video_resolution?: string | null
+          reference_link?: string | null
+          edit_level?: string | null
           is_open?: boolean
           max_collaborators?: number
           collab_mode?: string
@@ -183,6 +187,8 @@ export interface Database {
           requirements?: string | null
           compensation?: string | null
           video_resolution?: string | null
+          reference_link?: string | null
+          edit_level?: string | null
           is_open?: boolean
           max_collaborators?: number
           collab_mode?: string

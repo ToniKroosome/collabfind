@@ -87,8 +87,17 @@ export interface Translations {
   'createPost.selectDate': string
   'createPost.videoResolution': string
   'createPost.videoResolutionPlaceholder': string
+  'createPost.referenceLink': string
+  'createPost.referenceLinkPlaceholder': string
+  'createPost.editLevel': string
+  'createPost.editLevelPlaceholder': string
   'createPost.creating': string
   'createPost.create': string
+
+  // Edit levels
+  'editLevel.full_edit': string
+  'editLevel.rough_cut': string
+  'editLevel.raw_footage': string
 
   // Title templates
   'titleTemplate.dog_video_collab': string

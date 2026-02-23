@@ -99,6 +99,8 @@ CREATE TABLE IF NOT EXISTS collab_posts (
     requirements TEXT,
     compensation TEXT,
     video_resolution TEXT,
+    reference_link TEXT,
+    edit_level TEXT,
     max_collaborators INT NOT NULL DEFAULT 1,
     collab_mode TEXT NOT NULL DEFAULT 'separate'
         CHECK (collab_mode IN ('separate', 'group')),

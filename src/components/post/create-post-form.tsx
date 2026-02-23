@@ -9,10 +9,10 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIVERABLE_QUANTITIES, MAX_COLLABORATORS, TITLE_TEMPLATES, VIDEO_RESOLUTIONS } from '@/lib/constants'
+import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIVERABLE_QUANTITIES, MAX_COLLABORATORS, TITLE_TEMPLATES, VIDEO_RESOLUTIONS, EDIT_LEVELS } from '@/lib/constants'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel, getTitleTemplateLabel } from '@/lib/i18n'
+import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel, getTitleTemplateLabel, getEditLevelLabel } from '@/lib/i18n'
 import { Plus, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { DatePicker } from '@/components/ui/date-picker'
@@ -37,6 +37,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [requirements, setRequirements] = useState('')
   const [compensation, setCompensation] = useState('')
   const [videoResolution, setVideoResolution] = useState('')
+  const [editLevel, setEditLevel] = useState('')
+  const [referenceLink, setReferenceLink] = useState('')
   const [maxCollaborators, setMaxCollaborators] = useState(1)
   const [collabMode, setCollabMode] = useState('separate')
   const [saving, setSaving] = useState(false)
@@ -114,6 +116,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       requirements: requirements.trim() || null,
       compensation: compensation.trim() || null,
       video_resolution: videoResolution || null,
+      reference_link: referenceLink.trim() || null,
+      edit_level: editLevel || null,
       max_collaborators: maxCollaborators,
       collab_mode: maxCollaborators > 1 ? collabMode : 'separate',
     })
@@ -261,6 +265,18 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         />
       </div>
 
+      {/* Reference Link */}
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#fefce8' }}>
+        <Label htmlFor="referenceLink">{t('createPost.referenceLink')}</Label>
+        <Input
+          id="referenceLink"
+          value={referenceLink}
+          onChange={(e) => setReferenceLink(e.target.value)}
+          placeholder={t('createPost.referenceLinkPlaceholder')}
+          type="url"
+        />
+      </div>
+
       {/* Number of Collaborators */}
       <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#fff7ed' }}>
         <Label>{t('collab.maxCollaborators')}</Label>
@@ -334,6 +350,23 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                   {VIDEO_RESOLUTIONS.map((res) => (
                     <SelectItem key={res.value} value={res.value}>
                       {res.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Edit Level */}
+            <div className="space-y-2 rounded-lg border p-3" style={{ backgroundColor: '#e0e7ff' }}>
+              <Label>{t('createPost.editLevel')}</Label>
+              <Select value={editLevel} onValueChange={setEditLevel}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('createPost.editLevelPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {EDIT_LEVELS.map((level) => (
+                    <SelectItem key={level} value={level}>
+                      {getEditLevelLabel(t, level)}
                     </SelectItem>
                   ))}
                 </SelectContent>

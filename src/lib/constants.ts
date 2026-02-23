@@ -108,6 +108,14 @@ export const TITLE_TEMPLATES = [
 
 export type TitleTemplate = (typeof TITLE_TEMPLATES)[number]
 
+export const EDIT_LEVELS = [
+  'full_edit',
+  'rough_cut',
+  'raw_footage',
+] as const
+
+export type EditLevel = (typeof EDIT_LEVELS)[number]
+
 export const VIDEO_RESOLUTIONS = [
   { value: '1080x1920', label: '1080x1920 (Vertical/Reel)' },
   { value: '1920x1080', label: '1920x1080 (Landscape)' },

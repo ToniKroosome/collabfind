@@ -87,8 +87,17 @@ export const en: Translations = {
   'createPost.selectDate': 'Select a date',
   'createPost.videoResolution': 'Video Resolution',
   'createPost.videoResolutionPlaceholder': 'Select resolution',
+  'createPost.referenceLink': 'Reference Link',
+  'createPost.referenceLinkPlaceholder': 'Paste a reference link (e.g., YouTube, Instagram, TikTok)',
+  'createPost.editLevel': 'Edit Level',
+  'createPost.editLevelPlaceholder': 'What level of editing do you expect?',
   'createPost.creating': 'Creating...',
   'createPost.create': 'Create Collab Post',
+
+  // Edit levels
+  'editLevel.full_edit': 'Fully Edited Video',
+  'editLevel.rough_cut': 'Rough Cut',
+  'editLevel.raw_footage': 'Raw Footage Only',
 
   // Title templates
   'titleTemplate.dog_video_collab': 'Dog Video Collab',

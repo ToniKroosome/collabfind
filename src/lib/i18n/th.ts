@@ -87,8 +87,17 @@ export const th: Translations = {
   'createPost.selectDate': 'เลือกวันที่',
   'createPost.videoResolution': 'ความละเอียดวิดีโอ',
   'createPost.videoResolutionPlaceholder': 'เลือกความละเอียด',
+  'createPost.referenceLink': 'ลิงก์อ้างอิง',
+  'createPost.referenceLinkPlaceholder': 'วางลิงก์อ้างอิง (เช่น YouTube, Instagram, TikTok)',
+  'createPost.editLevel': 'ระดับการตัดต่อ',
+  'createPost.editLevelPlaceholder': 'คุณต้องการการตัดต่อระดับไหน?',
   'createPost.creating': 'กำลังสร้าง...',
   'createPost.create': 'สร้างโพสต์คอลแลป',
+
+  // Edit levels
+  'editLevel.full_edit': 'ตัดต่อเต็มรูปแบบ',
+  'editLevel.rough_cut': 'ตัดต่อคร่าวๆ',
+  'editLevel.raw_footage': 'ฟุตเทจดิบเท่านั้น',
 
   // Title templates
   'titleTemplate.dog_video_collab': 'คอลแลปวิดีโอน้องหมา',
