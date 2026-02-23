@@ -16,8 +16,8 @@ import { DrawingCanvas } from '@/components/storyboard/drawing-canvas'
 import type { StoryboardSlot as StoryboardSlotType, CollabMember } from '@/types/database'
 
 const SLOT_STYLES = [
-  'bg-white dark:bg-zinc-900 border-border',
-  'bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700',
+  'bg-white dark:bg-zinc-900',
+  'bg-zinc-200 dark:bg-zinc-700',
 ]
 
 interface StoryboardSlotProps {
