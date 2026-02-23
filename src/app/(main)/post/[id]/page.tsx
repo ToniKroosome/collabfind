@@ -81,6 +81,25 @@ export default async function PostDetailPage({
     interests = (data as InterestWithProfile[]) || []
   }
 
+  // Check if any match for this post has an accepted contract
+  let hasAcceptedContract = false
+  if (isOwner) {
+    const { data: matches } = await supabase
+      .from('matches')
+      .select('id')
+      .eq('post_id', id)
+    const matchIds = matches?.map((m) => m.id) || []
+    if (matchIds.length > 0) {
+      const { data: contracts } = await supabase
+        .from('collab_contracts')
+        .select('id')
+        .in('match_id', matchIds)
+        .eq('status', 'accepted')
+        .limit(1)
+      hasAcceptedContract = (contracts?.length ?? 0) > 0
+    }
+  }
+
   return (
     <PostDetailContent
       post={post}
@@ -88,6 +107,7 @@ export default async function PostDetailPage({
       hasExpressedInterest={hasExpressedInterest}
       interests={interests}
       userId={user?.id || null}
+      hasAcceptedContract={hasAcceptedContract}
     />
   )
 }

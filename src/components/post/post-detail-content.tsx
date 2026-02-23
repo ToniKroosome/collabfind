@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { COLLAB_TYPE_COLORS, FOLLOWER_RANGES } from '@/lib/constants'
-import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn, Trash2, Share2 } from 'lucide-react'
+import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn, Trash2, Share2, Pencil } from 'lucide-react'
 import { TimeAgo } from '@/components/shared/time-ago'
 import { toast } from 'sonner'
 import type { InterestWithProfile } from '@/types/database'
@@ -32,6 +32,7 @@ interface PostDetailContentProps {
   hasExpressedInterest: boolean
   interests: InterestWithProfile[]
   userId: string | null
+  hasAcceptedContract?: boolean
 }
 
 export function PostDetailContent({
@@ -40,6 +41,7 @@ export function PostDetailContent({
   hasExpressedInterest,
   interests,
   userId,
+  hasAcceptedContract = false,
 }: PostDetailContentProps) {
   const { t } = useLanguage()
   const router = useRouter()
@@ -237,9 +239,17 @@ export function PostDetailContent({
         />
       )}
 
-      {/* Owner: delete post */}
+      {/* Owner: edit & delete post */}
       {isOwner && (
         <>
+          {!hasAcceptedContract && (
+            <Link href={`/post/${post.id}/edit`}>
+              <Button variant="outline" className="w-full">
+                <Pencil className="mr-2 h-4 w-4" />
+                {t('postDetail.editPost')}
+              </Button>
+            </Link>
+          )}
           <Button
             variant="ghost"
             className="w-full text-destructive hover:text-destructive"

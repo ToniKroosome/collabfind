@@ -16,31 +16,33 @@ import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel
 import { Plus, X } from 'lucide-react'
 import { format } from 'date-fns'
 import { DatePicker } from '@/components/ui/date-picker'
-import type { DeliverableSlot, Json } from '@/types/database'
+import type { CollabPost, DeliverableSlot, Json } from '@/types/database'
 
 interface CreatePostFormProps {
   userId: string
+  editPost?: CollabPost
 }
 
-export function CreatePostForm({ userId }: CreatePostFormProps) {
+export function CreatePostForm({ userId, editPost }: CreatePostFormProps) {
+  const isEdit = !!editPost
   const [titleTemplate, setTitleTemplate] = useState('__custom__')
-  const [titleDetail, setTitleDetail] = useState('')
-  const [description, setDescription] = useState('')
-  const [collabType, setCollabType] = useState('')
-  const [nicheTags, setNicheTags] = useState<string[]>([])
-  const [audienceMin, setAudienceMin] = useState(0)
-  const [audienceMax, setAudienceMax] = useState(0)
-  const [location, setLocation] = useState('')
-  const [showDetails, setShowDetails] = useState(false)
-  const [timeline, setTimeline] = useState<Date | undefined>(undefined)
-  const [deliverableSlots, setDeliverableSlots] = useState<DeliverableSlot[]>([])
-  const [requirements, setRequirements] = useState('')
-  const [compensation, setCompensation] = useState('')
-  const [videoResolution, setVideoResolution] = useState('')
-  const [editLevel, setEditLevel] = useState('')
-  const [referenceLink, setReferenceLink] = useState('')
-  const [maxCollaborators, setMaxCollaborators] = useState(1)
-  const [collabMode, setCollabMode] = useState('separate')
+  const [titleDetail, setTitleDetail] = useState(editPost?.title || '')
+  const [description, setDescription] = useState(editPost?.description || '')
+  const [collabType, setCollabType] = useState(editPost?.collab_type || '')
+  const [nicheTags, setNicheTags] = useState<string[]>(editPost?.niche_tags || [])
+  const [audienceMin, setAudienceMin] = useState(editPost?.preferred_audience_min || 0)
+  const [audienceMax, setAudienceMax] = useState(editPost?.preferred_audience_max || 0)
+  const [location, setLocation] = useState(editPost?.location || '')
+  const [showDetails, setShowDetails] = useState(isEdit && !!(editPost?.timeline || editPost?.deliverable_slots || editPost?.requirements || editPost?.compensation || editPost?.video_resolution || editPost?.edit_level))
+  const [timeline, setTimeline] = useState<Date | undefined>(editPost?.timeline ? new Date(editPost.timeline) : undefined)
+  const [deliverableSlots, setDeliverableSlots] = useState<DeliverableSlot[]>(editPost?.deliverable_slots ? (editPost.deliverable_slots as unknown as DeliverableSlot[]) : [])
+  const [requirements, setRequirements] = useState(editPost?.requirements || '')
+  const [compensation, setCompensation] = useState(editPost?.compensation || '')
+  const [videoResolution, setVideoResolution] = useState(editPost?.video_resolution || '')
+  const [editLevel, setEditLevel] = useState(editPost?.edit_level || '')
+  const [referenceLink, setReferenceLink] = useState(editPost?.reference_link || '')
+  const [maxCollaborators, setMaxCollaborators] = useState(editPost?.max_collaborators || 1)
+  const [collabMode, setCollabMode] = useState(editPost?.collab_mode || 'separate')
   const [saving, setSaving] = useState(false)
 
   const router = useRouter()
@@ -101,8 +103,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       ? filledSlots.map((s) => `${s.quantity}x ${s.content_type}${s.description ? ` — ${s.description}` : ''}`).join('\n')
       : null
 
-    const { error } = await supabase.from('collab_posts').insert({
-      user_id: userId,
+    const postData = {
       title: fullTitle,
       description: description.trim(),
       collab_type: collabType,
@@ -120,7 +121,11 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       edit_level: editLevel || null,
       max_collaborators: maxCollaborators,
       collab_mode: maxCollaborators > 1 ? collabMode : 'separate',
-    })
+    }
+
+    const { error } = isEdit
+      ? await supabase.from('collab_posts').update(postData).eq('id', editPost.id)
+      : await supabase.from('collab_posts').insert({ user_id: userId, ...postData })
 
     if (error) {
       toast.error(t('toast.failedCreatePost'))
@@ -128,17 +133,17 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       return
     }
 
-    toast.success(t('toast.postCreated'))
-    router.push('/feed')
+    toast.success(isEdit ? t('toast.postUpdated') : t('toast.postCreated'))
+    router.push(isEdit ? `/post/${editPost.id}` : '/feed')
     router.refresh()
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 py-4">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">{t('createPost.title')}</h1>
+        <h1 className="text-2xl font-bold">{isEdit ? t('createPost.editTitle') : t('createPost.title')}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {t('createPost.subtitle')}
+          {isEdit ? t('createPost.editSubtitle') : t('createPost.subtitle')}
         </p>
       </div>
 
@@ -484,7 +489,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       </div>
 
       <Button type="submit" className="w-full" disabled={saving}>
-        {saving ? t('createPost.creating') : t('createPost.create')}
+        {saving ? t('createPost.creating') : isEdit ? t('createPost.saveChanges') : t('createPost.create')}
       </Button>
     </form>
   )

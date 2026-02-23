@@ -107,7 +107,12 @@ export interface Translations {
   'titleTemplate.pet_lifestyle_content': string
   'titleTemplate.dog_training_tips': string
 
+  'createPost.editTitle': string
+  'createPost.editSubtitle': string
+  'createPost.saveChanges': string
+
   // Post Detail
+  'postDetail.editPost': string
   'postDetail.collabDetails': string
   'postDetail.lookingFor': string
   'postDetail.noLongerAccepting': string
@@ -252,6 +257,7 @@ export interface Translations {
   'toast.selectCollabType': string
   'toast.failedCreatePost': string
   'toast.postCreated': string
+  'toast.postUpdated': string
   'toast.failedDeletePost': string
   'toast.postDeleted': string
   'toast.alreadyInterested': string

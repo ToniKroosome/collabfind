@@ -107,7 +107,12 @@ export const th: Translations = {
   'titleTemplate.pet_lifestyle_content': 'คอนเทนต์ไลฟ์สไตล์สัตว์เลี้ยง',
   'titleTemplate.dog_training_tips': 'คอลแลปเทคนิคฝึกสุนัข',
 
+  'createPost.editTitle': 'แก้ไขโพสต์คอลแลป',
+  'createPost.editSubtitle': 'อัปเดตรายละเอียดคอลแลปของคุณ',
+  'createPost.saveChanges': 'บันทึกการเปลี่ยนแปลง',
+
   // Post Detail
+  'postDetail.editPost': 'แก้ไขโพสต์',
   'postDetail.collabDetails': 'รายละเอียดคอลแลป',
   'postDetail.lookingFor': 'มองหาผู้ติดตาม {range}',
   'postDetail.noLongerAccepting': 'โพสต์คอลแลปนี้ไม่รับความสนใจแล้ว',
@@ -252,6 +257,7 @@ export const th: Translations = {
   'toast.selectCollabType': 'กรุณาเลือกประเภทคอลแลป',
   'toast.failedCreatePost': 'ไม่สามารถสร้างโพสต์ได้',
   'toast.postCreated': 'สร้างโพสต์คอลแลปแล้ว!',
+  'toast.postUpdated': 'อัปเดตโพสต์แล้ว!',
   'toast.failedDeletePost': 'ไม่สามารถลบโพสต์ได้',
   'toast.postDeleted': 'ลบโพสต์แล้ว!',
   'toast.alreadyInterested': 'คุณแสดงความสนใจไปแล้ว',

@@ -107,7 +107,12 @@ export const en: Translations = {
   'titleTemplate.pet_lifestyle_content': 'Pet Lifestyle Content',
   'titleTemplate.dog_training_tips': 'Dog Training Tips Collab',
 
+  'createPost.editTitle': 'Edit Collab Post',
+  'createPost.editSubtitle': 'Update your collaboration details',
+  'createPost.saveChanges': 'Save Changes',
+
   // Post Detail
+  'postDetail.editPost': 'Edit Post',
   'postDetail.collabDetails': 'Collab Details',
   'postDetail.lookingFor': 'Looking for {range} followers',
   'postDetail.noLongerAccepting': 'This collab post is no longer accepting interests.',
@@ -252,6 +257,7 @@ export const en: Translations = {
   'toast.selectCollabType': 'Please select a collab type',
   'toast.failedCreatePost': 'Failed to create post',
   'toast.postCreated': 'Collab post created!',
+  'toast.postUpdated': 'Post updated!',
   'toast.failedDeletePost': 'Failed to delete post',
   'toast.postDeleted': 'Post deleted!',
   'toast.alreadyInterested': "You've already expressed interest",
