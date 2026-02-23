@@ -281,6 +281,7 @@ export const en: Translations = {
   'niche.art': 'Art',
   'niche.health': 'Health',
   'niche.photography': 'Photography',
+  'niche.pet': 'Pet',
 
   // Contracts
   'contract.createContract': 'Create Contract',

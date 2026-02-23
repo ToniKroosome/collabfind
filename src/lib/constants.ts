@@ -14,6 +14,7 @@ export const NICHES = [
   'art',
   'health',
   'photography',
+  'pet',
 ] as const
 
 export type Niche = (typeof NICHES)[number]

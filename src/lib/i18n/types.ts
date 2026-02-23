@@ -281,6 +281,7 @@ export interface Translations {
   'niche.art': string
   'niche.health': string
   'niche.photography': string
+  'niche.pet': string
 
   // Contracts
   'contract.createContract': string

@@ -281,6 +281,7 @@ export const th: Translations = {
   'niche.art': 'ศิลปะ',
   'niche.health': 'สุขภาพ',
   'niche.photography': 'ถ่ายภาพ',
+  'niche.pet': 'สัตว์เลี้ยง',
 
   // Contracts
   'contract.createContract': 'สร้างสัญญา',
