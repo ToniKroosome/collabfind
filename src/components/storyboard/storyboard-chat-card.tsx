@@ -8,6 +8,17 @@ import { useLanguage } from '@/lib/i18n'
 import { renderStrokes } from '@/lib/drawing-utils'
 import type { Storyboard, StoryboardSlot, CollabMember, DrawingStroke } from '@/types/database'
 
+const MEMBER_COLORS = [
+  { bg: 'bg-indigo-50 dark:bg-indigo-950/30', border: 'border-l-indigo-400', name: 'text-indigo-700 dark:text-indigo-300' },
+  { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-l-emerald-400', name: 'text-emerald-700 dark:text-emerald-300' },
+  { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-l-amber-400', name: 'text-amber-700 dark:text-amber-300' },
+  { bg: 'bg-rose-50 dark:bg-rose-950/30', border: 'border-l-rose-400', name: 'text-rose-700 dark:text-rose-300' },
+  { bg: 'bg-cyan-50 dark:bg-cyan-950/30', border: 'border-l-cyan-400', name: 'text-cyan-700 dark:text-cyan-300' },
+  { bg: 'bg-violet-50 dark:bg-violet-950/30', border: 'border-l-violet-400', name: 'text-violet-700 dark:text-violet-300' },
+]
+
+const FALLBACK_COLOR = { bg: 'bg-background/60', border: 'border-l-gray-300', name: 'text-muted-foreground' }
+
 interface StoryboardChatCardProps {
   storyboard: Storyboard | null
   members: CollabMember[]
@@ -57,6 +68,12 @@ export function StoryboardChatCard({
   const getMemberName = (id: string) => {
     const m = members.find((m) => m.id === id)
     return m?.full_name?.split(' ')[0] || '?'
+  }
+
+  const getMemberColor = (id: string) => {
+    const index = members.findIndex((m) => m.id === id)
+    if (index === -1) return FALLBACK_COLOR
+    return MEMBER_COLORS[index % MEMBER_COLORS.length]
   }
 
   // No storyboard yet — show create button for owner
@@ -111,8 +128,10 @@ export function StoryboardChatCard({
                 {t('storyboard.noStoryboardHint')}
               </p>
             ) : (
-              slots.map((slot, i) => (
-                <div key={i} className="space-y-1 rounded-lg bg-background/60 p-2">
+              slots.map((slot, i) => {
+                const color = getMemberColor(slot.assigned_to)
+                return (
+                <div key={i} className={`space-y-1 rounded-lg border-l-2 ${color.bg} ${color.border} p-2`}>
                   <div className="flex items-start gap-1.5">
                     <Badge
                       variant="secondary"
@@ -124,7 +143,7 @@ export function StoryboardChatCard({
                       <p className="text-xs leading-snug">
                         {slot.description || '-'}
                       </p>
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className={`text-[10px] font-medium ${color.name}`}>
                         {getMemberName(slot.assigned_to)}
                       </p>
                     </div>
@@ -133,7 +152,8 @@ export function StoryboardChatCard({
                     <DrawingThumbnail strokes={slot.drawing} />
                   )}
                 </div>
-              ))
+                )
+              })
             )}
 
             {isOwner && (
