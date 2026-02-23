@@ -338,6 +338,8 @@ export interface Translations {
   'storyboard.deleteSlot': string
   'storyboard.copy': string
   'storyboard.paste': string
+  'storyboard.slots': string
+  'storyboard.edit': string
   'storyboard.undoStroke': string
   'storyboard.clearDrawing': string
 

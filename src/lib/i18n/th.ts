@@ -338,6 +338,8 @@ export const th: Translations = {
   'storyboard.deleteSlot': 'ลบช่อง',
   'storyboard.copy': 'คัดลอก',
   'storyboard.paste': 'วาง',
+  'storyboard.slots': 'ช่อง',
+  'storyboard.edit': 'แก้ไขสตอรี่บอร์ด',
   'storyboard.undoStroke': 'เลิกทำ',
   'storyboard.clearDrawing': 'ลบภาพวาด',
 

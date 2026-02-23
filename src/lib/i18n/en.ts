@@ -338,6 +338,8 @@ export const en: Translations = {
   'storyboard.deleteSlot': 'Delete slot',
   'storyboard.copy': 'Copy',
   'storyboard.paste': 'Paste',
+  'storyboard.slots': 'slots',
+  'storyboard.edit': 'Edit Storyboard',
   'storyboard.undoStroke': 'Undo',
   'storyboard.clearDrawing': 'Clear drawing',
 

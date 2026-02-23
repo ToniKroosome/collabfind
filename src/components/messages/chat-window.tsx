@@ -12,6 +12,7 @@ import { useLanguage } from '@/lib/i18n'
 import { ChatContractBar } from '@/components/contracts/chat-contract-bar'
 import { ContractPanel } from '@/components/contracts/contract-panel'
 import { StoryboardPanel } from '@/components/storyboard/storyboard-panel'
+import { StoryboardChatCard } from '@/components/storyboard/storyboard-chat-card'
 
 interface ChatWindowProps {
   matchId: string
@@ -261,6 +262,16 @@ export function ChatWindow({
 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+        {/* Inline storyboard card */}
+        {!isMock && postId && (
+          <StoryboardChatCard
+            storyboard={storyboard}
+            members={groupMembers}
+            isOwner={currentUserId === postOwnerId}
+            onEdit={() => setStoryboardPanelOpen(true)}
+            onCreate={() => setStoryboardPanelOpen(true)}
+          />
+        )}
         {messages.length === 0 && (
           <div className="flex h-full items-center justify-center">
             <p className="text-sm text-muted-foreground">
