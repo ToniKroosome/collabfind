@@ -15,16 +15,10 @@ import { useLanguage } from '@/lib/i18n'
 import { DrawingCanvas } from '@/components/storyboard/drawing-canvas'
 import type { StoryboardSlot as StoryboardSlotType, CollabMember } from '@/types/database'
 
-const MEMBER_COLORS = [
-  { bg: 'bg-indigo-50 dark:bg-indigo-950/30', border: 'border-indigo-300 dark:border-indigo-700' },
-  { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-300 dark:border-emerald-700' },
-  { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-300 dark:border-amber-700' },
-  { bg: 'bg-rose-50 dark:bg-rose-950/30', border: 'border-rose-300 dark:border-rose-700' },
-  { bg: 'bg-cyan-50 dark:bg-cyan-950/30', border: 'border-cyan-300 dark:border-cyan-700' },
-  { bg: 'bg-violet-50 dark:bg-violet-950/30', border: 'border-violet-300 dark:border-violet-700' },
+const SLOT_STYLES = [
+  'bg-white dark:bg-zinc-900 border-border',
+  'bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700',
 ]
-
-const FALLBACK_COLOR = { bg: '', border: 'border' }
 
 interface StoryboardSlotProps {
   slot: StoryboardSlotType
@@ -55,11 +49,8 @@ export function StoryboardSlot({
 
   const member = members.find((m) => m.id === slot.assigned_to)
   const assignedName = member?.full_name || '?'
-  const memberIndex = members.findIndex((m) => m.id === slot.assigned_to)
-  const color = memberIndex === -1 ? FALLBACK_COLOR : MEMBER_COLORS[memberIndex % MEMBER_COLORS.length]
-
   return (
-    <div className={`space-y-2 rounded-lg border p-3 ${color.bg} ${color.border}`}>
+    <div className={`space-y-2 rounded-lg border p-3 ${SLOT_STYLES[index % 2]}`}>
       {/* Row 1: Order badge + Description */}
       <div className="flex items-center gap-2">
         <Badge

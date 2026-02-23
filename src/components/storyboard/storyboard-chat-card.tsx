@@ -8,16 +8,10 @@ import { useLanguage } from '@/lib/i18n'
 import { renderStrokes } from '@/lib/drawing-utils'
 import type { Storyboard, StoryboardSlot, CollabMember, DrawingStroke } from '@/types/database'
 
-const MEMBER_COLORS = [
-  { bg: 'bg-indigo-100 dark:bg-indigo-950/50', border: 'border-indigo-300 dark:border-indigo-700', name: 'text-indigo-700 dark:text-indigo-300' },
-  { bg: 'bg-emerald-100 dark:bg-emerald-950/50', border: 'border-emerald-300 dark:border-emerald-700', name: 'text-emerald-700 dark:text-emerald-300' },
-  { bg: 'bg-amber-100 dark:bg-amber-950/50', border: 'border-amber-300 dark:border-amber-700', name: 'text-amber-700 dark:text-amber-300' },
-  { bg: 'bg-rose-100 dark:bg-rose-950/50', border: 'border-rose-300 dark:border-rose-700', name: 'text-rose-700 dark:text-rose-300' },
-  { bg: 'bg-cyan-100 dark:bg-cyan-950/50', border: 'border-cyan-300 dark:border-cyan-700', name: 'text-cyan-700 dark:text-cyan-300' },
-  { bg: 'bg-violet-100 dark:bg-violet-950/50', border: 'border-violet-300 dark:border-violet-700', name: 'text-violet-700 dark:text-violet-300' },
+const SLOT_STYLES = [
+  'bg-white dark:bg-zinc-900 border-border',
+  'bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700',
 ]
-
-const FALLBACK_COLOR = { bg: 'bg-gray-100 dark:bg-gray-800', border: 'border-gray-300 dark:border-gray-600', name: 'text-muted-foreground' }
 
 interface StoryboardChatCardProps {
   storyboard: Storyboard | null
@@ -70,11 +64,6 @@ export function StoryboardChatCard({
     return m?.full_name?.split(' ')[0] || '?'
   }
 
-  const getMemberColor = (id: string) => {
-    const index = members.findIndex((m) => m.id === id)
-    if (index === -1) return FALLBACK_COLOR
-    return MEMBER_COLORS[index % MEMBER_COLORS.length]
-  }
 
   // No storyboard yet — show create button for owner
   if (!storyboard) {
@@ -128,10 +117,8 @@ export function StoryboardChatCard({
                 {t('storyboard.noStoryboardHint')}
               </p>
             ) : (
-              slots.map((slot, i) => {
-                const color = getMemberColor(slot.assigned_to)
-                return (
-                <div key={i} className={`space-y-1 rounded-lg border ${color.bg} ${color.border} p-2`}>
+              slots.map((slot, i) => (
+                <div key={i} className={`space-y-1 rounded-lg border p-2 ${SLOT_STYLES[i % 2]}`}>
                   <div className="flex items-start gap-1.5">
                     <Badge
                       variant="secondary"
@@ -143,7 +130,7 @@ export function StoryboardChatCard({
                       <p className="text-xs leading-snug">
                         {slot.description || '-'}
                       </p>
-                      <p className={`text-[10px] font-medium ${color.name}`}>
+                      <p className="text-[10px] text-muted-foreground">
                         {getMemberName(slot.assigned_to)}
                       </p>
                     </div>
@@ -152,8 +139,7 @@ export function StoryboardChatCard({
                     <DrawingThumbnail strokes={slot.drawing} />
                   )}
                 </div>
-                )
-              })
+              ))
             )}
 
             {isOwner && (
