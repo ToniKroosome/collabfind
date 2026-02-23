@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { COLLAB_TYPE_COLORS, FOLLOWER_RANGES } from '@/lib/constants'
-import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn, Trash2 } from 'lucide-react'
+import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn, Trash2, Share2 } from 'lucide-react'
 import { TimeAgo } from '@/components/shared/time-ago'
 import { toast } from 'sonner'
 import type { InterestWithProfile } from '@/types/database'
@@ -47,6 +47,20 @@ export function PostDetailContent({
   const [deleting, setDeleting] = useState(false)
   const typeLabel = getCollabTypeLabel(t, post.collab_type)
   const typeColor = COLLAB_TYPE_COLORS[post.collab_type] || COLLAB_TYPE_COLORS.other
+
+  const handleShare = async () => {
+    const url = window.location.href
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: post.title, url })
+      } catch {
+        // User cancelled or share failed — ignore
+      }
+    } else {
+      await navigator.clipboard.writeText(url)
+      toast.success(t('toast.linkCopied'))
+    }
+  }
 
   const audienceLabel = FOLLOWER_RANGES.find(
     (r) =>
@@ -80,11 +94,22 @@ export function PostDetailContent({
 
       {/* Post content */}
       <div className="space-y-3">
-        <div>
-          <h1 className="text-xl font-bold">{post.title}</h1>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            <TimeAgo date={post.created_at} />
-          </p>
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <h1 className="text-xl font-bold">{post.title}</h1>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              <TimeAgo date={post.created_at} />
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            onClick={handleShare}
+            title={t('postDetail.share')}
+          >
+            <Share2 className="h-4 w-4" />
+          </Button>
         </div>
 
         {/* Tags */}

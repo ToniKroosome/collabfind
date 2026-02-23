@@ -92,6 +92,7 @@ export const th: Translations = {
   'postDetail.deleteDesc': 'โพสต์และความสนใจทั้งหมดจะถูกลบอย่างถาวร ไม่สามารถย้อนกลับได้',
   'postDetail.confirmDelete': 'ใช่ ลบเลย',
   'postDetail.deleting': 'กำลังลบ...',
+  'postDetail.share': 'แชร์',
 
   // Interest
   'interest.imInterested': 'ฉันสนใจ',
@@ -355,6 +356,7 @@ export const th: Translations = {
   'toast.enterSubmissionDesc': 'กรุณาอธิบายผลงานที่เสร็จแล้ว',
   'toast.storyboardSaved': 'บันทึกสตอรี่บอร์ดแล้ว!',
   'toast.failedSaveStoryboard': 'ไม่สามารถบันทึกสตอรี่บอร์ดได้',
+  'toast.linkCopied': 'คัดลอกลิงก์แล้ว!',
 
   // Deliverable content types
   'deliverable.video': 'วิดีโอ',

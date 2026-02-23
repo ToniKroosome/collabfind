@@ -92,6 +92,7 @@ export const en: Translations = {
   'postDetail.deleteDesc': 'This will permanently remove the post and all related interests. This action cannot be undone.',
   'postDetail.confirmDelete': 'Yes, Delete',
   'postDetail.deleting': 'Deleting...',
+  'postDetail.share': 'Share',
 
   // Interest
   'interest.imInterested': "I'm Interested",
@@ -355,6 +356,7 @@ export const en: Translations = {
   'toast.enterSubmissionDesc': 'Please describe your completed work',
   'toast.storyboardSaved': 'Storyboard saved!',
   'toast.failedSaveStoryboard': 'Failed to save storyboard',
+  'toast.linkCopied': 'Link copied!',
 
   // Deliverable content types
   'deliverable.video': 'Video',

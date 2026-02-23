@@ -1,7 +1,41 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { PostDetailContent } from '@/components/post/post-detail-content'
 import type { InterestWithProfile } from '@/types/database'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+  const { data: post } = await supabase
+    .from('collab_posts')
+    .select('title, description')
+    .eq('id', id)
+    .single()
+
+  if (!post) return { title: 'Post not found' }
+
+  const description = post.description?.slice(0, 160) || 'Check out this collab opportunity!'
+
+  return {
+    title: `${post.title} — IntrovertxCollab`,
+    description,
+    openGraph: {
+      title: post.title,
+      description,
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary',
+      title: post.title,
+      description,
+    },
+  }
+}
 
 export default async function PostDetailPage({
   params,

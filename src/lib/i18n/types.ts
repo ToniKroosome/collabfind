@@ -92,6 +92,7 @@ export interface Translations {
   'postDetail.deleteDesc': string
   'postDetail.confirmDelete': string
   'postDetail.deleting': string
+  'postDetail.share': string
 
   // Interest
   'interest.imInterested': string
@@ -355,6 +356,7 @@ export interface Translations {
   'toast.enterSubmissionDesc': string
   'toast.storyboardSaved': string
   'toast.failedSaveStoryboard': string
+  'toast.linkCopied': string
 
   // Deliverable content types
   'deliverable.video': string
