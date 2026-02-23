@@ -21,3 +21,8 @@ export function getDeliverableTypeLabel(t: TranslateFn, value: string): string {
   const key = `deliverable.${value}` as keyof Translations
   return t(key)
 }
+
+export function getTitleTemplateLabel(t: TranslateFn, value: string): string {
+  const key = `titleTemplate.${value}` as keyof Translations
+  return t(key)
+}

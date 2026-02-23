@@ -80,8 +80,19 @@ export interface Translations {
   'createPost.deliverablesPH': string
   'createPost.requirementsPH': string
   'createPost.compensationPH': string
+  'createPost.titleTemplate': string
+  'createPost.titleTemplatePlaceholder': string
+  'createPost.customTitle': string
   'createPost.creating': string
   'createPost.create': string
+
+  // Title templates
+  'titleTemplate.dog_video_collab': string
+  'titleTemplate.dog_product_review': string
+  'titleTemplate.dog_photo_shoot': string
+  'titleTemplate.dog_park_meetup': string
+  'titleTemplate.pet_lifestyle_content': string
+  'titleTemplate.dog_training_tips': string
 
   // Post Detail
   'postDetail.collabDetails': string

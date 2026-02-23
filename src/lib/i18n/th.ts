@@ -80,8 +80,19 @@ export const th: Translations = {
   'createPost.deliverablesPH': 'เช่น แต่ละคนโพสต์ Reel 1 อัน แท็กอีกฝ่าย',
   'createPost.requirementsPH': 'เช่น ต้องมีผู้ติดตาม 10K+ บน Instagram',
   'createPost.compensationPH': 'เช่น โปรโมทข้ามช่องเท่านั้น, แบ่งรายได้ 50/50',
+  'createPost.titleTemplate': 'หัวข้อด่วน',
+  'createPost.titleTemplatePlaceholder': 'เลือกหัวข้อหรือพิมพ์เอง',
+  'createPost.customTitle': 'กำหนดเอง',
   'createPost.creating': 'กำลังสร้าง...',
   'createPost.create': 'สร้างโพสต์คอลแลป',
+
+  // Title templates
+  'titleTemplate.dog_video_collab': 'คอลแลปวิดีโอน้องหมา',
+  'titleTemplate.dog_product_review': 'รีวิวสินค้าน้องหมา',
+  'titleTemplate.dog_photo_shoot': 'ถ่ายรูปน้องหมา',
+  'titleTemplate.dog_park_meetup': 'นัดเจอที่สวนสุนัข',
+  'titleTemplate.pet_lifestyle_content': 'คอนเทนต์ไลฟ์สไตล์สัตว์เลี้ยง',
+  'titleTemplate.dog_training_tips': 'คอลแลปเทคนิคฝึกสุนัข',
 
   // Post Detail
   'postDetail.collabDetails': 'รายละเอียดคอลแลป',

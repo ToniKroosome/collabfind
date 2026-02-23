@@ -95,3 +95,14 @@ export const DELIVERABLE_QUANTITIES = [
 ] as const
 
 export const MAX_COLLABORATORS = 10
+
+export const TITLE_TEMPLATES = [
+  'dog_video_collab',
+  'dog_product_review',
+  'dog_photo_shoot',
+  'dog_park_meetup',
+  'pet_lifestyle_content',
+  'dog_training_tips',
+] as const
+
+export type TitleTemplate = (typeof TITLE_TEMPLATES)[number]

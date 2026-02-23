@@ -9,10 +9,10 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIVERABLE_QUANTITIES, MAX_COLLABORATORS } from '@/lib/constants'
+import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIVERABLE_QUANTITIES, MAX_COLLABORATORS, TITLE_TEMPLATES } from '@/lib/constants'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel } from '@/lib/i18n'
+import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel, getTitleTemplateLabel } from '@/lib/i18n'
 import { Plus, X } from 'lucide-react'
 import type { DeliverableSlot, Json } from '@/types/database'
 
@@ -35,6 +35,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [compensation, setCompensation] = useState('')
   const [maxCollaborators, setMaxCollaborators] = useState(1)
   const [collabMode, setCollabMode] = useState('separate')
+  const [titleTemplate, setTitleTemplate] = useState('__custom__')
   const [saving, setSaving] = useState(false)
   const router = useRouter()
   const supabase = createClient()
@@ -128,8 +129,35 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         </p>
       </div>
 
-      {/* Title */}
+      {/* Title Template + Title */}
       <div className="space-y-2">
+        <Label>{t('createPost.titleTemplate')}</Label>
+        <Select
+          value={titleTemplate}
+          onValueChange={(value) => {
+            setTitleTemplate(value)
+            if (value === '__custom__') {
+              setTitle('')
+            } else {
+              setTitle(getTitleTemplateLabel(t, value))
+            }
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder={t('createPost.titleTemplatePlaceholder')} />
+          </SelectTrigger>
+          <SelectContent>
+            {TITLE_TEMPLATES.map((tmpl) => (
+              <SelectItem key={tmpl} value={tmpl}>
+                {getTitleTemplateLabel(t, tmpl)}
+              </SelectItem>
+            ))}
+            <SelectItem value="__custom__">
+              {t('createPost.customTitle')}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+
         <Label htmlFor="title">{t('createPost.titleLabel')}</Label>
         <Input
           id="title"

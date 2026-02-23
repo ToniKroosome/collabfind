@@ -80,8 +80,19 @@ export const en: Translations = {
   'createPost.deliverablesPH': 'e.g., Each person posts 1 Reel tagging the other',
   'createPost.requirementsPH': 'e.g., Must have 10K+ followers on Instagram',
   'createPost.compensationPH': 'e.g., Cross-promotion only, Revenue split 50/50',
+  'createPost.titleTemplate': 'Quick Title',
+  'createPost.titleTemplatePlaceholder': 'Select a title or type your own',
+  'createPost.customTitle': 'Custom',
   'createPost.creating': 'Creating...',
   'createPost.create': 'Create Collab Post',
+
+  // Title templates
+  'titleTemplate.dog_video_collab': 'Dog Video Collab',
+  'titleTemplate.dog_product_review': 'Dog Product Review',
+  'titleTemplate.dog_photo_shoot': 'Dog Photo Shoot',
+  'titleTemplate.dog_park_meetup': 'Dog Park Meetup',
+  'titleTemplate.pet_lifestyle_content': 'Pet Lifestyle Content',
+  'titleTemplate.dog_training_tips': 'Dog Training Tips Collab',
 
   // Post Detail
   'postDetail.collabDetails': 'Collab Details',
