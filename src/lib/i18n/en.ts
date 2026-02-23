@@ -82,6 +82,7 @@ export const en: Translations = {
   'createPost.compensationPH': 'e.g., Cross-promotion only, Revenue split 50/50',
   'createPost.titleTemplate': 'Quick Title',
   'createPost.titleTemplatePlaceholder': 'Select a title or type your own',
+  'createPost.titleDetailPlaceholder': 'Add more details...',
   'createPost.customTitle': 'Custom',
   'createPost.creating': 'Creating...',
   'createPost.create': 'Create Collab Post',

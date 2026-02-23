@@ -82,6 +82,7 @@ export const th: Translations = {
   'createPost.compensationPH': 'เช่น โปรโมทข้ามช่องเท่านั้น, แบ่งรายได้ 50/50',
   'createPost.titleTemplate': 'หัวข้อด่วน',
   'createPost.titleTemplatePlaceholder': 'เลือกหัวข้อหรือพิมพ์เอง',
+  'createPost.titleDetailPlaceholder': 'เพิ่มรายละเอียด...',
   'createPost.customTitle': 'กำหนดเอง',
   'createPost.creating': 'กำลังสร้าง...',
   'createPost.create': 'สร้างโพสต์คอลแลป',

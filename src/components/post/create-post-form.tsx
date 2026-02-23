@@ -21,7 +21,8 @@ interface CreatePostFormProps {
 }
 
 export function CreatePostForm({ userId }: CreatePostFormProps) {
-  const [title, setTitle] = useState('')
+  const [titleTemplate, setTitleTemplate] = useState('__custom__')
+  const [titleDetail, setTitleDetail] = useState('')
   const [description, setDescription] = useState('')
   const [collabType, setCollabType] = useState('')
   const [nicheTags, setNicheTags] = useState<string[]>([])
@@ -35,11 +36,15 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [compensation, setCompensation] = useState('')
   const [maxCollaborators, setMaxCollaborators] = useState(1)
   const [collabMode, setCollabMode] = useState('separate')
-  const [titleTemplate, setTitleTemplate] = useState('__custom__')
   const [saving, setSaving] = useState(false)
+
   const router = useRouter()
   const supabase = createClient()
   const { t } = useLanguage()
+
+  const fullTitle = titleTemplate !== '__custom__'
+    ? `${getTitleTemplateLabel(t, titleTemplate)}: ${titleDetail}`.trim()
+    : titleDetail.trim()
 
   const toggleNiche = (niche: string) => {
     setNicheTags((prev) =>
@@ -70,7 +75,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!title.trim()) {
+    if (!fullTitle) {
       toast.error(t('toast.enterTitle'))
       return
     }
@@ -93,7 +98,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
     const { error } = await supabase.from('collab_posts').insert({
       user_id: userId,
-      title: title.trim(),
+      title: fullTitle,
       description: description.trim(),
       collab_type: collabType,
       niche_tags: nicheTags,
@@ -129,44 +134,44 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
         </p>
       </div>
 
-      {/* Title Template + Title */}
+      {/* Title: Template dropdown + detail input */}
       <div className="space-y-2">
-        <Label>{t('createPost.titleTemplate')}</Label>
-        <Select
-          value={titleTemplate}
-          onValueChange={(value) => {
-            setTitleTemplate(value)
-            if (value === '__custom__') {
-              setTitle('')
-            } else {
-              setTitle(getTitleTemplateLabel(t, value))
-            }
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={t('createPost.titleTemplatePlaceholder')} />
-          </SelectTrigger>
-          <SelectContent>
-            {TITLE_TEMPLATES.map((tmpl) => (
-              <SelectItem key={tmpl} value={tmpl}>
-                {getTitleTemplateLabel(t, tmpl)}
+        <Label>{t('createPost.titleLabel')}</Label>
+        <div className="flex items-center gap-2">
+          <Select
+            value={titleTemplate}
+            onValueChange={setTitleTemplate}
+          >
+            <SelectTrigger className="w-[180px] shrink-0">
+              <SelectValue placeholder={t('createPost.titleTemplatePlaceholder')} />
+            </SelectTrigger>
+            <SelectContent>
+              {TITLE_TEMPLATES.map((tmpl) => (
+                <SelectItem key={tmpl} value={tmpl}>
+                  {getTitleTemplateLabel(t, tmpl)}
+                </SelectItem>
+              ))}
+              <SelectItem value="__custom__">
+                {t('createPost.customTitle')}
               </SelectItem>
-            ))}
-            <SelectItem value="__custom__">
-              {t('createPost.customTitle')}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Label htmlFor="title">{t('createPost.titleLabel')}</Label>
-        <Input
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder={t('createPost.titlePlaceholder')}
-          required
-          maxLength={100}
-        />
+            </SelectContent>
+          </Select>
+          {titleTemplate !== '__custom__' && (
+            <span className="text-muted-foreground font-medium">:</span>
+          )}
+          <Input
+            value={titleDetail}
+            onChange={(e) => setTitleDetail(e.target.value)}
+            placeholder={titleTemplate !== '__custom__' ? t('createPost.titleDetailPlaceholder') : t('createPost.titlePlaceholder')}
+            className="min-w-0 flex-1"
+            maxLength={100}
+          />
+        </div>
+        {titleTemplate !== '__custom__' && (
+          <p className="text-xs text-muted-foreground">
+            {fullTitle}
+          </p>
+        )}
       </div>
 
       {/* Description */}

@@ -82,6 +82,7 @@ export interface Translations {
   'createPost.compensationPH': string
   'createPost.titleTemplate': string
   'createPost.titleTemplatePlaceholder': string
+  'createPost.titleDetailPlaceholder': string
   'createPost.customTitle': string
   'createPost.creating': string
   'createPost.create': string
