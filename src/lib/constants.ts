@@ -107,3 +107,12 @@ export const TITLE_TEMPLATES = [
 ] as const
 
 export type TitleTemplate = (typeof TITLE_TEMPLATES)[number]
+
+export const VIDEO_RESOLUTIONS = [
+  { value: '1080x1920', label: '1080x1920 (Vertical/Reel)' },
+  { value: '1920x1080', label: '1920x1080 (Landscape)' },
+  { value: '1080x1080', label: '1080x1080 (Square)' },
+  { value: '720x1280', label: '720x1280 (Vertical HD)' },
+  { value: '1280x720', label: '1280x720 (Landscape HD)' },
+  { value: '3840x2160', label: '3840x2160 (4K)' },
+] as const

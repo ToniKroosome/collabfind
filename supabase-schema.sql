@@ -98,6 +98,7 @@ CREATE TABLE IF NOT EXISTS collab_posts (
     deliverable_slots JSONB,
     requirements TEXT,
     compensation TEXT,
+    video_resolution TEXT,
     max_collaborators INT NOT NULL DEFAULT 1,
     collab_mode TEXT NOT NULL DEFAULT 'separate'
         CHECK (collab_mode IN ('separate', 'group')),

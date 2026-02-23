@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIVERABLE_QUANTITIES, MAX_COLLABORATORS, TITLE_TEMPLATES } from '@/lib/constants'
+import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIVERABLE_QUANTITIES, MAX_COLLABORATORS, TITLE_TEMPLATES, VIDEO_RESOLUTIONS } from '@/lib/constants'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel, getTitleTemplateLabel } from '@/lib/i18n'
@@ -36,6 +36,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
   const [deliverableSlots, setDeliverableSlots] = useState<DeliverableSlot[]>([])
   const [requirements, setRequirements] = useState('')
   const [compensation, setCompensation] = useState('')
+  const [videoResolution, setVideoResolution] = useState('')
   const [maxCollaborators, setMaxCollaborators] = useState(1)
   const [collabMode, setCollabMode] = useState('separate')
   const [saving, setSaving] = useState(false)
@@ -112,6 +113,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       deliverable_slots: filledSlots.length > 0 ? (filledSlots as unknown as Json) : null,
       requirements: requirements.trim() || null,
       compensation: compensation.trim() || null,
+      video_resolution: videoResolution || null,
       max_collaborators: maxCollaborators,
       collab_mode: maxCollaborators > 1 ? collabMode : 'separate',
     })
@@ -321,6 +323,23 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 placeholder={t('createPost.selectDate')}
               />
             </div>
+            {/* Video Resolution */}
+            <div className="space-y-2">
+              <Label>{t('createPost.videoResolution')}</Label>
+              <Select value={videoResolution} onValueChange={setVideoResolution}>
+                <SelectTrigger>
+                  <SelectValue placeholder={t('createPost.videoResolutionPlaceholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {VIDEO_RESOLUTIONS.map((res) => (
+                    <SelectItem key={res.value} value={res.value}>
+                      {res.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Deliverable Slots */}
             <div className="space-y-3">
               <Label>{t('deliverable.whatYouNeed' as any)}</Label>

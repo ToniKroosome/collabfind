@@ -85,6 +85,8 @@ export const en: Translations = {
   'createPost.titleDetailPlaceholder': 'Add more details...',
   'createPost.customTitle': 'Custom',
   'createPost.selectDate': 'Select a date',
+  'createPost.videoResolution': 'Video Resolution',
+  'createPost.videoResolutionPlaceholder': 'Select resolution',
   'createPost.creating': 'Creating...',
   'createPost.create': 'Create Collab Post',
 

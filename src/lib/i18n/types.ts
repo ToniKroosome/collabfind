@@ -85,6 +85,8 @@ export interface Translations {
   'createPost.titleDetailPlaceholder': string
   'createPost.customTitle': string
   'createPost.selectDate': string
+  'createPost.videoResolution': string
+  'createPost.videoResolutionPlaceholder': string
   'createPost.creating': string
   'createPost.create': string
 

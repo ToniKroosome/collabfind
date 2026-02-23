@@ -85,6 +85,8 @@ export const th: Translations = {
   'createPost.titleDetailPlaceholder': 'เพิ่มรายละเอียด...',
   'createPost.customTitle': 'กำหนดเอง',
   'createPost.selectDate': 'เลือกวันที่',
+  'createPost.videoResolution': 'ความละเอียดวิดีโอ',
+  'createPost.videoResolutionPlaceholder': 'เลือกความละเอียด',
   'createPost.creating': 'กำลังสร้าง...',
   'createPost.create': 'สร้างโพสต์คอลแลป',
 

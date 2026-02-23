@@ -138,6 +138,7 @@ export interface Database {
           deliverable_slots: Json | null
           requirements: string | null
           compensation: string | null
+          video_resolution: string | null
           is_open: boolean
           max_collaborators: number
           collab_mode: string
@@ -159,6 +160,7 @@ export interface Database {
           deliverable_slots?: Json | null
           requirements?: string | null
           compensation?: string | null
+          video_resolution?: string | null
           is_open?: boolean
           max_collaborators?: number
           collab_mode?: string
@@ -180,6 +182,7 @@ export interface Database {
           deliverable_slots?: Json | null
           requirements?: string | null
           compensation?: string | null
+          video_resolution?: string | null
           is_open?: boolean
           max_collaborators?: number
           collab_mode?: string
