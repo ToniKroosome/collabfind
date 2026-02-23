@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { COLLAB_TYPE_COLORS, FOLLOWER_RANGES } from '@/lib/constants'
-import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn, Trash2, Share2, Pencil } from 'lucide-react'
+import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn, Trash2, Share2, Pencil, Send } from 'lucide-react'
 import { TimeAgo } from '@/components/shared/time-ago'
 import { toast } from 'sonner'
 import type { InterestWithProfile } from '@/types/database'
@@ -53,6 +53,27 @@ export function PostDetailContent({
   const handleShare = async () => {
     await navigator.clipboard.writeText(window.location.href)
     toast.success(t('toast.linkCopied'))
+  }
+
+  const handleInviteShare = async () => {
+    const descSnippet = post.description?.length > 100
+      ? post.description.slice(0, 100) + '...'
+      : post.description || ''
+    const message = t('postDetail.inviteMessage')
+      .replace('{title}', post.title)
+      .replace('{description}', descSnippet)
+      .replace('{link}', window.location.href)
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: message })
+        return
+      } catch {
+        // User cancelled or share failed, fall through to clipboard
+      }
+    }
+    await navigator.clipboard.writeText(message)
+    toast.success(t('toast.inviteCopied'))
   }
 
   const audienceLabel = FOLLOWER_RANGES.find(
@@ -94,15 +115,26 @@ export function PostDetailContent({
               <TimeAgo date={post.created_at} />
             </p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 shrink-0"
-            onClick={handleShare}
-            title={t('postDetail.share')}
-          >
-            <Share2 className="h-4 w-4" />
-          </Button>
+          <div className="flex shrink-0 gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={handleShare}
+              title={t('postDetail.share')}
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={handleInviteShare}
+              title={t('postDetail.inviteCollab')}
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Tags */}

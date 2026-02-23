@@ -122,6 +122,8 @@ export const th: Translations = {
   'postDetail.confirmDelete': 'ใช่ ลบเลย',
   'postDetail.deleting': 'กำลังลบ...',
   'postDetail.share': 'แชร์',
+  'postDetail.inviteCollab': 'เชิญคอลแลป',
+  'postDetail.inviteMessage': "เฮ้! เรากำลังมองหาคนมาคอลแลปสำหรับ \"{title}\" — {description}\n\nดูรายละเอียดและร่วมได้ที่: {link}",
 
   // Interest
   'interest.imInterested': 'ฉันสนใจ',
@@ -392,6 +394,7 @@ export const th: Translations = {
   'toast.storyboardSaved': 'บันทึกสตอรี่บอร์ดแล้ว!',
   'toast.failedSaveStoryboard': 'ไม่สามารถบันทึกสตอรี่บอร์ดได้',
   'toast.linkCopied': 'คัดลอกลิงก์แล้ว!',
+  'toast.inviteCopied': 'คัดลอกข้อความเชิญแล้ว!',
   'toast.storyboardCopied': 'คัดลอกสตอรี่บอร์ดแล้ว!',
   'toast.storyboardPasted': 'วางสตอรี่บอร์ดแล้ว! อย่าลืมบันทึก',
   'toast.invalidStoryboardData': 'ไม่มีข้อมูลสตอรี่บอร์ดในคลิปบอร์ด',

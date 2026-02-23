@@ -122,6 +122,8 @@ export interface Translations {
   'postDetail.confirmDelete': string
   'postDetail.deleting': string
   'postDetail.share': string
+  'postDetail.inviteCollab': string
+  'postDetail.inviteMessage': string
 
   // Interest
   'interest.imInterested': string
@@ -392,6 +394,7 @@ export interface Translations {
   'toast.storyboardSaved': string
   'toast.failedSaveStoryboard': string
   'toast.linkCopied': string
+  'toast.inviteCopied': string
   'toast.storyboardCopied': string
   'toast.storyboardPasted': string
   'toast.invalidStoryboardData': string

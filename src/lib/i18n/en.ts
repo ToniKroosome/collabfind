@@ -122,6 +122,8 @@ export const en: Translations = {
   'postDetail.confirmDelete': 'Yes, Delete',
   'postDetail.deleting': 'Deleting...',
   'postDetail.share': 'Share',
+  'postDetail.inviteCollab': 'Invite to Collab',
+  'postDetail.inviteMessage': "Hey! I'm looking for collaborators for \"{title}\" — {description}\n\nCheck it out and join here: {link}",
 
   // Interest
   'interest.imInterested': "I'm Interested",
@@ -392,6 +394,7 @@ export const en: Translations = {
   'toast.storyboardSaved': 'Storyboard saved!',
   'toast.failedSaveStoryboard': 'Failed to save storyboard',
   'toast.linkCopied': 'Link copied!',
+  'toast.inviteCopied': 'Invitation message copied!',
   'toast.storyboardCopied': 'Storyboard copied!',
   'toast.storyboardPasted': 'Storyboard pasted! Remember to save.',
   'toast.invalidStoryboardData': 'No storyboard data in clipboard',
