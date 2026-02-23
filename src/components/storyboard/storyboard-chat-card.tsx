@@ -9,15 +9,15 @@ import { renderStrokes } from '@/lib/drawing-utils'
 import type { Storyboard, StoryboardSlot, CollabMember, DrawingStroke } from '@/types/database'
 
 const MEMBER_COLORS = [
-  { bg: 'bg-indigo-50 dark:bg-indigo-950/30', border: 'border-l-indigo-400', name: 'text-indigo-700 dark:text-indigo-300' },
-  { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-l-emerald-400', name: 'text-emerald-700 dark:text-emerald-300' },
-  { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-l-amber-400', name: 'text-amber-700 dark:text-amber-300' },
-  { bg: 'bg-rose-50 dark:bg-rose-950/30', border: 'border-l-rose-400', name: 'text-rose-700 dark:text-rose-300' },
-  { bg: 'bg-cyan-50 dark:bg-cyan-950/30', border: 'border-l-cyan-400', name: 'text-cyan-700 dark:text-cyan-300' },
-  { bg: 'bg-violet-50 dark:bg-violet-950/30', border: 'border-l-violet-400', name: 'text-violet-700 dark:text-violet-300' },
+  { bg: 'bg-indigo-100 dark:bg-indigo-950/50', border: 'border-indigo-300 dark:border-indigo-700', name: 'text-indigo-700 dark:text-indigo-300' },
+  { bg: 'bg-emerald-100 dark:bg-emerald-950/50', border: 'border-emerald-300 dark:border-emerald-700', name: 'text-emerald-700 dark:text-emerald-300' },
+  { bg: 'bg-amber-100 dark:bg-amber-950/50', border: 'border-amber-300 dark:border-amber-700', name: 'text-amber-700 dark:text-amber-300' },
+  { bg: 'bg-rose-100 dark:bg-rose-950/50', border: 'border-rose-300 dark:border-rose-700', name: 'text-rose-700 dark:text-rose-300' },
+  { bg: 'bg-cyan-100 dark:bg-cyan-950/50', border: 'border-cyan-300 dark:border-cyan-700', name: 'text-cyan-700 dark:text-cyan-300' },
+  { bg: 'bg-violet-100 dark:bg-violet-950/50', border: 'border-violet-300 dark:border-violet-700', name: 'text-violet-700 dark:text-violet-300' },
 ]
 
-const FALLBACK_COLOR = { bg: 'bg-background/60', border: 'border-l-gray-300', name: 'text-muted-foreground' }
+const FALLBACK_COLOR = { bg: 'bg-gray-100 dark:bg-gray-800', border: 'border-gray-300 dark:border-gray-600', name: 'text-muted-foreground' }
 
 interface StoryboardChatCardProps {
   storyboard: Storyboard | null
@@ -122,7 +122,7 @@ export function StoryboardChatCard({
 
         {/* Expanded storyboard content — slides out below the bubble */}
         {expanded && (
-          <div className="mt-1 space-y-1.5 rounded-2xl rounded-tl-md bg-muted border border-border px-3.5 py-2.5">
+          <div className="mt-1 space-y-1.5 rounded-2xl rounded-tl-md bg-background border border-border px-3.5 py-2.5">
             {slots.length === 0 ? (
               <p className="py-1 text-xs text-muted-foreground">
                 {t('storyboard.noStoryboardHint')}
@@ -131,7 +131,7 @@ export function StoryboardChatCard({
               slots.map((slot, i) => {
                 const color = getMemberColor(slot.assigned_to)
                 return (
-                <div key={i} className={`space-y-1 rounded-lg border-l-2 ${color.bg} ${color.border} p-2`}>
+                <div key={i} className={`space-y-1 rounded-lg border ${color.bg} ${color.border} p-2`}>
                   <div className="flex items-start gap-1.5">
                     <Badge
                       variant="secondary"
