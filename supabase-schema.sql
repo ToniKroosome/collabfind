@@ -597,6 +597,9 @@ CREATE POLICY "Match participants can update contracts"
 ON collab_contracts FOR UPDATE TO authenticated
 USING (match_id IN (
     SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)
+))
+WITH CHECK (match_id IN (
+    SELECT id FROM matches WHERE user_a = auth.uid() OR user_b = auth.uid() OR auth.uid() = ANY(members)
 ));
 
 CREATE TRIGGER trigger_collab_contracts_updated_at
@@ -648,6 +651,14 @@ WITH CHECK (
 CREATE POLICY "Reviewers can update submissions"
 ON contract_submissions FOR UPDATE TO authenticated
 USING (
+    submitted_by != auth.uid()
+    AND contract_id IN (
+        SELECT c.id FROM collab_contracts c
+        JOIN matches m ON c.match_id = m.id
+        WHERE m.user_a = auth.uid() OR m.user_b = auth.uid() OR auth.uid() = ANY(m.members)
+    )
+)
+WITH CHECK (
     submitted_by != auth.uid()
     AND contract_id IN (
         SELECT c.id FROM collab_contracts c
