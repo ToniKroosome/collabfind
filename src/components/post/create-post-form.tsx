@@ -139,7 +139,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       </div>
 
       {/* Title: Template dropdown + detail input */}
-      <div className="space-y-2">
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#eef2ff' }}>
         <Label>{t('createPost.titleLabel')}</Label>
         <div className="flex items-center gap-2">
           <Select
@@ -179,7 +179,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       </div>
 
       {/* Description */}
-      <div className="space-y-2">
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#f0fdf4' }}>
         <Label htmlFor="description">{t('createPost.descriptionLabel')}</Label>
         <Textarea
           id="description"
@@ -196,7 +196,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       </div>
 
       {/* Collab Type */}
-      <div className="space-y-2">
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#fef3c7' }}>
         <Label>{t('createPost.collabTypeLabel')}</Label>
         <Select value={collabType} onValueChange={setCollabType}>
           <SelectTrigger>
@@ -213,7 +213,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       </div>
 
       {/* Niche Tags */}
-      <div className="space-y-2">
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#fce7f3' }}>
         <Label>{t('createPost.nicheTags')}</Label>
         <div className="flex flex-wrap gap-2">
           {NICHES.map((niche) => (
@@ -233,7 +233,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       </div>
 
       {/* Preferred Audience Size */}
-      <div className="space-y-2">
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#ecfeff' }}>
         <Label>{t('createPost.audienceSize')}</Label>
         <Select value={getCurrentRange()} onValueChange={handleAudienceRange}>
           <SelectTrigger>
@@ -251,7 +251,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       </div>
 
       {/* Location */}
-      <div className="space-y-2">
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#faf5ff' }}>
         <Label htmlFor="location">{t('createPost.location')}</Label>
         <Input
           id="location"
@@ -262,7 +262,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       </div>
 
       {/* Number of Collaborators */}
-      <div className="space-y-2">
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#fff7ed' }}>
         <Label>{t('collab.maxCollaborators')}</Label>
         <Select
           value={String(maxCollaborators)}
@@ -283,7 +283,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
 
       {/* Chat Mode - only show when maxCollaborators > 1 */}
       {maxCollaborators > 1 && (
-        <div className="space-y-2">
+        <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#fff7ed' }}>
           <Label>{t('collab.collabMode')}</Label>
           <Select value={collabMode} onValueChange={setCollabMode}>
             <SelectTrigger>
@@ -305,7 +305,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
       )}
 
       {/* Collab Details (collapsible) */}
-      <div className="space-y-2">
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#f0f9ff' }}>
         <button
           type="button"
           onClick={() => setShowDetails(!showDetails)}
