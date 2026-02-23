@@ -314,8 +314,8 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
           {showDetails ? t('createPost.hideDetails') : t('createPost.showDetails')}
         </button>
         {showDetails && (
-          <div className="space-y-4 rounded-lg border p-4">
-            <div className="space-y-2">
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2 rounded-lg border p-3" style={{ backgroundColor: '#fefce8' }}>
               <Label>{t('common.timeline')}</Label>
               <DatePicker
                 value={timeline}
@@ -324,7 +324,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
               />
             </div>
             {/* Video Resolution */}
-            <div className="space-y-2">
+            <div className="space-y-2 rounded-lg border p-3" style={{ backgroundColor: '#f0fdf4' }}>
               <Label>{t('createPost.videoResolution')}</Label>
               <Select value={videoResolution} onValueChange={setVideoResolution}>
                 <SelectTrigger>
@@ -341,7 +341,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
             </div>
 
             {/* Deliverable Slots */}
-            <div className="space-y-3">
+            <div className="space-y-3 rounded-lg border p-3" style={{ backgroundColor: '#fce7f3' }}>
               <Label>{t('deliverable.whatYouNeed' as any)}</Label>
               {deliverableSlots.map((slot, idx) => (
                 <div key={idx} className="space-y-2 rounded-lg border p-3">
@@ -423,7 +423,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 {t('deliverable.addSlot' as any)}
               </Button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 rounded-lg border p-3" style={{ backgroundColor: '#ecfeff' }}>
               <Label htmlFor="requirements">{t('common.requirements')}</Label>
               <Textarea
                 id="requirements"
@@ -437,7 +437,7 @@ export function CreatePostForm({ userId }: CreatePostFormProps) {
                 {requirements.length}/500
               </p>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 rounded-lg border p-3" style={{ backgroundColor: '#fff7ed' }}>
               <Label htmlFor="compensation">{t('common.compensation')}</Label>
               <Input
                 id="compensation"
