@@ -64,14 +64,6 @@ export function PostDetailContent({
       .replace('{description}', descSnippet)
       .replace('{link}', window.location.href)
 
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: message })
-        return
-      } catch {
-        // User cancelled or share failed, fall through to clipboard
-      }
-    }
     await navigator.clipboard.writeText(message)
     toast.success(t('toast.inviteCopied'))
   }
