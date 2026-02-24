@@ -465,6 +465,10 @@ export const th: Translations = {
   'admin.topPages': 'หน้ายอดนิยม',
   'admin.views': 'ครั้ง',
 
+  // Likes
+  'like.like': 'ถูกใจ',
+  'like.liked': 'ถูกใจแล้ว',
+
   // Time ago
   'time.justNow': 'เมื่อกี้',
   'time.minutesAgo': '{n} นาทีที่แล้ว',

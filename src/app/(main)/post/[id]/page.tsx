@@ -81,6 +81,23 @@ export default async function PostDetailPage({
     interests = (data as InterestWithProfile[]) || []
   }
 
+  // Fetch like count and whether current user liked
+  const { count: likeCount } = await supabase
+    .from('post_likes')
+    .select('*', { count: 'exact', head: true })
+    .eq('post_id', id)
+
+  let isLiked = false
+  if (user) {
+    const { data: userLike } = await supabase
+      .from('post_likes')
+      .select('id')
+      .eq('post_id', id)
+      .eq('user_id', user.id)
+      .maybeSingle()
+    isLiked = !!userLike
+  }
+
   // Check if any match for this post has an accepted contract
   let hasAcceptedContract = false
   if (isOwner) {
@@ -108,6 +125,8 @@ export default async function PostDetailPage({
       interests={interests}
       userId={user?.id || null}
       hasAcceptedContract={hasAcceptedContract}
+      likeCount={likeCount ?? 0}
+      isLiked={isLiked}
     />
   )
 }

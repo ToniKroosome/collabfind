@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Eye, MapPin, Star, Users } from 'lucide-react'
+import { LikeButton } from '@/components/post/like-button'
 import { COLLAB_TYPE_COLORS } from '@/lib/constants'
 import { TimeAgo } from '@/components/shared/time-ago'
 import type { CollabPostWithProfile } from '@/types/database'
@@ -15,9 +16,12 @@ interface CollabCardProps {
   post: CollabPostWithProfile
   reputation?: { avgRating: number; count: number }
   viewCount?: number
+  likeCount?: number
+  isLiked?: boolean
+  userId?: string | null
 }
 
-export function CollabCard({ post, reputation, viewCount }: CollabCardProps) {
+export function CollabCard({ post, reputation, viewCount, likeCount = 0, isLiked = false, userId = null }: CollabCardProps) {
   const { t } = useLanguage()
   const typeLabel = getCollabTypeLabel(t, post.collab_type)
   const typeColor = COLLAB_TYPE_COLORS[post.collab_type] || COLLAB_TYPE_COLORS.other
@@ -120,7 +124,7 @@ export function CollabCard({ post, reputation, viewCount }: CollabCardProps) {
             </p>
           )}
 
-          {/* Location & Views */}
+          {/* Location, Likes & Views */}
           <div className="mt-2 flex items-center justify-between">
             {post.location ? (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -130,12 +134,20 @@ export function CollabCard({ post, reputation, viewCount }: CollabCardProps) {
             ) : (
               <div />
             )}
-            {viewCount != null && viewCount > 0 && (
-              <div className="flex items-center gap-0.5 text-[11px] text-muted-foreground">
-                <Eye className="h-3 w-3" />
-                {viewCount}
-              </div>
-            )}
+            <div className="flex items-center gap-3">
+              <LikeButton
+                postId={post.id}
+                userId={userId}
+                initialLiked={isLiked}
+                initialCount={likeCount}
+              />
+              {viewCount != null && viewCount > 0 && (
+                <div className="flex items-center gap-0.5 text-[11px] text-muted-foreground">
+                  <Eye className="h-3 w-3" />
+                  {viewCount}
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

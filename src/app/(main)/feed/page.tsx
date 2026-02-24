@@ -116,6 +116,25 @@ export default async function FeedPage({
     }
   }
 
+  // Fetch like counts and user's likes
+  const postIds = posts.map((p) => p.id)
+  const likeCountMap = new Map<string, number>()
+  const userLikedSet = new Set<string>()
+  if (postIds.length > 0) {
+    const { data: likeData } = await supabase
+      .from('post_likes')
+      .select('post_id, user_id')
+      .in('post_id', postIds)
+    if (likeData) {
+      for (const row of likeData) {
+        likeCountMap.set(row.post_id, (likeCountMap.get(row.post_id) ?? 0) + 1)
+        if (user && row.user_id === user.id) {
+          userLikedSet.add(row.post_id)
+        }
+      }
+    }
+  }
+
   return (
     <div className="space-y-4 py-4">
       <FeedFilters />
@@ -128,6 +147,9 @@ export default async function FeedPage({
               post={post}
               reputation={reputationMap.get(post.user_id)}
               viewCount={viewCountMap.get(`/post/${post.id}`) ?? 0}
+              likeCount={likeCountMap.get(post.id) ?? 0}
+              isLiked={userLikedSet.has(post.id)}
+              userId={user?.id || null}
             />
           ))}
         </div>

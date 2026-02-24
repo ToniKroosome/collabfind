@@ -23,6 +23,7 @@ import { toast } from 'sonner'
 import type { InterestWithProfile } from '@/types/database'
 import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel } from '@/lib/i18n'
 import type { DeliverableSlot } from '@/types/database'
+import { LikeButton } from '@/components/post/like-button'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -34,6 +35,8 @@ interface PostDetailContentProps {
   interests: InterestWithProfile[]
   userId: string | null
   hasAcceptedContract?: boolean
+  likeCount?: number
+  isLiked?: boolean
 }
 
 export function PostDetailContent({
@@ -43,6 +46,8 @@ export function PostDetailContent({
   interests,
   userId,
   hasAcceptedContract = false,
+  likeCount = 0,
+  isLiked = false,
 }: PostDetailContentProps) {
   const { t } = useLanguage()
   const router = useRouter()
@@ -246,7 +251,13 @@ export function PostDetailContent({
         )}
 
         {/* Meta info */}
-        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+          <LikeButton
+            postId={post.id}
+            userId={userId}
+            initialLiked={isLiked}
+            initialCount={likeCount}
+          />
           {audienceLabel && (
             <span className="flex items-center gap-1">
               <Users className="h-3.5 w-3.5" />

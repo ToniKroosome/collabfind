@@ -465,6 +465,10 @@ export interface Translations {
   'admin.topPages': string
   'admin.views': string
 
+  // Likes
+  'like.like': string
+  'like.liked': string
+
   // Time ago
   'time.justNow': string
   'time.minutesAgo': string

@@ -465,6 +465,10 @@ export const en: Translations = {
   'admin.topPages': 'Top Pages',
   'admin.views': 'views',
 
+  // Likes
+  'like.like': 'Like',
+  'like.liked': 'Liked',
+
   // Time ago
   'time.justNow': 'just now',
   'time.minutesAgo': '{n}m ago',

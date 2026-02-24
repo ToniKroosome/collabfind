@@ -919,3 +919,30 @@ USING (true);
 -- =====================================================
 ALTER TABLE page_views ADD COLUMN IF NOT EXISTS visitor_id TEXT;
 CREATE INDEX IF NOT EXISTS idx_page_views_visitor_id ON page_views(visitor_id);
+
+-- =====================================================
+-- 20. POST LIKES
+-- =====================================================
+CREATE TABLE IF NOT EXISTS post_likes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID NOT NULL REFERENCES collab_posts(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(post_id, user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_post_likes_post_id ON post_likes(post_id);
+CREATE INDEX IF NOT EXISTS idx_post_likes_user_id ON post_likes(user_id);
+
+ALTER TABLE post_likes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can view likes"
+ON post_likes FOR SELECT USING (true);
+
+CREATE POLICY "Authenticated users can like posts"
+ON post_likes FOR INSERT TO authenticated
+WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can unlike their own likes"
+ON post_likes FOR DELETE TO authenticated
+USING (auth.uid() = user_id);
