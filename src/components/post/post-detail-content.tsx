@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { COLLAB_TYPE_COLORS, FOLLOWER_RANGES } from '@/lib/constants'
-import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn, Trash2, Share2, Pencil, Send } from 'lucide-react'
+import { MapPin, Users, Calendar, FileText, ShieldCheck, DollarSign, LogIn, Trash2, Share2, Pencil, Send, Lock, LockOpen } from 'lucide-react'
 import { TimeAgo } from '@/components/shared/time-ago'
 import { toast } from 'sonner'
 import type { InterestWithProfile } from '@/types/database'
@@ -46,7 +46,9 @@ export function PostDetailContent({
   const { t } = useLanguage()
   const router = useRouter()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showCloseDialog, setShowCloseDialog] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [isOpen, setIsOpen] = useState(post.is_open)
   const typeLabel = getCollabTypeLabel(t, post.collab_type)
   const typeColor = COLLAB_TYPE_COLORS[post.collab_type] || COLLAB_TYPE_COLORS.other
 
@@ -90,6 +92,24 @@ export function PostDetailContent({
 
     toast.success(t('toast.postDeleted' as any))
     router.push('/feed')
+    router.refresh()
+  }
+
+  const handleToggleOpen = async (newOpen: boolean) => {
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('collab_posts')
+      .update({ is_open: newOpen })
+      .eq('id', post.id)
+
+    if (error) {
+      toast.error(t('toast.failedUpdatePost'))
+      return
+    }
+
+    setIsOpen(newOpen)
+    setShowCloseDialog(false)
+    toast.success(newOpen ? t('toast.postReopened') : t('toast.postClosed'))
     router.refresh()
   }
 
@@ -231,7 +251,7 @@ export function PostDetailContent({
       </div>
 
       {/* Action section */}
-      {!isOwner && post.is_open && userId && (
+      {!isOwner && isOpen && userId && (
         <InterestButton
           postId={post.id}
           userId={userId}
@@ -239,7 +259,7 @@ export function PostDetailContent({
         />
       )}
 
-      {!isOwner && post.is_open && !userId && (
+      {!isOwner && isOpen && !userId && (
         <Link href="/login">
           <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
             <LogIn className="mr-2 h-4 w-4" />
@@ -248,7 +268,7 @@ export function PostDetailContent({
         </Link>
       )}
 
-      {!post.is_open && !isOwner && (
+      {!isOpen && !isOwner && (
         <p className="text-center text-sm text-muted-foreground">
           {t('postDetail.noLongerAccepting')}
         </p>
@@ -263,9 +283,30 @@ export function PostDetailContent({
         />
       )}
 
-      {/* Owner: edit & delete post */}
+      {/* Owner: actions */}
       {isOwner && (
         <>
+          {/* Close / Reopen post */}
+          {isOpen ? (
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setShowCloseDialog(true)}
+            >
+              <Lock className="mr-2 h-4 w-4" />
+              {t('postDetail.closePost')}
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleToggleOpen(true)}
+            >
+              <LockOpen className="mr-2 h-4 w-4" />
+              {t('postDetail.reopenPost')}
+            </Button>
+          )}
+
           {!hasAcceptedContract && (
             <Link href={`/post/${post.id}/edit`}>
               <Button variant="outline" className="w-full">
@@ -283,6 +324,25 @@ export function PostDetailContent({
             {t('postDetail.deletePost' as any)}
           </Button>
 
+          {/* Close post confirmation */}
+          <Dialog open={showCloseDialog} onOpenChange={setShowCloseDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t('postDetail.closePostTitle')}</DialogTitle>
+                <DialogDescription>{t('postDetail.closePostDesc')}</DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2 sm:gap-0">
+                <Button variant="outline" onClick={() => setShowCloseDialog(false)}>
+                  {t('common.cancel')}
+                </Button>
+                <Button onClick={() => handleToggleOpen(false)}>
+                  {t('postDetail.confirmClose')}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Delete post confirmation */}
           <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
             <DialogContent>
               <DialogHeader>

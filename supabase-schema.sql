@@ -218,18 +218,17 @@ USING (auth.uid() = user_a OR auth.uid() = user_b OR auth.uid() = ANY(members))
 WITH CHECK (auth.uid() = user_a OR auth.uid() = user_b OR auth.uid() = ANY(members));
 
 -- Auto-create match when interest is accepted (supports multi-collaborator)
+-- Post stays open until the owner manually closes it.
 CREATE OR REPLACE FUNCTION handle_interest_accepted()
 RETURNS TRIGGER AS $$
 DECLARE
     v_post_owner UUID;
     v_post_mode TEXT;
-    v_max INT;
-    v_accepted_count INT;
     v_existing_match_id UUID;
 BEGIN
     IF NEW.status = 'accepted' AND OLD.status = 'pending' THEN
-        SELECT user_id, collab_mode, max_collaborators
-        INTO v_post_owner, v_post_mode, v_max
+        SELECT user_id, collab_mode
+        INTO v_post_owner, v_post_mode
         FROM collab_posts WHERE id = NEW.post_id;
 
         IF v_post_mode = 'group' THEN
@@ -253,13 +252,6 @@ BEGIN
             VALUES (NEW.id, NEW.post_id, v_post_owner, NEW.user_id, 'separate',
                     ARRAY[v_post_owner, NEW.user_id])
             ON CONFLICT DO NOTHING;
-        END IF;
-
-        -- Auto-close post when all slots filled
-        SELECT COUNT(*) INTO v_accepted_count
-        FROM interests WHERE post_id = NEW.post_id AND status = 'accepted';
-        IF v_accepted_count >= v_max THEN
-            UPDATE collab_posts SET is_open = false WHERE id = NEW.post_id;
         END IF;
     END IF;
     RETURN NEW;

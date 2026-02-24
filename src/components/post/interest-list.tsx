@@ -31,7 +31,6 @@ export function InterestList({
   const { t } = useLanguage()
 
   const acceptedCount = interests.filter((i) => i.status === 'accepted').length
-  const slotsFull = acceptedCount >= maxCollaborators
 
   const handleAction = async (interestId: string, action: 'accepted' | 'declined') => {
     const { error } = await supabase
@@ -53,20 +52,6 @@ export function InterestList({
         ? t('toast.interestAccepted')
         : t('toast.interestDeclined')
     )
-
-    // Single-collab mode: redirect to chat after accept
-    if (action === 'accepted' && maxCollaborators === 1) {
-      const { data: match } = await supabase
-        .from('matches')
-        .select('id')
-        .eq('interest_id', interestId)
-        .single()
-
-      if (match) {
-        router.push(`/messages/${match.id}`)
-        return
-      }
-    }
 
     router.refresh()
   }
@@ -166,7 +151,6 @@ export function InterestList({
                   size="sm"
                   className="flex-1 bg-green-600 hover:bg-green-700"
                   onClick={() => handleAction(interest.id, 'accepted')}
-                  disabled={slotsFull}
                 >
                   <Check className="mr-1 h-4 w-4" />
                   {t('interest.accept')}
@@ -182,7 +166,7 @@ export function InterestList({
                 </Button>
               </div>
             )}
-            {interest.status === 'accepted' && maxCollaborators > 1 && (
+            {interest.status === 'accepted' && (
               <div className="mt-2">
                 <Button
                   size="sm"

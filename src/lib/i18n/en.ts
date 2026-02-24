@@ -124,6 +124,11 @@ export const en: Translations = {
   'postDetail.share': 'Share',
   'postDetail.inviteCollab': 'Invite to Collab',
   'postDetail.inviteMessage': "Hey! I'm looking for collaborators for \"{title}\" — {description}\n\nCheck it out and join here: {link}",
+  'postDetail.closePost': 'Close Post',
+  'postDetail.reopenPost': 'Reopen Post',
+  'postDetail.closePostTitle': 'Close this post?',
+  'postDetail.closePostDesc': 'New people will no longer be able to express interest. You can reopen it later.',
+  'postDetail.confirmClose': 'Yes, Close',
 
   // Interest
   'interest.imInterested': "I'm Interested",
@@ -395,6 +400,9 @@ export const en: Translations = {
   'toast.failedSaveStoryboard': 'Failed to save storyboard',
   'toast.linkCopied': 'Link copied!',
   'toast.inviteCopied': 'Invitation message copied!',
+  'toast.postClosed': 'Post closed.',
+  'toast.postReopened': 'Post reopened!',
+  'toast.failedUpdatePost': 'Failed to update post',
   'toast.storyboardCopied': 'Storyboard copied!',
   'toast.storyboardPasted': 'Storyboard pasted! Remember to save.',
   'toast.invalidStoryboardData': 'No storyboard data in clipboard',

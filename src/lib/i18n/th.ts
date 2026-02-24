@@ -124,6 +124,11 @@ export const th: Translations = {
   'postDetail.share': 'แชร์',
   'postDetail.inviteCollab': 'เชิญคอลแลป',
   'postDetail.inviteMessage': "เฮ้! เรากำลังมองหาคนมาคอลแลปสำหรับ \"{title}\" — {description}\n\nดูรายละเอียดและร่วมได้ที่: {link}",
+  'postDetail.closePost': 'ปิดโพสต์',
+  'postDetail.reopenPost': 'เปิดโพสต์อีกครั้ง',
+  'postDetail.closePostTitle': 'ปิดโพสต์นี้?',
+  'postDetail.closePostDesc': 'คนใหม่จะไม่สามารถแสดงความสนใจได้ คุณสามารถเปิดอีกครั้งได้ภายหลัง',
+  'postDetail.confirmClose': 'ใช่ ปิดเลย',
 
   // Interest
   'interest.imInterested': 'ฉันสนใจ',
@@ -395,6 +400,9 @@ export const th: Translations = {
   'toast.failedSaveStoryboard': 'ไม่สามารถบันทึกสตอรี่บอร์ดได้',
   'toast.linkCopied': 'คัดลอกลิงก์แล้ว!',
   'toast.inviteCopied': 'คัดลอกข้อความเชิญแล้ว!',
+  'toast.postClosed': 'ปิดโพสต์แล้ว',
+  'toast.postReopened': 'เปิดโพสต์อีกครั้งแล้ว!',
+  'toast.failedUpdatePost': 'ไม่สามารถอัปเดตโพสต์ได้',
   'toast.storyboardCopied': 'คัดลอกสตอรี่บอร์ดแล้ว!',
   'toast.storyboardPasted': 'วางสตอรี่บอร์ดแล้ว! อย่าลืมบันทึก',
   'toast.invalidStoryboardData': 'ไม่มีข้อมูลสตอรี่บอร์ดในคลิปบอร์ด',

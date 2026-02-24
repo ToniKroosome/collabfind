@@ -124,6 +124,11 @@ export interface Translations {
   'postDetail.share': string
   'postDetail.inviteCollab': string
   'postDetail.inviteMessage': string
+  'postDetail.closePost': string
+  'postDetail.reopenPost': string
+  'postDetail.closePostTitle': string
+  'postDetail.closePostDesc': string
+  'postDetail.confirmClose': string
 
   // Interest
   'interest.imInterested': string
@@ -395,6 +400,9 @@ export interface Translations {
   'toast.failedSaveStoryboard': string
   'toast.linkCopied': string
   'toast.inviteCopied': string
+  'toast.postClosed': string
+  'toast.postReopened': string
+  'toast.failedUpdatePost': string
   'toast.storyboardCopied': string
   'toast.storyboardPasted': string
   'toast.invalidStoryboardData': string
