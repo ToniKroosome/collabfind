@@ -91,6 +91,9 @@ export const th: Translations = {
   'createPost.referenceLinkPlaceholder': 'วางลิงก์อ้างอิง (เช่น YouTube, Instagram, TikTok)',
   'createPost.editLevel': 'ระดับการตัดต่อ',
   'createPost.editLevelPlaceholder': 'คุณต้องการการตัดต่อระดับไหน?',
+  'createPost.postImage': 'รูปภาพโพสต์',
+  'createPost.uploadImage': 'อัปโหลดรูปภาพ',
+  'createPost.removeImage': 'ลบ',
   'createPost.creating': 'กำลังสร้าง...',
   'createPost.create': 'สร้างโพสต์คอลแลป',
 

@@ -91,6 +91,9 @@ export interface Translations {
   'createPost.referenceLinkPlaceholder': string
   'createPost.editLevel': string
   'createPost.editLevelPlaceholder': string
+  'createPost.postImage': string
+  'createPost.uploadImage': string
+  'createPost.removeImage': string
   'createPost.creating': string
   'createPost.create': string
 

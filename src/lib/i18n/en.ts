@@ -91,6 +91,9 @@ export const en: Translations = {
   'createPost.referenceLinkPlaceholder': 'Paste a reference link (e.g., YouTube, Instagram, TikTok)',
   'createPost.editLevel': 'Edit Level',
   'createPost.editLevelPlaceholder': 'What level of editing do you expect?',
+  'createPost.postImage': 'Post Image',
+  'createPost.uploadImage': 'Upload Image',
+  'createPost.removeImage': 'Remove',
   'createPost.creating': 'Creating...',
   'createPost.create': 'Create Collab Post',
 

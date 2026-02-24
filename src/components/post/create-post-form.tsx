@@ -13,7 +13,8 @@ import { NICHES, COLLAB_TYPES, FOLLOWER_RANGES, DELIVERABLE_CONTENT_TYPES, DELIV
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel, getTitleTemplateLabel, getEditLevelLabel } from '@/lib/i18n'
-import { Plus, X } from 'lucide-react'
+import { ImagePlus, Plus, X } from 'lucide-react'
+import Image from 'next/image'
 import { format } from 'date-fns'
 import { DatePicker } from '@/components/ui/date-picker'
 import type { CollabPost, DeliverableSlot, Json } from '@/types/database'
@@ -43,6 +44,8 @@ export function CreatePostForm({ userId, editPost }: CreatePostFormProps) {
   const [referenceLink, setReferenceLink] = useState(editPost?.reference_link || '')
   const [maxCollaborators, setMaxCollaborators] = useState(editPost?.max_collaborators || 1)
   const [collabMode, setCollabMode] = useState(editPost?.collab_mode || 'separate')
+  const [imageUrl, setImageUrl] = useState(editPost?.image_url || '')
+  const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
 
   const router = useRouter()
@@ -77,6 +80,29 @@ export function CreatePostForm({ userId, editPost }: CreatePostFormProps) {
       (r) => r.min === audienceMin && r.max === audienceMax
     )
     return range?.label || '__any__'
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    const fileExt = file.name.split('.').pop()
+    const filePath = `${userId}/${Date.now()}.${fileExt}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('post-images')
+      .upload(filePath, file, { upsert: true })
+
+    if (uploadError) {
+      toast.error('Failed to upload image')
+      setUploading(false)
+      return
+    }
+
+    const { data } = supabase.storage.from('post-images').getPublicUrl(filePath)
+    setImageUrl(data.publicUrl)
+    setUploading(false)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -119,6 +145,7 @@ export function CreatePostForm({ userId, editPost }: CreatePostFormProps) {
       video_resolution: videoResolution || null,
       reference_link: referenceLink.trim() || null,
       edit_level: editLevel || null,
+      image_url: imageUrl || null,
       max_collaborators: maxCollaborators,
       collab_mode: maxCollaborators > 1 ? collabMode : 'separate',
     }
@@ -202,6 +229,46 @@ export function CreatePostForm({ userId, editPost }: CreatePostFormProps) {
         <p className="text-xs text-muted-foreground">
           {description.length}/1000
         </p>
+      </div>
+
+      {/* Post Image */}
+      <div className="space-y-2 rounded-lg border p-4" style={{ backgroundColor: '#fdf2f8' }}>
+        <Label>{t('createPost.postImage')}</Label>
+        {imageUrl ? (
+          <div className="relative">
+            <Image
+              src={imageUrl}
+              alt="Post image"
+              width={600}
+              height={400}
+              className="w-full rounded-lg object-cover"
+            />
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              className="absolute right-2 top-2"
+              onClick={() => setImageUrl('')}
+            >
+              <X className="mr-1 h-3 w-3" />
+              {t('createPost.removeImage')}
+            </Button>
+          </div>
+        ) : (
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/25 p-8 transition-colors hover:border-muted-foreground/50">
+            <ImagePlus className="h-8 w-8 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">
+              {uploading ? '...' : t('createPost.uploadImage')}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+              disabled={uploading}
+            />
+          </label>
+        )}
       </div>
 
       {/* Collab Type */}

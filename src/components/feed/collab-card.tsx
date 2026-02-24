@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -59,6 +60,17 @@ export function CollabCard({ post, reputation, viewCount }: CollabCardProps) {
           <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
             {post.description}
           </p>
+
+          {/* Post Image */}
+          {post.image_url && (
+            <Image
+              src={post.image_url}
+              alt={post.title}
+              width={600}
+              height={300}
+              className="mt-2 w-full rounded-lg object-cover max-h-48"
+            />
+          )}
 
           {/* Tags row */}
           <div className="mt-3 flex flex-wrap items-center gap-1.5">

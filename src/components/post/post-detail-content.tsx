@@ -23,6 +23,7 @@ import { toast } from 'sonner'
 import type { InterestWithProfile } from '@/types/database'
 import { useLanguage, getCollabTypeLabel, getNicheLabel, getDeliverableTypeLabel } from '@/lib/i18n'
 import type { DeliverableSlot } from '@/types/database'
+import Image from 'next/image'
 import Link from 'next/link'
 
 interface PostDetailContentProps {
@@ -171,6 +172,17 @@ export function PostDetailContent({
         <p className="whitespace-pre-wrap text-sm leading-relaxed">
           {post.description}
         </p>
+
+        {/* Post Image */}
+        {post.image_url && (
+          <Image
+            src={post.image_url}
+            alt={post.title}
+            width={800}
+            height={500}
+            className="w-full rounded-lg object-cover"
+          />
+        )}
 
         {/* Collab Details */}
         {(post.timeline || post.deliverables || post.deliverable_slots || post.requirements || post.compensation) && (
