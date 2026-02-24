@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -63,12 +62,11 @@ export function CollabCard({ post, reputation, viewCount }: CollabCardProps) {
 
           {/* Post Image */}
           {post.image_url && (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               src={post.image_url}
               alt={post.title}
-              width={600}
-              height={300}
-              className="mt-2 w-full rounded-lg object-contain"
+              className="mt-2 w-full rounded-lg"
             />
           )}
 
