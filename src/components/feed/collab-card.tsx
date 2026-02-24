@@ -28,9 +28,9 @@ export function CollabCard({ post, reputation, viewCount }: CollabCardProps) {
         <CardContent className="p-4">
           {/* Author row */}
           <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8">
+            <Avatar className="h-24 w-24">
               <AvatarImage src={post.profiles?.avatar_url || undefined} />
-              <AvatarFallback className="text-xs">
+              <AvatarFallback className="text-2xl">
                 {post.profiles?.full_name?.charAt(0) || '?'}
               </AvatarFallback>
             </Avatar>
