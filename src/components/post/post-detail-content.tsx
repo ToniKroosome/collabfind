@@ -179,8 +179,8 @@ export function PostDetailContent({
             src={post.image_url}
             alt={post.title}
             width={800}
-            height={500}
-            className="w-full rounded-lg object-cover"
+            height={800}
+            className="w-full rounded-lg object-contain"
           />
         )}
 

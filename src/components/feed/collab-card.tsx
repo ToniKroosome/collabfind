@@ -68,7 +68,7 @@ export function CollabCard({ post, reputation, viewCount }: CollabCardProps) {
               alt={post.title}
               width={600}
               height={300}
-              className="mt-2 w-full rounded-lg object-cover max-h-48"
+              className="mt-2 w-full rounded-lg object-contain"
             />
           )}
 
